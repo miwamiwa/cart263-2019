@@ -13,6 +13,13 @@ to overlap another circle (food) in order to grow bigger.
 // Constants defining key quantities
 const AVATAR_SIZE_GAIN = 50;
 const AVATAR_SIZE_LOSS = 1;
+const MAX_SPEED = 10;
+
+let frame =0;
+let gameOverTextx = [];
+let gameOverTexty = [];
+let gameOverTextc = [];
+
 
 // Avatar is an object defined by its properties
 let avatar = {
@@ -28,6 +35,8 @@ let avatar = {
 let food = {
   x: 0,
   y: 0,
+  vx:0,
+  vy:0,
   size: 64,
   color: '#55cccc'
 }
@@ -48,6 +57,7 @@ function preload() {
 function setup() {
   createCanvas(windowWidth,windowHeight);
   positionFood();
+  updateFoodVelocity();
   noCursor();
 }
 
@@ -57,16 +67,49 @@ function setup() {
 // Move the avatar, check for collisions, display avatar and food
 
 function draw() {
+  frame +=1;
   // Make sure the avatar is still alive - if not, we don't run
   // the rest of the draw loop
   if (!avatar.active) {
     // By using "return" the draw() function exits immediately
+    background(0);
+  
+    gameOverTextx.push(random(width));
+    gameOverTexty.push(random(height));
+    gameOverTextc.push(color(random(40), random(40), random(40)));
+
+    for( let i=0; i<gameOverTextx.length; i++ ){
+
+      fill(gameOverTextc[i]);
+      text("game ovrr", gameOverTextx[i], gameOverTexty[i]);
+
+    }
+
+    fill(avatar.color);
+    let avatarTextX = constrain(avatar.x, 20, width-20);
+    let avatarTextY = constrain(avatar.y, 20, height-20);
+    text(" you ", avatarTextX, avatarTextY);
+    fill(food.color);
+    let foodTextX = constrain(food.x, 50, width-50);
+    let foodTextY = constrain(food.y, 20, height-20);
+    text(" your freaking target ", foodTextX, foodTextY);
+    let infoFill = color(random(255), random(255), random(255));
+    stroke(infoFill);
+    line(52, 18, 68, 2);
+    line(68, 2, 63, 2);
+    line(68, 2, 68, 7);
+    noStroke();
+    fill(infoFill);
+    text(" refresh ", 10, 20);
+
     return;
   }
-
+  if(frame%60===0)
+  updateFoodVelocity();
   // Otherwise we handle the game
   background(0);
   updateAvatar();
+  updateFood();
   checkCollision();
   displayAvatar();
   displayFood();
@@ -132,4 +175,20 @@ function displayFood() {
 function positionFood() {
   food.x = random(0,width);
   food.y = random(0,height);
+}
+
+function updateFood(){
+
+  food.x += food.vx;
+  food.y += food.vy;
+  if(food.x >= width || food.x <= 0 || food.y >= height || food.y <=0)
+  updateFoodVelocity();
+
+
+}
+
+function updateFoodVelocity(){
+
+  food.vx = random(-MAX_SPEED, MAX_SPEED);
+  food.vy = random(-MAX_SPEED, MAX_SPEED);
 }
