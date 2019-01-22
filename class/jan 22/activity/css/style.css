@@ -1,0 +1,27 @@
+/*********************************************
+
+This is the style file for this project.
+
+**********************************************/
+@import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+body{
+  padding:20px;
+font-family: 'Inconsolata', monospace;
+}
+div{
+  padding:10px;
+
+}
+span{
+  margin-left:5px;
+}
+.redacted{
+  background-color: black;
+  color: transparent;
+}
+
+.revealed{
+  background-color: transparent;
+  color:red;
+}
