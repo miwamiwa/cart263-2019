@@ -11,7 +11,7 @@ class Food extends Agent {
   // Also set a minimum and maximum size for this food object which it
   // will vary between when it resets
   constructor(x,y,minSize,maxSize) {
-    let randomColor = color(45, random(45, 85), random(145,195));
+    let randomColor = color(45, random(45, 85), random(135,215));
     super(x,y,random(minSize,maxSize),randomColor);
     this.minSize = minSize;
     this.maxSize = maxSize;
