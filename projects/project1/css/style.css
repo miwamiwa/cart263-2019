@@ -1,0 +1,29 @@
+/*********************************************
+
+This is the style file for this project.
+
+**********************************************/
+
+body{
+width:100%;
+height:100%;
+}
+
+#top{
+ width:700px;
+ height:80px;
+}
+
+#face{
+  width:200px;
+  height:200px;
+  background-color:red;
+}
+
+#beard{
+  width:200px;
+  justify-content: space-around;
+  line-height:0px;
+  display:flex;
+  flex-direction:row;
+}
