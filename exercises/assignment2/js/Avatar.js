@@ -11,7 +11,7 @@ class Avatar extends Agent {
   // Also sets a maximum size and size loss property
   constructor(x,y,size,sizeLoss) {
     super(x,y,size,'#cccc55');
-    this.maxSize = size;
+    this.maxSize = avatarMaxSize;
     this.sizeLoss = sizeLoss;
   }
 
