@@ -58,12 +58,16 @@ function fall(){
 }
 
 function removeSpans(){
-  if(!spansRemoved){
+  if(!spansRemoved
+  && $("span").hasClass("stillChar")===false
+  && $("span").hasClass("stillChar")===false
+){
     spansRemoved=true;
   console.log("yo")
   $("span").remove();
   textLoop +=1;
-  let nextText = '"#text'+textLoop+'"';
+  let nextText = "#text"+textLoop;
+  console.log("next is "+nextText)
   chars =0;
   setupText(nextText);
 
@@ -78,8 +82,8 @@ function makeItFall(){
   let selector = "#"+thisAtt;
   $(selector).css("left", $(this).position().left+"px");
   $(selector).css("top", $(this).position().top+"px");
-  console.log("left "+$(this).position().left+"px");
-  console.log("top "+$(this).position().top+"px");
+  //console.log("left "+$(this).position().left+"px");
+  //console.log("top "+$(this).position().top+"px");
   chars +=1;
 }
 
@@ -92,16 +96,21 @@ function moveIt(){
 }
 
 function setupText(selectedText){
-  console.log(selectedText)
+  console.log($(selectedText).html())
   $(".introText").hide();
   $(selectedText).show();
   let text = $(selectedText).html();
-  $("#text1").html("");
+  $(selectedText).html("");
   for (let i=0; i<text.length; i++){
-    let thisChar = "<span class='stillChar'>"+text.charAt(i)+"</span>";
-    $("#text1").append(thisChar)
+    let addSpace = "";
+    if(text.charAt(i-1).trim() === ""&&i!=0){
+      addSpace = " ";
+    }
+    let thisChar = "<span class='stillChar'>"+text.charAt(i)+addSpace+"</span>";
+    $(selectedText).append(thisChar)
   }
   spansRemoved = false;
+    $(".stillChar").mouseenter(makeItFall);
 }
 
 

@@ -1,12 +1,28 @@
-/*****************
+"use strict";
+let $fly;
+let $mouth;
 
-Title of Project
-Author Name
+let buzz = new Audio("assets/sounds/buzz.mp3");
 
-This is a template. You must fill in the title,
-author, and this description to match your project!
+window.onload = function(){
+  setTimeout(playStuff, 1000);
+  /*
+  let fly = document.getElementById("fly");
+  fly.addEventListener("mousedown", function(){
+    buzz.play().then(function(){
+      console.log("playen")
+    }).catch(function (error){
+      console.log(error);
+    });
+  });
+  */
+}
+function playStuff(){
+  buzz.play();
+}
 
-******************/
+
+/*
 "use strict";
 
 let $fly;
@@ -18,15 +34,16 @@ let chew = new Audio("sounds/crunch.wav");
 $(document).ready(setup);
 
 function setup(){
-  buzz.loop = true;
-
-  console.log("ready")
+buzz.load();
 $fly = $("#fly");
 $mouth = $("#mouth");
+
+  buzz.loop = true;
 $fly.on("mousedown", function(){
 
-  buzz.currentTime = 0;
-buzz.play();})
+buzz.play();
+
+});
 
 
 $fly.draggable({
@@ -43,7 +60,7 @@ console.log("dragging");
   stop: function() {
 console.log("stop drag");
 $mouth.attr("src", "images/mouth-closed.png");
-buzz.pause();
+//buzz.pause();
   }
 });
 
@@ -58,3 +75,4 @@ $mouth.droppable({
     }
   });
 }
+*/
