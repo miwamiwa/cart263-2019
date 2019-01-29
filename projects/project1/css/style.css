@@ -9,6 +9,16 @@ width:100%;
 height:100%;
 }
 
+#move{
+  position:absolute;
+  left:0px;
+  top:0px;
+}
+
+.fallingChar{
+  position:fixed;
+}
+
 #top{
  width:700px;
  height:80px;
