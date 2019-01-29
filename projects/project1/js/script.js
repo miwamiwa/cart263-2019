@@ -13,20 +13,17 @@ let spansRemoved = false;
 let $hairs;
 let chars =0;
 let textLoop =1;
+let numberOfIntroFrames=7;
 
 $(document).ready(setup);
 
 
 function setup(){
+  $("#face").hide();
+  $("#beard").hide();
   setupText("#text1");
-  $("p").click(hairClicked);
-  setInterval(update, 1000);
-  $("body").mousemove(moveIt);
-
   $(".stillChar").mouseenter(makeItFall);
-
   setInterval(fall, 10);
-
 }
 
 function fall(){
@@ -69,7 +66,13 @@ function removeSpans(){
   let nextText = "#text"+textLoop;
   console.log("next is "+nextText)
   chars =0;
-  setupText(nextText);
+  if(textLoop>numberOfIntroFrames){
+    setupGame();
+  }
+  else {
+    setupText(nextText);
+  }
+
 
 }
 }
@@ -88,14 +91,8 @@ function makeItFall(){
 }
 
 
-
-function moveIt(){
-
-  $("#move").css( "left", event.pageX );
-  $("#move").css( "top", event.pageY );
-}
-
 function setupText(selectedText){
+
   console.log($(selectedText).html())
   $(".introText").hide();
   $(selectedText).show();
@@ -106,8 +103,11 @@ function setupText(selectedText){
     if(text.charAt(i-1).trim() === ""&&i!=0){
       addSpace = " ";
     }
-    let thisChar = "<span class='stillChar'>"+text.charAt(i)+addSpace+"</span>";
+    if(text.charAt(i).trim()!=""){
+    let thisChar = "<span class='stillChar'>"+addSpace+text.charAt(i)+"</span>";
     $(selectedText).append(thisChar)
+
+  }
   }
   spansRemoved = false;
     $(".stillChar").mouseenter(makeItFall);
@@ -150,4 +150,11 @@ function hairClicked(){
 function hairFaded(){
   $(this).remove();
   console.log("bruh")
+}
+
+function setupGame(){
+  $("#face").show();
+  $("#beard").show();
+  $("p").click(hairClicked);
+  setInterval(update, 1000);
 }
