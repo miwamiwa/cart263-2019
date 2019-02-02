@@ -12,16 +12,18 @@ author, and this description to match your project!
 let spansRemoved = false;
 let $hairs;
 let chars =0;
-let textLoop =1;
+let textLoop =0;
 let numberOfIntroFrames=7;
-
+let sample1 = new Audio("assets/sounds/bruce.wav");
+let stopSample;
+let isPlaying=false;
 $(document).ready(setup);
 
 
 function setup(){
   $("#face").hide();
   $("#beard").hide();
-  setupText("#text1");
+  setupText("#text0");
   $(".stillChar").mouseenter(makeItFall);
   setInterval(fall, 10);
 }
@@ -36,7 +38,7 @@ function fall(){
         let thisString = $(selector).css("top");
         let yPos = thisString.substr(0,thisString.length-2);
         if(yPos<500){
-          let newPos = Math.round(+yPos+5)+"px";
+          let newPos = Math.round(+yPos+10)+"px";
           $(selector).css("top", newPos);
           notAllFellYet = true;
         } else {
@@ -45,6 +47,9 @@ function fall(){
         }
       }
 
+    }
+    if($("span").hasClass("stillChar")){
+      notAllFellYet = true;
     }
     if(!notAllFellYet){
       console.log("errything fell")
@@ -88,8 +93,24 @@ function makeItFall(){
   //console.log("left "+$(this).position().left+"px");
   //console.log("top "+$(this).position().top+"px");
   chars +=1;
+  startGranular(sample1);
 }
 
+function startGranular(sample){
+  if(isPlaying){
+    clearTimeout(stopSample);
+  }
+  let startTime = Math.random()*sample.duration;
+  sample.currentTime = startTime;
+  let length = Math.random()*(sample.duration-startTime);
+  sample.play();
+  isPlaying = true;
+  stopSample = setTimeout(stopGranular(sample), length);
+}
+
+function stopGranular(sample){
+  sample.pause();
+}
 
 function setupText(selectedText){
 

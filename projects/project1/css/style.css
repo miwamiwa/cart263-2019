@@ -3,15 +3,17 @@
 This is the style file for this project.
 
 **********************************************/
+@import url('https://fonts.googleapis.com/css?family=Amatic+SC');
 
 body{
 width:100%;
 height:100%;
+display:flex;
+flex-direction:column;
+align-items:center;
+ font-family: 'Amatic SC', cursive;
 }
 
-span{
-  font-size:20px;
-}
 
 #move{
   position:absolute;
@@ -23,9 +25,17 @@ span{
   position:fixed;
 }
 
+#text0{
+  font-size:120px;
+}
+
+
 #top{
  width:700px;
  height:80px;
+ font-size:80px;
+ text-align:center;
+
 }
 
 #face{
@@ -40,4 +50,11 @@ span{
   line-height:0px;
   display:flex;
   flex-direction:row;
+}
+
+.hair{
+  cursor: url('cursor.cur'), auto;
+  font-weight:bold;
+  line-height:0;
+  font-size:40px;
 }
