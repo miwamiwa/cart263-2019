@@ -14,7 +14,8 @@ let $hairs;
 let chars =0;
 let textLoop =0;
 let numberOfIntroFrames=7;
-let sample1 = new Audio("assets/sounds/bruce.wav");
+let sample1 = new Audio("assets/sounds/etta.mp3");
+let sample2 = new Audio("assets/sounds/ride.wav");
 let stopSample;
 let isPlaying=false;
 $(document).ready(setup);
@@ -26,6 +27,9 @@ function setup(){
   setupText("#text0");
   $(".stillChar").mouseenter(makeItFall);
   setInterval(fall, 10);
+  sample2.loop = true;
+  sample2.playbackRate = 2;
+  sample2.play();
 }
 
 function fall(){
@@ -94,23 +98,26 @@ function makeItFall(){
   //console.log("top "+$(this).position().top+"px");
   chars +=1;
   startGranular(sample1);
+
 }
 
 function startGranular(sample){
   if(isPlaying){
     clearTimeout(stopSample);
   }
+
   let startTime = Math.random()*sample.duration;
+  console.log(startTime);
   sample.currentTime = startTime;
-  let length = Math.random()*(sample.duration-startTime);
+  let length = Math.random()*(sample.duration-startTime)*10;
   sample.play();
   isPlaying = true;
-  stopSample = setTimeout(stopGranular(sample), length);
+  stopSample = setTimeout(function stopGranular(){
+    sample.pause();
+  }, length);
 }
 
-function stopGranular(sample){
-  sample.pause();
-}
+
 
 function setupText(selectedText){
 
@@ -178,4 +185,8 @@ function setupGame(){
   $("#beard").show();
   $("p").click(hairClicked);
   setInterval(update, 1000);
+  sample1.loop = true;
+  sample1.currentTime = 0;
+  sample1.play();
+  sample2.pause();
 }
