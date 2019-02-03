@@ -58,3 +58,22 @@ align-items:center;
   line-height:0;
   font-size:40px;
 }
+.milestone{
+  position:absolute;
+    right:185px;
+    text-align:center;
+    font-size:35px;
+    color:black;
+}
+#milestone1{
+  top:300px;
+}
+#milestone2{
+  top:600px;
+}
+#milestone3{
+  top:800px;
+}
+#milestone4{
+  top:1100px;
+}
