@@ -13,7 +13,7 @@ let spansRemoved = false;
 let $hairs;
 let chars =0;
 let textLoop =0;
-let numberOfIntroFrames=1;
+let numberOfIntroFrames=5;
 let sample1 = new Audio("assets/sounds/etta.mp3");
 let sample2 = new Audio("assets/sounds/ride2.wav");
 let stopSample;
@@ -32,7 +32,7 @@ $(document).ready(setup);
 //
 
 function setup(){
-
+console.log("ctrl+R if sound doesn't play correctly (in promise DOMexception)")
   // hide unwanted html elements
   $(".introText").hide();
   $("#face").hide();
@@ -221,18 +221,18 @@ function update(){
 function growHair(){
 
   let randomNum = Math.random();
-  let newCharacter = "|"
+  let newCharacter = "ζ"
   if(randomNum<0.8){
-    newCharacter = "}";
+    newCharacter = "θ";
   }
   if(randomNum<0.6){
-    newCharacter = ";";
+    newCharacter = "Φ";
   }
   if(randomNum<0.4){
-    newCharacter = "/";
+    newCharacter = "Ω";
   }
   if(randomNum<0.2){
-    newCharacter = "[";
+    newCharacter = "λ";
   }
   let newString = "<p>"+newCharacter+"</p>"
   return newString;
@@ -258,7 +258,7 @@ sample1.volume = 0.7;
 sample1.play();
 $("#top").append("<div class='ready'>ready</div>");
   $('body').off("keypress");
-
+$("#infoSection").hide();
 // wait until ride stops playing before loading the game.
 // transition can get choppy otherwise
 sample2.onended = function(){
@@ -276,32 +276,33 @@ sample2.onended = function(){
 
 
 function checkLastChild(){
-  if($( "article p:last" ).position().top > 300 && !milestone1reached){
+  if($( "article p:last-child" ).position().top > 300 && !milestone1reached){
     let thisMilestone = "<div id='milestone1' class='milestone'>"+"cut it!"+"</div>";
     $("body").append(thisMilestone);
     milestone1reached = true;
   }
-  if($( "article p:last" ).position().top > 600 && !milestone2reached){
+  if($( "article p:last-child" ).position().top > 600 && !milestone2reached){
     let thisMilestone = "<div id='milestone2' class='milestone'>"+"cut harder!"+"</div>";
     $("body").append(thisMilestone);
     milestone2reached = true;
   }
-  if($( "article p:last" ).position().top > 800 && !milestone3reached){
+  if($( "article p:last-child" ).position().top > 800 && !milestone3reached){
     let thisMilestone = "<div id='milestone3' class='milestone'>"+"aaaauuugh!!"+"</div>";
     $("body").append(thisMilestone);
     milestone3reached = true;
   }
-  if($( "article p:last" ).position().top > 1000){
-    let thisMilestone = "<div id='milestone4' class='milestone'>"+"accept your new beard and let her go, Sisyphus. you deserve better. \npress space to restart"+"</div>";
+  if($( "article p:last-child" ).position().top > 1000){
+    let thisMilestone = "<div id='milestone4' class='milestone'>"+"accept your new beard and let her go, Sisyphus. <br>press space to play again"+"</div>";
     $("body").append(thisMilestone);
     gameOver = true;
-    //$mouth.attr("src", "images/mouth-closed.png");
+    $("#faceImage").attr("src", "assets/images/sisyB.jpg");
     $("#face").css("background-color", "green");
     // listen for spacebar keypress
     $('body').on("keypress", resetGame);
     $("#milestone1").html("game over ↓");
     $("#milestone2").html("game over ↓↓");
     $("#milestone3").html("game over ↓↓↓");
+
   }
 }
 
@@ -309,8 +310,7 @@ function resetGame(){
 $('body').off("keypress");
   $("#face").hide();
   $("#beard").hide();
-
-  console.log("this does something i swear")
+$("#faceImage").attr("src", "assets/images/sisyA.jpg");
   $("p").remove();
   $(".milestone").remove();
   milestone1reached = false;
@@ -324,4 +324,5 @@ $('body').off("keypress");
   textLoop=0;
   resetThisText();
   $('body').on("keypress", resetThisText);
+  $("#infoSection").show();
 }

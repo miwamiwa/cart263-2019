@@ -4,6 +4,7 @@ This is the style file for this project.
 
 **********************************************/
 @import url('https://fonts.googleapis.com/css?family=Amatic+SC');
+@import url('https://fonts.googleapis.com/css?family=GFS+Didot');
 
 body{
 width:100%;
@@ -25,17 +26,17 @@ align-items:center;
   position:fixed;
 }
 
-#text0{
-  font-size:120px;
-}
 
 
 #top{
  width:700px;
  height:80px;
- font-size:80px;
+ font-size:10vh;
  text-align:center;
 
+}
+#text0{
+  font-size:20vh;
 }
 
 #face{
@@ -53,6 +54,7 @@ align-items:center;
 }
 
 .hair{
+  font-family: 'GFS Didot', serif;
   cursor: url('cursor.cur'), auto;
   font-weight:bold;
   line-height:0;
@@ -64,6 +66,11 @@ align-items:center;
     text-align:center;
     font-size:35px;
     color:black;
+}
+#infoSection{
+  font-size:5vh;
+  position:fixed;
+  bottom:0;
 }
 #milestone1{
   top:300px;
