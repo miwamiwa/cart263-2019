@@ -282,22 +282,28 @@ sample2.onended = function(){
 
 
 function checkLastChild(){
-  if($( "article p:last-child" ).position().top > 300 && !milestone1reached){
+let lowest1 = $( "#hair1 p:last-child" ).position().top;
+let lowest2 = $( "#hair2 p:last-child" ).position().top;
+let lowest3 = $( "#hair3 p:last-child" ).position().top;
+let hairs = [lowest1, lowest2, lowest3];
+  let lowestP = Math.max.apply(Math,hairs);
+  console.log(lowestP)
+  if(lowestP > 500 && !milestone1reached){
     let thisMilestone = "<div id='milestone1' class='milestone'>"+"cut it!"+"</div>";
     $("body").append(thisMilestone);
     milestone1reached = true;
   }
-  if($( "article p:last-child" ).position().top > 600 && !milestone2reached){
+  if(lowestP > 1000 && !milestone2reached){
     let thisMilestone = "<div id='milestone2' class='milestone'>"+"cut harder!"+"</div>";
     $("body").append(thisMilestone);
     milestone2reached = true;
   }
-  if($( "article p:last-child" ).position().top > 800 && !milestone3reached){
+  if(lowestP > 1500 && !milestone3reached){
     let thisMilestone = "<div id='milestone3' class='milestone'>"+"aaaauuugh!!"+"</div>";
     $("body").append(thisMilestone);
     milestone3reached = true;
   }
-  if($( "article p:last-child" ).position().top > 1000){
+  if(lowestP > 2000){
     let thisMilestone = "<div id='milestone4' class='milestone'>"+"accept your new beard and let her go, Sisyphus. <br>press space to play again"+"</div>";
     $("body").append(thisMilestone);
     gameOver = true;
