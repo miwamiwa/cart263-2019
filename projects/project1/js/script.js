@@ -25,18 +25,24 @@ let milestone3reached = false;
 let gameOn;
 
 // fire setup function on load
-$(document).ready(setup);
+$(document).ready(preload);
 
+function preload(){
+  $("body").click(setup);
+}
 // setup()
 //
 //
 
 function setup(){
-console.log("ctrl+R if sound doesn't play correctly (in promise DOMexception)")
+$("body").off();
+$(".preloadInfo").remove();
   // hide unwanted html elements
   $(".introText").hide();
+  $("#top").show();
   $("#face").hide();
   $("#beard").hide();
+  $("#infoSection").show();
 
   // setup the first intro text frame
   setupText("#text0");

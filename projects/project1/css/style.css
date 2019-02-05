@@ -67,6 +67,9 @@ align-items:center;
     font-size:35px;
     color:black;
 }
+.preloadInfo{
+  font-size:20vh;
+}
 #infoSection{
   font-size:5vh;
   position:fixed;
