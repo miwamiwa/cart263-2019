@@ -1,47 +1,67 @@
 /*****************
 
-Title of Project
-Author Name
-
-This is a template. You must fill in the title,
-author, and this description to match your project!
+Sisyphus' Beard
+by Samuel Pare-Chouinard
+description: miwamiwa.github.io/projects/project1/README.md
 
 ******************/
 
 "use strict";
+
+// declare game variables
+
+// triggers
 let spansRemoved = false;
-let $hairs;
-let chars =0;
-let textLoop =0;
-let numberOfIntroFrames=5;
-let sample1 = new Audio("assets/sounds/etta.mp3");
-let sample2 = new Audio("assets/sounds/ride2.wav");
-let stopSample;
 let isPlaying=false;
 let gameOver = false;
 let milestone1reached = false;
 let milestone2reached = false;
 let milestone3reached = false;
+
+// jquery selectors
+let $hairs;
+let $spans;
+
+// counters
+let chars =0;
+let textLoop =0;
+let numberOfIntroFrames=4;
+
+// audio files
+let sample1 = new Audio("assets/sounds/etta.mp3");
+let sample2 = new Audio("assets/sounds/ride2.wav");
+
+// variables that hold timeout() functions
+let stopSample;
 let gameOn;
 
-// fire setup function on load
+
+
+// fire preload function on load
 $(document).ready(preload);
+
+// preload()
+//
+// a dummy function that forces a click before attempting to load sound,
+// in an effort to bypass autoplay issues
 
 function preload(){
   $("body").click(setup);
 }
+
 // setup()
 //
 //
 
 function setup(){
-$("body").off();
-$(".preloadInfo").remove();
-  // hide unwanted html elements
+
+  // setup html
+
+  $("body").off();
+  $(".preloadInfo").remove();
   $(".introText").hide();
+
   $("#top").show();
-  $("#face").hide();
-  $("#beard").hide();
   $("#infoSection").show();
 
   // setup the first intro text frame
@@ -71,8 +91,10 @@ $(".preloadInfo").remove();
 
 function fall(){
 
-// don't continue if nothing is falling
-  if($("span").hasClass("fallingChar")){
+  $spans = $("span");
+
+  // don't continue if nothing is falling
+  if( $spans.hasClass("fallingChar" )){
 
     // declare a variable that tells us if everything fell or not
     let notAllFellYet = false;
@@ -89,7 +111,7 @@ function fall(){
         let yPos = thisString.substr(0,thisString.length-2);
 
         // if this character hasn't reached the bottom
-        if(yPos<500){
+        if(yPos<window.innerHeight-200){
           // update position
           let newPos = Math.round(+yPos+10)+"px";
           $(selector).css("top", newPos);
@@ -105,13 +127,13 @@ function fall(){
     }
     // if any characters are still hanging up there,
     // not all characters have fallen.
-    if($("span").hasClass("stillChar")){
+    if( $spans.hasClass("stillChar")){
       notAllFellYet = true;
     }
     // if all characters have fallen,
     // fade out and remove spans
     if(!notAllFellYet){
-      $("span").fadeOut("slow", removeSpans);
+      $spans.fadeOut("slow", removeSpans);
       return;
     }
   }
@@ -127,63 +149,112 @@ function resetThisText(){
   $("span").remove();
   let nextText = "#text"+textLoop;
   chars =0;
-    setupText(nextText);
+  setupText(nextText);
 }
 
 
 // removespans()
 //
-// remove all spans and setup the next intro frame, or the game.
+// remove all spans and continue to the next intro frame, or the game.
 
 function removeSpans(){
-  if(!spansRemoved
-  && $("span").hasClass("stillChar")===false
-){
+
+  $spans = $("span");
+
+  // if spans haven't been removed yet and no characters are hanging on top,
+  if(
+    !spansRemoved
+    && $spans.hasClass("stillChar")===false
+  ){
+    // indicate that spans were removed
     spansRemoved=true;
-  //console.log("yo")
-  $("span").remove();
-  textLoop +=1;
-  let nextText = "#text"+textLoop;
-  //console.log("next is "+nextText)
-  chars =0;
-  if(textLoop>numberOfIntroFrames){
-    setupGame();
-  }
-  else {
-    setupText(nextText);
-  }
 
+    // remove all span elements
+    $spans.remove();
 
+    // start next part:
+
+    // increment intro loop
+    textLoop +=1;
+    let nextText = "#text"+textLoop;
+    chars =0;
+
+    // if intro is over start game
+    if(textLoop>numberOfIntroFrames){
+      setupGame();
+    }
+    // else continue intro by setting up the next frame
+    else {
+      setupText(nextText);
+    }
+  }
 }
-}
+
+// makeitfall()
+//
+// tell a character to start falling by updating class, id and css top/left
 
 function makeItFall(){
+
+  // update class
   $(this).removeClass("stillChar");
   $(this).addClass("fallingChar");
+
+  // add css positioning (.fallingChar class uses fixed position):
+
+  // select this span
   let thisAtt = "char"+chars;
+  // give it an ID
   $(this).attr('id', thisAtt)
+  // set css top/left to match span's previous in-line position
   let selector = "#"+thisAtt;
   $(selector).css("left", $(this).position().left+"px");
   $(selector).css("top", $(this).position().top+"px");
-  //console.log("left "+$(this).position().left+"px");
-  //console.log("top "+$(this).position().top+"px");
+
+  // count fallen characters
   chars +=1;
+
+  // shoot a sound
   startGranular(sample1);
 
 }
 
+// startgranular()
+//
+// here is a very simple granular synthesizor. the idea is that the synth
+// plays a series of "grains" or very short samples randomly selected from
+// a given section of a sample. no added frills, i suppose one could make
+// this more interesting by crossfading between grains and filtering sounds.
+//
+// this synth checks if a grain is currently playing, then if not it picks
+// a random starting point within a section of our sample, starts playing,
+// and starts a timeout that will stop the sample.
+
+
 function startGranular(sample){
+
+  // do not continue if synth is already playing
   if(isPlaying){
-    //clearTimeout(stopSample);
     return;
   }
 
-  let startTime = Math.random()*15+sample.duration*0.70;
-  //console.log(startTime);
+  // set length of section from which to randomly sample sound
+  let sectionLength = 15;
+  // set start time of the said section (% sample length)
+  let sectionStart = 0.7;
+  // generate random start time and set it
+  let startTime = Math.random()*sectionLength+sample.duration*sectionStart;
   sample.currentTime = startTime;
-  let length = Math.random()*(sample.duration-startTime)*9;
+
+  // set maximum possible grain length, then generate random grain length
+  let maxGrainLength =9;
+  let length = Math.random()*(sample.duration-startTime)*maxGrainLength;
+
+  // play sample
   sample.play();
   isPlaying = true;
+
+  // fire timer that fill stop the sample
   stopSample = setTimeout(function stopGranular(){
     sample.pause();
     isPlaying = false;
@@ -191,43 +262,79 @@ function startGranular(sample){
 }
 
 
+// setuptext()
+//
+// separates an introText div's individual characters into spans.
+// sticks spaces into the next span (hovering over a space character
+// doesn't work, it seems because there is no line to collide with)
 
 function setupText(selectedText){
 
-  //console.log($(selectedText).html())
-
-
+  // get this div's html content
   let text = $(selectedText).html();
 
+  // for each character
   for (let i=0; i<text.length; i++){
+    // declare a var to add space to this next span (or not)
     let addSpace = "";
+
+    // if last character was a space, update addSpace.
+    // works as long as first character in the string isn't space.
     if(text.charAt(i-1).trim() === ""&&i!=0){
       addSpace = " ";
     }
+
+    // don't continue if the current character is a space
     if(text.charAt(i).trim()!=""){
-    let thisChar = "<span class='stillChar'>"+addSpace+text.charAt(i)+"</span>";
-    $(currentText).append(thisChar)
+      // create a new span with the stillChar class
+      let thisChar = "<span class='stillChar'>"+addSpace+text.charAt(i)+"</span>";
+      // append to currentText, the div used to display intro text
+      $(currentText).append(thisChar)
 
+    }
   }
-  }
+
+  // reset spansRemoved trigger once all spans have been reset
   spansRemoved = false;
-    $(".stillChar").mouseenter(makeItFall);
+  // update mouse hover listener
+  $(".stillChar").mouseenter(makeItFall);
 }
 
 
+// update()
+//
+// called periodically using setInterval.
+// this updates the beard length, listens for mouse interaction and
+// checks if the beard has reached any milestones.
 
-function update(){
+function updateGameLoop(){
+
+  // don't continue if game isn't running
   if(!gameOver) {
-  $("article").append(growHair);
-  $("p").click(hairClicked);
-  checkLastChild();
+    // increase hair length
+    $("article").append(growHair);
+    // listen for clicks
+    $("p").click(hairClicked);
+    // check hair length
+    checkLastChild();
+  }
 }
-}
+
+// growhair()
+//
+// pick a random greek character and throw it inside a <p> element
 
 function growHair(){
 
+  // get a random number
   let randomNum = Math.random();
+
+  // either use this default character
   let newCharacter = "ζ"
+
+  // or if our random number meets any of the following requirements,
+  // pick another character:
+
   if(randomNum<0.8){
     newCharacter = "θ";
   }
@@ -240,77 +347,131 @@ function growHair(){
   if(randomNum<0.2){
     newCharacter = "λ";
   }
+
+  // return character inside a <p> element
   let newString = "<p>"+newCharacter+"</p>"
   return newString;
 
 }
 
+// hairclicked()
+//
+// fade out hair on click
+
 function hairClicked(){
   $(this).fadeOut(500, hairFaded);
-  //console.log("yo")
+
 }
+
+// hairfaded()
+//
+// remove <p> element upon hair fading out
 
 function hairFaded(){
   $(this).remove();
-  //console.log("bruh")
+
 }
+
+// setupgame()
+//
+//
 
 function setupGame(){
-  // stop looping the ride sample
-sample2.loop = false;
-sample1.loop = true;
-sample1.currentTime = 0;
-sample1.volume = 0.7;
-sample1.play();
-$("#top").append("<div class='ready'>ready</div>");
+
+  // setup audio
+  sample2.loop = false;
+  sample1.loop = true;
+  sample1.currentTime = 0;
+  sample1.volume = 0.7;
+  sample1.play();
+
+  // display "ready" to point out user is clearly not ready
+  $("#top").append("<div class='ready'>ready</div>");
+
+  // turn off keypress listener and remove intro elements
   $('body').off("keypress");
-$("#infoSection").hide();
-// wait until ride stops playing before loading the game.
-// transition can get choppy otherwise
-sample2.onended = function(){
+  $("#infoSection").hide();
 
-  $("#face").show();
-  $("#beard").show();
-  gameOver = false;
-  $(".ready").remove();
-  $("p").click(hairClicked);
-  gameOn = setInterval(update, 1000);
+  // wait until intro sound stops playing then start the game
+  sample2.onended = function(){
 
+    // display game elements
+    $("#face").show();
+    $("#beard").show();
+
+    // declare game started
+    gameOver = false;
+
+    // remove "ready" text
+    $(".ready").remove();
+
+    // star the game loop (hair growing, clicks, event triggers)
+    gameOn = setInterval(updateGameLoop, 1000);
+
+  }
 }
 
-}
-
+// checklastchild()
+//
+// find the lowest hair element, check if it reached any milestones.
+// milestones are bad but unavoidable
+// milestones cause descriptive text to appear and eventually end the game.
+// milestone text position is set using ID
 
 function checkLastChild(){
-let lowest1 = $( "#hair1 p:last-child" ).position().top;
-let lowest2 = $( "#hair2 p:last-child" ).position().top;
-let lowest3 = $( "#hair3 p:last-child" ).position().top;
-let hairs = [lowest1, lowest2, lowest3];
+
+  // get position of lowest <p> element in each "hair" article
+  let lowest1 = $( "#hair1 p:last-child" ).position().top;
+  let lowest2 = $( "#hair2 p:last-child" ).position().top;
+  let lowest3 = $( "#hair3 p:last-child" ).position().top;
+
+  // get highest value out of the three (lowest position)
+  let hairs = [lowest1, lowest2, lowest3];
   let lowestP = Math.max.apply(Math,hairs);
-  console.log(lowestP)
+
+  // if 1st milestone is hit
   if(lowestP > 500 && !milestone1reached){
+    // remind the user to cut stuff
     let thisMilestone = "<div id='milestone1' class='milestone'>"+"cut it!"+"</div>";
+    // append text
     $("body").append(thisMilestone);
+    // prevent text from being added multiple times
     milestone1reached = true;
   }
+
+  // if 2nd milestone is hit
   if(lowestP > 1000 && !milestone2reached){
+    // tell user he suks
     let thisMilestone = "<div id='milestone2' class='milestone'>"+"cut harder!"+"</div>";
     $("body").append(thisMilestone);
     milestone2reached = true;
   }
+
+  // if 3rd milestone is hit
   if(lowestP > 1500 && !milestone3reached){
+    // tell user u're starting to freak out
     let thisMilestone = "<div id='milestone3' class='milestone'>"+"aaaauuugh!!"+"</div>";
     $("body").append(thisMilestone);
     milestone3reached = true;
   }
+
+  // if 4th milestone is reached, game over.
   if(lowestP > 2000){
+
+    // display gameover text below the hair line
     let thisMilestone = "<div id='milestone4' class='milestone'>"+"accept your new beard and let her go, Sisyphus. <br>press space to play again"+"</div>";
     $("body").append(thisMilestone);
+
+    // indicate that game is over
     gameOver = true;
+
+    // update face image (make sisyphus smile)
     $("#faceImage").attr("src", "assets/images/sisyB.jpg");
-    $("#face").css("background-color", "green");
-    // listen for spacebar keypress
+
+    // reset game using spacebar
     $('body').on("keypress", resetGame);
+
+    // update milestone text to show that game is over
     $("#milestone1").html("game over ↓");
     $("#milestone2").html("game over ↓↓");
     $("#milestone3").html("game over ↓↓↓");
@@ -318,23 +479,49 @@ let hairs = [lowest1, lowest2, lowest3];
   }
 }
 
+
+// resetgame()
+//
+// turn game off and start intro from the top
+
 function resetGame(){
-$('body').off("keypress");
+
+  // turn off listeners and game loop
+  $('body').off("keypress");
+  clearInterval(gameOn);
+
+  // hide game html
   $("#face").hide();
   $("#beard").hide();
-$("#faceImage").attr("src", "assets/images/sisyA.jpg");
+
+  // remove generated beard
   $("p").remove();
+
+  // remove milestones
   $(".milestone").remove();
   milestone1reached = false;
   milestone2reached = false;
   milestone3reached = false;
-  clearInterval(gameOn);
-  sample2.loop = true;
-  sample2.play();
+
+  // reset face image (sisyphus starts out sad)
+  $("#faceImage").attr("src", "assets/images/sisyA.jpg");
+
+  // stop game sound
   sample1.loop = false;
   sample1.pause();
+  // start intro sound
+  sample2.loop = true;
+  sample2.play();
+
+  // reset intro text loop
   textLoop=0;
+
+  // setup text
   resetThisText();
+
+  // listen for keypress
   $('body').on("keypress", resetThisText);
+
+  // show intro html
   $("#infoSection").show();
 }

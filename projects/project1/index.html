@@ -17,64 +17,72 @@
   <script src="js/script.js"></script>
 </head>
 
+
+<!-- BODY -->
 <body>
-<div class="preloadInfo">click to start</div>
+
+  <!-- preload instructions  -->
+  <div class="preloadInfo">click to start</div>
+
+  <!-- Intro text section -->
+
   <section id="top" hidden>
+
+    <!-- placeholder DIV to hold intro text separated into span elements -->
     <div id="currentText"></div>
 
-    <div id="text0" class="introText">SISYPHUS' BEARD</div>
 
-    <div id="text1" class="introText">in fear of developing back pains, sisyphus requested a new trial.
-      zeus gave him a pair of scissors and told him to start trimming his beard.</div>
+    <!-- Introduction text -->
+    <div id="text0" class="introText">
+      SISYPHUS' BEARD
+    </div>
 
-    <div id="text2" class="introText">"hah! ez" sisyphus said, to which a grumpy zeus responded by cursing the beard,
-      causing it to grow at a most unnatural rate.</div>
+    <div id="text1" class="introText">
+      in fear of developing back pains, sisyphus requested a new trial.
+      zeus gave him a pair of scissors and told him to start trimming his beard.
+    </div>
 
-      <div id="text3" class="introText">now sisyphus' gf won't
-        even talk to him unless he has a clean shave. totally panicked, sisyphus is loosing it
-        trying to cut his own hair in front of a mirror.
-      </div>
+    <div id="text2" class="introText">
+      "hah! ez" sisyphus said, to which a grumpy zeus responded by cursing the beard,
+      causing it to grow at a most unnatural rate.
+    </div>
 
-      <div id="text4" class="introText">
-        give the poor guy a hand! try to shave off his beard, or at least help him
-        push back his impending tendinitis.
-      </div>
+    <div id="text3" class="introText">
+      now sisyphus' gf won't
+      even talk to him unless he has a clean shave. totally panicked, sisyphus is loosing it
+      trying to cut his own hair in front of a mirror.
+    </div>
 
-      <div id="text5" class="introText">
+    <div id="text4" class="introText">
+      give the poor guy a hand! try to shave off his beard, or at least help him
+      push back his impending tendinitis.
+    </div>
 
-      </div>
+  </section>
 
-      <div id="text6" class="introText">
-        ONCE HAIR REACHES THE BOTTOM OF THE SCREEN, GAME OVER.
-      </div>
+  <!-- Face: holds the image of sisyphus' face -->
+  <section id="face" hidden>
+    <img id="faceImage" src="assets/images/sisyA.jpg" alt="">
+  </section>
 
-      <div id="text7" class="introText">
+  <!-- Beard: is where the beard will start to grow -->
+  <section id="beard" hidden>
 
-      </div>
-    </section>
+    <article class="hair" id="hair1">
+    </article>
 
-    <section id="face" hidden>
-      <img id="faceImage" src="assets/images/sisyA.jpg" alt="">
-    </section>
+    <article class="hair" id="hair2">
+    </article>
 
-    <section id="beard">
+    <article class="hair" id="hair3">
+    </article>
 
-      <article class="hair" id="hair1">
+  </section>
 
-      </article>
+  <!-- control info section at the bottom of the screen -->
+  <section id="infoSection" hidden>
+    brush text away to continue. press space to reset current text
+  </section>
+</body>
 
-      <article class="hair" id="hair2">
-
-      </article>
-
-      <article class="hair" id="hair3">
-
-      </article>
-
-    </section>
-<section id="infoSection" hidden>
-brush text away to continue. press space to reset current text
-</section>
-  </body>
-
-  </html>
+</html>
