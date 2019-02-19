@@ -3,3 +3,22 @@
 This is the style file for this project.
 
 **********************************************/
+
+#preload{
+  margin:30px;
+}
+
+.buttons{
+  margin:30px;
+  font-size:15px;
+}
+
+.answer{
+  margin:30px;
+  font-size:100px;
+}
+
+.instructions{
+  margin: 30px;
+  font-size:12px;
+}
