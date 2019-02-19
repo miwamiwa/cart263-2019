@@ -1,0 +1,13 @@
+/*********************************************
+
+This is the style file for this project.
+
+**********************************************/
+
+html{
+  background-color:grey;
+}
+
+#preload{
+  font-size:100px;
+}
