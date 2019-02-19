@@ -1,0 +1,10 @@
+class Vid{
+
+  constructor(){
+
+  }
+
+  display(){
+
+  }
+}
