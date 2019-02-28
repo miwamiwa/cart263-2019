@@ -31,10 +31,15 @@ let randomWordsChosen = 0;
 let synonymsChosen = 0;
 let allNouns = [];
 
+let guesses =0;
+let cueStartAgain = false;
+
 let readyToStart = false;
 
 let numberOfCards = 1 + numberOfRandomWords + numberOfSynonyms + numberOfComposites;
 let cards = [];
+
+let currentlyGuessing = false;
 
 // preload()
 //
@@ -54,7 +59,7 @@ function setup() {
   createCanvas(window.innerWidth-50, window.innerHeight);
   theWord = RiTa.randomWord("nn");
   let xml = [];
-  xml  = loadStrings("https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w="+theWord+"&xml=1", gotRandomWord);
+  xml  = loadStrings("http://www.onelook.com/?w="+theWord+"&xml=1", gotRandomWord);
 
 }
 
@@ -110,7 +115,7 @@ function gotRandomWord(data){
         moreRandomWords.push(newWord);
         // shoot query
         let xml = [];
-        xml  = loadStrings("https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w="+newWord+"&xml=1", gotRandomWord);
+        xml  = loadStrings("http://www.onelook.com/?w="+newWord+"&xml=1", gotRandomWord);
 
       }
       else {
@@ -126,7 +131,7 @@ function gotRandomWord(data){
         moreRandomWords.push(newWord);
         // shoot query
         let xml = [];
-        xml  = loadStrings("https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w="+newWord+"&xml=1", gotRandomWord);
+        xml  = loadStrings("http://www.onelook.com/?w="+newWord+"&xml=1", gotRandomWord);
       }
     } else {
 
@@ -159,6 +164,9 @@ function startAgain(){
   randomWordChosen = false;
   randomWordsChosen = 0;
   synonymsChosen = 0;
+  guesses =0;
+  currentlyGuessing = false;
+  cards = [];
   allNouns = [];
   theWord=0;
   itsDefinition="";
@@ -172,7 +180,8 @@ function startAgain(){
   // start search
   theWord = RiTa.randomWord("nn");
   let xml = [];
-  xml  = loadStrings("https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w="+theWord+"&xml=1", gotRandomWord);
+  xml  = loadStrings("http://www.onelook.com/?w="+theWord+"&xml=1", gotRandomWord);
+
 }
 
 // gotrelatedwords()
@@ -185,7 +194,7 @@ function gotRelatedWords(data){
     let result = data[i].word;
     itsSynonyms.push(result);
     let xml = [];
-    xml  = loadStrings("https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w="+result+"&xml=1", gotSynonymDefinition);
+    xml  = loadStrings("http://www.onelook.com/?w="+result+"&xml=1", gotSynonymDefinition);
   }
 }
 
@@ -412,6 +421,9 @@ for (let j=0; j<numberOfCards; j++){
 }
 }
 
+if(cueStartAgain){
+  startAgain();
+}
 }
 
 

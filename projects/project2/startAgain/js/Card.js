@@ -78,9 +78,10 @@ if(this.optionsRevealed){
       && mouseY<this.y+this.h/2
     ){
 
-      if(mouseIsPressed){
+      if(mouseIsPressed&&!currentlyGuessing){
         this.defRevealed = true;
         this.optionsRevealed = true;
+        currentlyGuessing = true;
       }
     }
   }
@@ -132,13 +133,29 @@ if(this.optionsRevealed){
   }
 
   checkGuess(checkForWhat, checkOther){
-    if(this.type === checkForWhat || ( this.type === checkOther && checkOther != 0 )){
+    if(this.type === checkForWhat
+      || ( this.type === checkOther && checkOther != 0 )
+      || ( checkForWhat==="main word" && this.definition === itsDefinition )
+
+    ){
       this.reaction = "correct!"
     }
     else {
       this.reaction = "incorrect!"
+      if(guesses>=3){
+        readyToStart = false;
+        cueStartAgain = true;
+      }
     }
+    // ^^^^
+    // overwrite reaction in the case where player checked if card is correct definition,
+    // and the correct definition matches the contents of the card.
+    // sometimes the related words found through onelook have the exact same
+    // definition as the word we're looking for.
 
+
+    guesses +=1;
+    currentlyGuessing = false;
     this.wordRevealed = true;
     this.typeRevealed = true;
     this.optionsRevealed = false;
