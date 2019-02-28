@@ -180,7 +180,7 @@ function startAgain(){
   // start search
   theWord = RiTa.randomWord("nn");
   let xml = [];
-  xml  = loadStrings("http://www.onelook.com/?w="+theWord+"&xml=1", gotRandomWord);
+  xml  = loadStrings("https://www.onelook.com/?w="+theWord+"&xml=1", gotRandomWord);
 
 }
 
