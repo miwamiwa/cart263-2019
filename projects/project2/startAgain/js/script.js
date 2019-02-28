@@ -12,6 +12,10 @@ https://od-api.oxforddictionaries.com/api/v1
 app_id 8e3dbc60
 app_key 	46ee0a1c78e6ca4d0c6a3856fbfede81
 
+
+https://cors-anywhere.herokuapp.com/
+
+
 ******************/
 let theWord;
 let itsDefinition;
@@ -59,7 +63,7 @@ function setup() {
   createCanvas(window.innerWidth-50, window.innerHeight);
   theWord = RiTa.randomWord("nn");
   let xml = [];
-  xml  = loadStrings("http://www.onelook.com/?w="+theWord+"&xml=1", gotRandomWord);
+  xml  = loadStrings("https://www.onelook.com/?w="+theWord+"&xml=1", gotRandomWord);
 
 }
 
@@ -115,7 +119,7 @@ function gotRandomWord(data){
         moreRandomWords.push(newWord);
         // shoot query
         let xml = [];
-        xml  = loadStrings("http://www.onelook.com/?w="+newWord+"&xml=1", gotRandomWord);
+        xml  = loadStrings("https://www.onelook.com/?w="+newWord+"&xml=1", gotRandomWord);
 
       }
       else {
@@ -131,7 +135,7 @@ function gotRandomWord(data){
         moreRandomWords.push(newWord);
         // shoot query
         let xml = [];
-        xml  = loadStrings("http://www.onelook.com/?w="+newWord+"&xml=1", gotRandomWord);
+        xml  = loadStrings("https://www.onelook.com/?w="+newWord+"&xml=1", gotRandomWord);
       }
     } else {
 
@@ -194,7 +198,7 @@ function gotRelatedWords(data){
     let result = data[i].word;
     itsSynonyms.push(result);
     let xml = [];
-    xml  = loadStrings("http://www.onelook.com/?w="+result+"&xml=1", gotSynonymDefinition);
+    xml  = loadStrings("https://www.onelook.com/?w="+result+"&xml=1", gotSynonymDefinition);
   }
 }
 
