@@ -3,7 +3,7 @@ class Channel{
   constructor( channelIndex ){
     this.index = channelIndex;
     this.channelName = "channel name";
-    this.badness = Math.floor( Math.random()*6);
+    this.badness = Math.floor( Math.random()*3+1 );
 
     // channel types: good (0), bads (1), copycat (2)
     this.type = Math.floor( Math.random()*3 );
@@ -14,7 +14,7 @@ class Channel{
     if(this.type===2)
     this.typeClass = "copycat";
 
-    console.log(this.type);
+    console.log("channel type: "+ this.type + ", bad lvl "+this.badness);
   // this.type = 2;
     // need a var for channel human or copycat
     // need a var for human channel goodness

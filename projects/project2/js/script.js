@@ -5,7 +5,7 @@ MR. PARROT
 "use strict";
 
 let mrParrot;
-let startingChannels =3;
+let startingChannels =100;
 let channels = [];
 let lastChannelIndex =0;
 let dayLength = 1000;
@@ -45,13 +45,15 @@ function parrotTalk(){
 
 function selectAllChannels(){
 
-  $(".activeChannel").each(produceVideos);
+  $(".goodhuman").each(produceVideos);
+  $(".badhuman").each(produceVideos);
+  $(".copycat").each(produceVideos);
 }
 
 function produceVideos(){
 
   let videoWords = produceWords($(this).attr('id'));
-  let videoElement = "<div class='videoElement' id='video"+this.length+"' hidden>"+videoWords+"</div>"
+  let videoElement = "<div class='videoElement' id='video"+this.length+"' hidden>"+videoWords+"</div>";
   $(this).append(videoElement);
 
 }
@@ -66,6 +68,7 @@ function produceWords( whichChannel ){
   let amountOfWords = 10;
   let goodWordsLength = goodWords.length;
   let badWordsLength = badWords.length;
+  let thisBadness = channels[channelIndex].badness;
 
   // if good human channel
   if(channels[channelIndex].type === 0){
@@ -83,28 +86,24 @@ function produceWords( whichChannel ){
   if(channels[channelIndex].type === 1){
 
     let whichAreBad = [];
-    for(let i=0; i<channels[channelIndex].badness; i++){
+    let wordCounter =0;
+    let treshold = thisBadness * 2 /10;
 
-      whichAreBad.push(Math.floor( Math.random()*amountOfWords ));
-    }
-    console.log(channels[channelIndex].badness);
 
-    for( let i=0; i<amountOfWords; i++ ){
-for (let j=0; j<whichAreBad.length; j++){
-
-      if( i===whichAreBad[j] ){
-
+while(wordCounter<amountOfWords){
+      if( Math.random() < treshold ){
+      wordCounter +=1;
       let randomIndex = Math.floor( Math.random()*badWordsLength );
       result += badWords[randomIndex]+" ";
     }
     else {
-
+      wordCounter +=1;
       let randomIndex = Math.floor( Math.random()*goodWordsLength );
       result += goodWords[randomIndex]+" ";
     }
-    }
   }
-}
+    }
+
 
   // if copycat channel
   if(channels[channelIndex].type === 2){
@@ -112,40 +111,51 @@ for (let j=0; j<whichAreBad.length; j++){
   let videoContents="";
   let totalVideos;
   let randomVideo;
-  let innerText;
+  let innerText="";
+  let videoChosen = false;
 
-  while(videoContents===""){
 
-  // get number of videos
-   totalVideos = $( ".videoElement" ).length;
-  // pick a random video
-  randomVideo = Math.floor( Math.random()*totalVideos );
-  // get its contents
-  innerText = $( ".videoElement" ).eq( randomVideo ).text();
-  if(innerText!=""){
-    videoContents = innerText;
-  }else {
-    console.log("yo")
-  }
+  for(let i=0; i< channels.length; i++ ){
+
+    if(channelIndex !== i && !videoChosen){
+
+      let selector = "#"+"channel"+channelIndex;
+      let allVideos = $( ".videoElement" ).length;
+
+while(innerText.trim() ===""){
+      // pick a random video
+      randomVideo = Math.floor( Math.random()*allVideos );
+
+      // get its contents
+      innerText = $( ".videoElement" ).eq(randomVideo).text();
 }
+      if(innerText.trim()!=""){
+
+        videoContents = innerText;
+        videoChosen = true;
+      }
+    }
+  }
+
 
   // alter text
   let splitContents = videoContents.split(" ");
+
+  for(let i=0; i<thisBadness; i++){
   let randomPick = Math.floor( Math.random() * splitContents.length );
-  let randomWord;
-  if(Math.random()<0.5){
-    let whichWord = Math.floor( Math.random()* goodWordsLength);
-    randomWord = goodWords[whichWord];
-  }
-  else {
-    let whichWord = Math.floor( Math.random()* badWordsLength);
-    randomWord = badWords[whichWord];
-  }
+
+  let randomVid = $(".videoElement").eq( Math.floor( Math.random() *  $(".videoElement").length )).text().trim().split(" ");
+  let randomWord = randomVid[ Math.floor(Math.random() * randomVid.length)];
+
+  console.log("random word "+randomWord)
+
   splitContents[randomPick] = randomWord;
-  videoContents = splitContents.join(" ")
+
+}
+  videoContents = splitContents.join(" ");
 
   result = videoContents;
   }
-console.log(result);
+//console.log(result);
   return result;
 }
