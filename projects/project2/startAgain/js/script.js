@@ -22,9 +22,9 @@ let randomWordsDefinitions = [];
 let compositeDefinitions = [];
 let compositeWords = [];
 
-let numberOfSynonyms = 2;
-let numberOfRandomWords = 3;
-let numberOfComposites = 5;
+let numberOfSynonyms = 3;
+let numberOfRandomWords = 2;
+let numberOfComposites = 8;
 
 let randomWordChosen = false;
 let randomWordsChosen = 0;
@@ -385,6 +385,7 @@ cardType = "composite";
   cards.push( new Card(cardX, cardY, cardWidth, cardHeight, cardType, cardWord, cardDefinition));
 
 }
+shuffleCards();
 }
 
 // draw()
@@ -399,49 +400,30 @@ text("loading!", width/2, height/2);
 if(readyToStart){
   background(235);
 
+fill(0);
+textSize(100);
+textAlign(CENTER);
+text(theWord, width/2, 112);
 //console.log(numberOfCards);
 for (let j=0; j<numberOfCards; j++){
 //  console.log("hey")
   cards[j].display();
   cards[j].update();
 }
-
-//displayEverything();
-
-}
 }
 
-function displayEverything(){
+}
 
-    let posx = 10;
-    let posy = 30;
-    let textsize = 15;
 
-    textSize(textsize);
-    text("main word : "+theWord, posx, posy);
-    posy+= textsize +1;
-    text("its definition : "+itsDefinition, posx, posy);
+function shuffleCards(){
 
-    for(let i=0; i<moreRandomWords.length; i++){
-      posy+= textsize +1;
-      posy+= textsize +1;
-      text("random word : "+moreRandomWords[i], posx, posy);
-      posy+= textsize +1;
-      text("its definition : "+randomWordsDefinitions[i], posx, posy);
-    }
-
-    for (let i=0; i<itsSynonyms.length; i++){
-      posy+= textsize +1;
-      posy+= textsize +1;
-      text("related word : "+itsSynonyms[i], posx, posy);
-      posy+= textsize +1;
-      text("its definition : "+synonymDefinitions[i], posx, posy);
-    }
-
-    for (let i=0; i<compositeDefinitions.length; i++){
-      posy+= textsize +1;
-      posy+= textsize +1;
-      text("composite definition : "+compositeDefinitions[i], posx, posy);
-    }
+let positions = [];
+  for(let i=0; i<numberOfCards; i++){
+    positions.push(cards[i].x);
+  }
+  let shuffledPositions = shuffle(positions);
+  for(let i=0; i<numberOfCards; i++){
+    cards[i].x = shuffledPositions[i];
+  }
 
 }
