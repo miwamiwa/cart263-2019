@@ -21,6 +21,7 @@ https://cors-anywhere.herokuapp.com/
 
 let guesses =0;
 let strikeOut = 3;
+
 let cueStartAgain = false;
 let readyToContinue = false;
 let currentlyGuessing = false;
@@ -71,6 +72,13 @@ for (let j=0; j<game.numberOfCards; j++){
   game.cards[j].display();
   game.cards[j].update();
 }
+
+for (let j=0; j<game.numberOfCards; j++){
+  if(game.cards[j].optionsRevealed){
+    game.cards[j].options();
+  }
+}
+
 }
 
 if(cueStartAgain){

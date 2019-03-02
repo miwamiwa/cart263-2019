@@ -3,6 +3,7 @@ class GameSetup{
   constructor(){
 
     this.readyToStart = false;
+    this.incorrectGuesses =0;
 
     this.theWord = RiTa.randomWord("nn");
     this.itsDefinition;
@@ -37,9 +38,6 @@ class GameSetup{
     // extract definition from xml
     let definition = game.extractDefinition(data)
 
-    if(definition===0){
-      return;
-    }
 
     // pick what to do with it
     if( game.randomWordsChosen < game.startingWordTypes[1] ){
@@ -116,6 +114,8 @@ class GameSetup{
     this.compositeDefinitions = [];
     this.compositeWords = [];
 
+    this.startOver = false;
+
     // start search
     this.theWord = RiTa.randomWord("nn");
     this.getRandomWordDefinition(this.theWord);
@@ -130,8 +130,9 @@ class GameSetup{
 
     for( let i=0; i< game.startingWordTypes[0]; i++){
       game.itsSynonyms.push( data[i].word );
-      game.getSynonymDefinition( data[i].word );
     }
+
+      game.getSynonymDefinition( data[0].word );
   }
 
   getSynonymDefinition(input){
@@ -148,10 +149,6 @@ class GameSetup{
     // save definition and count synonym definitions received
     let definition = game.extractDefinition(data);
 
-    if(definition===0){
-      return;
-    }
-
     game.synonymDefinitions.push(definition);
     game.synonymsChosen +=1;
 /*
@@ -160,7 +157,16 @@ class GameSetup{
     console.log("synonyms definitions "+game.synonymDefinitions.length)
 */
     // if all synonyms were found
-    if(game.synonymsChosen === game.startingWordTypes[0]){
+  if(game.synonymsChosen < game.startingWordTypes[0]){
+    game.getSynonymDefinition( game.itsSynonyms[game.synonymsChosen] );
+  }
+  else if(game.synonymsChosen === game.startingWordTypes[0]){
+
+      if(game.startOver){
+        console.log("restart");
+        game.startAgain();
+        return;
+      }
 
       game.allDefinitions = concat(game.randomWordsDefinitions, game.synonymDefinitions);
       game.allDefinitions.push( game.itsDefinition );
@@ -212,7 +218,7 @@ class GameSetup{
     }
     else {
     //  console.log("output 0")
-      game.startAgain();
+      this.startOver = true;
       return 0;
     }
   }
@@ -226,7 +232,6 @@ for(let i=0; i<this.startingWordTypes[2]; i++){
 
       let whichTypeToCopy = floor(random(this.allDefinitions.length));
 
-      console.log("all defs :"+this.allDefinitions)
       let whichDef = this.allDefinitions[ whichTypeToCopy ];
       let wordsArray = splitTokens( whichDef, " ");
       let composited = false;
@@ -325,6 +330,7 @@ console.log("forced compositing")
     let shuffledPositions = shuffle(positions);
     for(let i=0; i<this.numberOfCards; i++){
       this.cards[i].index = shuffledPositions[i];
+      this.cards[i].updatePosition();
     }
 
   }
