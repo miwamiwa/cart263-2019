@@ -22,12 +22,16 @@ https://cors-anywhere.herokuapp.com/
 let guesses =0;
 let strikeOut = 3;
 
+let animator =[];
+let animationLength = 40;
+let animationTimer = animationLength;
+
 let cueStartAgain = false;
 let readyToContinue = false;
 let currentlyGuessing = false;
 let game;
 let roundOverText;
-
+let numberOfEllipses = 8;
 
 // preload()
 //
@@ -44,6 +48,9 @@ function preload() {
 
 function setup() {
 
+for(let i=0; i<numberOfEllipses; i++){
+  animator.push(i);
+}
   createCanvas(window.innerWidth-50, window.innerHeight);
   game = new GameSetup();
 
@@ -55,9 +62,6 @@ function setup() {
 // Description of draw()
 
 function draw() {
-background(125);
-fill(255);
-text("loading!", width/2, height/2);
 
 if(game.readyToStart){
   background(235);
@@ -78,6 +82,14 @@ for (let j=0; j<game.numberOfCards; j++){
     game.cards[j].options();
   }
 }
+
+}
+else {
+  background(125);
+  fill(255);
+  text("loading!", width/2, height/2);
+
+  displayEllipses();
 
 }
 
@@ -117,6 +129,27 @@ function startNewRound(){
   roundOverText = "";
 
   game = new GameSetup();
+}
+
+function displayEllipses(){
+
+  for(let i=0; i<numberOfEllipses; i++){
+    let ellipseX = width/3;
+    let ellipseY = height/2;
+    let ellipseR;
+
+    if(frameCount<animationTimer){
+      animator[i]+=10;
+    } else {
+      animator[i] +=i;
+    }
+
+    ellipseR = 12*i + sin( radians( 180*animator[i]/100 ) )*20;
+    stroke(255);
+    noFill();
+    ellipse(ellipseX, ellipseY, ellipseR, ellipseR);
+  }
+
 }
 
 

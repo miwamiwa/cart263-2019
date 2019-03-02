@@ -11,7 +11,7 @@ class Card{
     this.fill = color(255);
     this.defRevealed = false;
     this.wordRevealed = false;
-    this.typeRevealed = false;
+    this.typeRevealed = true;
     this.optionsRevealed = false;
     this.reaction = "";
 
@@ -69,7 +69,7 @@ if(this.optionsRevealed){
     if(this.defRevealed){
         fill(0);
       textSize(12);
-      text(this.definition, this.x, this.y+40, this.w, this.h);
+      text(this.definition, this.x, this.y+40, this.w-10, this.h);
 
     }
     if(this.wordRevealed){
@@ -103,9 +103,9 @@ updatePosition(){
   let totalMargin = (game.numberOfCards)*cardMargin;
 
   let cardWidth =  ( width - totalMargin ) / (game.numberOfCards/2);
-  let cardHeight = height / ( game.numberOfCards / 4 );
+  let cardHeight = height / ( 3.5 );
 
-  let cardsInARow = (game.numberOfCards /2);
+  let cardsInARow = ceil(game.numberOfCards /2);
 
   let windowMargin = (width - ( cardsInARow* cardWidth + (cardsInARow)* cardMargin ))/2;
 
@@ -123,7 +123,7 @@ updatePosition(){
   this.y =cardY;
   this.w =cardWidth;
   this.h =cardHeight;
-  console.log(this.x+" "+this.y)
+      //console.log(this.x+" "+this.y)
 
 }
   options(){
