@@ -1,10 +1,10 @@
 class Card{
 
-  constructor(x, y, w, h, type, word, definition){
-    this.x =x;
-    this.y =y;
-    this.w =w;
-    this.h =h;
+  constructor(index, type, word, definition){
+    /*
+
+    */
+    this.index =index;
     this.word = word;
     this.definition= definition;
     this.type = type;
@@ -30,9 +30,35 @@ class Card{
       case "composite": this.fill = color(125, 185, 185); break;
     };
     this.currentFill = this.fill;
+
+    let cardMargin = 10;
+    let totalMargin = (this.numberOfCards+1)*cardMargin;
+
+    let cardWidth =  ( width - totalMargin ) / (this.numberOfCards/2);
+    let cardHeight = height / ( this.numberOfCards / 4 );
+
+    let cardsInARow = (this.numberOfCards /2);
+
+    let cardIndex =this.index;
+    let cardX = 0.5*cardWidth + cardIndex * (cardWidth+cardMargin) + cardMargin;
+    let cardY = height/2;
+
+    if( cardIndex >= cardsInARow ){
+      cardX -= 6*cardWidth + 5*cardMargin;
+      cardY += cardHeight+cardMargin;
+    }
+
+
+    this.x =cardX;
+    this.y =cardY;
+    this.w =cardWidth;
+    this.h =cardHeight;
+    console.log(this.x+" "+this.y)
   }
 
   display(){
+
+
     rectMode(CENTER);
     textAlign(CENTER);
 
@@ -135,15 +161,15 @@ if(this.optionsRevealed){
   checkGuess(checkForWhat, checkOther){
     if(this.type === checkForWhat
       || ( this.type === checkOther && checkOther != 0 )
-      || ( checkForWhat==="main word" && this.definition === itsDefinition )
+      || ( checkForWhat==="main word" && this.definition === game.itsDefinition )
 
     ){
       this.reaction = "correct!"
     }
     else {
       this.reaction = "incorrect!"
-      if(guesses>=3){
-        readyToStart = false;
+      if(guesses>=strikeOut-1){
+
         cueStartAgain = true;
       }
     }
