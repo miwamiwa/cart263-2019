@@ -18,13 +18,14 @@ https://cors-anywhere.herokuapp.com/
 
 ******************/
 
-
+let maxGuesses = 3;
 let guesses =0;
 let points =0;
 let failedRounds =0;
+let incorrectGuess =0;
 
 let gameOverY  =0;
-let strikeOut = 3;
+let strikeOut = 5;
 let maxFailedRounds = 1;
 
 let animator =[];
@@ -179,8 +180,8 @@ else {
 
 if(cueStartAgain){
 
-  roundOverText = "strikeout! click to start next round.";
-  setTimeout( readyForNewRound, 1000);
+  roundOverText = "click to start next round.";
+  setTimeout( startNewRound, 1000);
   cueStartAgain = false;
 }
 
@@ -190,11 +191,6 @@ text(roundOverText, width/2, height-50);
 }
 
 
-function readyForNewRound(){
-
-  readyToContinue = true;
-}
-
 function   squak(input){
     let randomPick = floor(random(7));
     sample[randomPick].currentTime = 0;
@@ -202,9 +198,9 @@ function   squak(input){
     sample[randomPick].play();
 
     sample[randomPick].onended = function(){
-      responsiveVoice.speak(input, this.voice, {
-        pitch: this.pitch,
-        rate: this.rate,
+      responsiveVoice.speak(input, parrot.voice, {
+        pitch: parrot.pitch,
+        rate: parrot.rate,
 
       });
     }
@@ -228,10 +224,7 @@ else if(gameOver&&gameOverClickable){
   gameOverY  =0;
   game = new GameSetup();
 }
-else  if(readyToContinue){
-    readyToContinue = false;
-    startNewRound();
-  }
+
 }
 
 function displayStartScreen(){
@@ -270,6 +263,7 @@ function startNewRound(){
   cueStartAgain = false;
   currentlyGuessing = false;
   guesses = 0;
+  incorrectGuess =0;
   roundOverText = "";
 
   game = new GameSetup();
@@ -314,7 +308,7 @@ function handleScore(){
   fill(0);
   text("score : "+points, width-30, height-30);
 
-  if(guesses>=10){
+  if(guesses>=maxGuesses){
  cueStartAgain = true;
   }
 
@@ -322,5 +316,6 @@ function handleScore(){
     // game over. display score and restart.à
     gameOver = true;
     setTimeout(function(){gameOverClickable = true}, 500);
+
   }
 }

@@ -1,9 +1,9 @@
 class Parrot{
 
   constructor(){
-    this.voice = "UK English Female";
+    this.voice = "US English Female";
     this.pitch = 1;
-    this.rate = 1.25;
+    this.rate = 0.7;
 
   }
 
@@ -16,14 +16,24 @@ squak(game.theWord)
   }
 
   defineWord(){
+
 console.log("define it")
+
 let randomPick = floor( random(game.numberOfCards));
+if(guesses<9){
+  while(game.cards[randomPick].wasChecked ){
+    randomPick = floor( random(game.numberOfCards));
+  }
+}
+
+
 if(!currentlyGuessing){
   squak (game.cards[randomPick].definition);
   game.cards[randomPick].optionsRevealed = true;
   game.cards[randomPick].defRevealed = true;
+  game.cards[randomPick].wasChecked = true;
   currentlyGuessing = true;
-
+  game.whichCard = randomPick;
 
   if(annyang){
 
@@ -48,5 +58,26 @@ console.log("startover")
 
   thank(){
     squak("thank you");
+  }
+
+  correctGuess(){
+    squak("correct!");
+    if(guesses<maxGuesses){
+      setTimeout( parrot.defineWord, 3000);
+    }
+    else {
+      cueStartAgain = true;
+    }
+
+  }
+
+  incorrectGuess(){
+    squak("incorrect!");
+    if(guesses<maxGuesses){
+      setTimeout( parrot.defineWord, 3000);
+    }
+    else {
+      cueStartAgain = true;
+    }
   }
 }

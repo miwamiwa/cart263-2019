@@ -3,7 +3,7 @@ class GameSetup{
   constructor(){
 
     this.readyToStart = false;
-    this.incorrectGuesses =0;
+
 
     this.theWord = RiTa.randomWord("nn");
     this.itsDefinition;
@@ -31,6 +31,8 @@ class GameSetup{
     this.cards = [];
     this.numberOfCards = 1 + this.startingWordTypes[0]+this.startingWordTypes[1]+this.startingWordTypes[2];
     this.cardIndex=0;
+
+    this.whichCard;
 
     this.getRandomWordDefinition(this.theWord);
   }
@@ -169,7 +171,6 @@ class GameSetup{
     this.randomWordsChosen = 0;
     this.synonymsChosen = 0;
 this.synonymBank = [];
-this.synonymResults = 0;
 
     this.theWord=0;
     this.itsDefinition="";
@@ -177,6 +178,8 @@ this.synonymResults = 0;
     this.allDefinitions = [];
     this.itsSynonyms = [];
     this.synonymDefinitions = [];
+
+    this.synonymResults ;
     this.moreRandomWords = [];
     this.randomWordsDefinitions = [];
     this.compositeDefinitions = [];
@@ -201,9 +204,10 @@ if(data != undefined){
 
   for( let i=0; i< 25; i++){
     game.synonymBank.push( data[i].word );
+    console.log("word added : "+data[i].word );
   }
-console.log("successfully fetched synonyms list");
-console.log("synonyms list : "+game.synonymBank)
+console.log("successfully fetched synonyms list : "+game.synonymBank);
+
   game.getSynonymDefinition( game.synonymBank[0] );
 }
 else {
@@ -243,9 +247,10 @@ else {
       // cors-anywhere banned my ip the other day cause i was
       // accidentally flooding them with queries
 
-      if(game.synonymResults>=25){
+      if(game.synonymResults>=20){
         console.log("fail");
         console.log("last data element: "+data)
+        game.startOver = false;
         return;
       }
 
@@ -298,16 +303,10 @@ else {
       if( match(firstCut, "&") != null){
 
         let secondCut = splitTokens(firstCut, "&");
-
-        //    console.log("output extract : "+definition);
-
-        return definition;
+        return secondCut[0];
       }
       else {
         definition = trim(firstCut);
-
-        //      console.log("output extract : "+definition);
-
         return definition;
       }
     }
@@ -357,7 +356,7 @@ else {
       }
       let definition2 = wordsArray.join(" ");
       this.compositeDefinitions.push(definition2);
-      this.loadACard("composite", "composite",game.compositeDefinitions[i]);
+      this.loadACard("composite", "composite",this.compositeDefinitions[i]);
     }
 
     this.tellMeWhatsUp();
