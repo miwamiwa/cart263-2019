@@ -119,7 +119,7 @@ class GameSetup{
 // getrandomworddefinition()
 //
 // builds a query for a definition to send to onelook dictionary.
-// treats result as a randomWord definition. 
+// treats result as a randomWord definition.
 
   getRandomWordDefinition(input){
 
@@ -131,7 +131,7 @@ class GameSetup{
 
   getRelatedWord(input){
 
-    let queryTextStart = "https://api.datamuse.com/words?ml=";
+    let queryTextStart = "https://cors-anywhere.herokuapp.com/https://api.datamuse.com/words?ml=";
     let xml = [];
     xml  = loadJSON( queryTextStart + input, this.gotRelatedWords);
   }
