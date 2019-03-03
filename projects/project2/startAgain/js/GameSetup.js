@@ -36,26 +36,42 @@ class GameSetup{
   }
 
 
+
+// gotrandomword()
+//
+// function to fire upon getting the callback response for a
+// random word's definition.
+
   gotRandomWord(data){
 
     // extract definition from xml
     let definition = game.extractDefinition(data);
 
+    // if there was some kind of issue with fetching this random word
 
-    if(definition===""&& game.randomWordChosen){
+    if((definition===""|| definition===undefined)&& game.randomWordChosen){
+      // remove last random word found
       if(game.randomWordsChosen.length>0){
         game.randomWordsChosen.shift();
       }
+      // for a lack of tangible results, make the loading screen animation
+      // move a bit, so that the user doesn't feel like the program crashed.
+      animationTimer = frameCount + animationLength;
+      // search new random word
       game.newRandomWord();
-      console.log("extra new random word")
       return;
     }
-    else if((definition===""|| definition===undefined)&& !game.randomWordChosen){
-      console.log("from the top. fetching new main word");
+    else if(
+      // if this was meant to be the main word, start from the top.
+      ( definition==="" || definition===undefined )
+      && !game.randomWordChosen
+    ){
       animationTimer = frameCount + animationLength;
       game.startAgain();
       return;
     }
+
+    // if there was no issue in finding this random word's definition
 
     // pick what to do with it
     if( game.randomWordsChosen < game.startingWordTypes[1]-1 || (game.startingWordTypes[1]===1 && game.randomWordsChosen===0) ){
@@ -63,24 +79,26 @@ class GameSetup{
 
         // if it's our main word - theWord,
         // save the definition and get a new random word
-
         game.randomWordChosen = true;
         game.itsDefinition = definition;
-
         game.loadACard("main word", game.theWord,game.itsDefinition);
         game.newRandomWord();
 
-        console.log("main random word :"+game.theWord +"\n and definition :"+game.itsDefinition)
+        //console.log("main random word :"+game.theWord +"\n and definition :"+game.itsDefinition)
       }
       else {
-
         // if we need more random words, save this definition and get a new one
         game.randomWordsDefinitions.push(definition);
         game.loadACard("random word", game.moreRandomWords[game.randomWordsChosen],game.randomWordsDefinitions[game.randomWordsChosen]);
         game.randomWordsChosen +=1;
+
+      // get a new random word
         if(game.startingWordTypes[1]>1){
         game.newRandomWord();
-      } else {
+      }
+        // that is unless we only needed one extra random word.
+        // in that case move on.
+      else {
           game.getRelatedWord(game.theWord);
       }
       }
@@ -89,14 +107,19 @@ class GameSetup{
 
       // if done looking for random words,
       // push this last definition
-
         game.randomWordsDefinitions.push(definition);
         game.loadACard("random word", game.moreRandomWords[game.randomWordsChosen],game.randomWordsDefinitions[game.randomWordsChosen]);
 
-      // seek out synonyms
+      // move on to seeking out synonyms
       game.getRelatedWord(game.theWord);
     }
   }
+
+
+// getrandomworddefinition()
+//
+// builds a query for a definition to send to onelook dictionary.
+// treats result as a randomWord definition. 
 
   getRandomWordDefinition(input){
 
@@ -199,6 +222,11 @@ else {
     }
 
       game.synonymResults +=1;
+
+      // in case my code sux this prevents an infinite loop
+      // of synonym queries from being fired.
+      // cors-anywhere banned my ip the other day cause i was
+      // accidentally flooding them with queries
 
       if(game.synonymResults>=25){
         console.log("fail");

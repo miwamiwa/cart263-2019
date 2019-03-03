@@ -20,7 +20,12 @@ https://cors-anywhere.herokuapp.com/
 
 
 let guesses =0;
+let points =0;
+let failedRounds =0;
+
+let gameOverY  =0;
 let strikeOut = 3;
+let maxFailedRounds = 1;
 
 let animator =[];
 let animationLength = 40;
@@ -29,10 +34,13 @@ let animationTimer = animationLength;
 let cueStartAgain = false;
 let readyToContinue = false;
 let currentlyGuessing = false;
+
+let startScreen  = true;
 let game;
 let roundOverText;
 let numberOfEllipses = 8;
-
+let gameOver = false;
+let gameOverClickable = false;
 // preload()
 //
 // Description of preload
@@ -47,6 +55,8 @@ function preload() {
 // Description of setup
 
 function setup() {
+  textAlign(CENTER);
+  rectMode(CENTER);
 
 for(let i=0; i<numberOfEllipses; i++){
   animator.push(i);
@@ -63,16 +73,21 @@ for(let i=0; i<numberOfEllipses; i++){
 
 function draw() {
 
-if(game.readyToStart){
+if(startScreen){
+  displayStartScreen();
+}
+else {
+
+if(game.readyToStart && !gameOver){
   background(235);
 
 fill(0);
 textSize(100);
 textAlign(CENTER);
 text(game.theWord, width/2, 112);
-//console.log(numberOfCards);
+
+
 for (let j=0; j<game.numberOfCards; j++){
-//  console.log("hey")
   game.cards[j].display();
   game.cards[j].update();
 }
@@ -83,6 +98,11 @@ for (let j=0; j<game.numberOfCards; j++){
   }
 }
 
+handleScore();
+}
+else if(gameOver){
+
+  displayGameOverScreen();
 }
 else {
   background(125);
@@ -90,9 +110,8 @@ else {
   text("loading!", width/2, height/2);
 
   displayEllipses();
-
 }
-
+}
 if(cueStartAgain){
 
   roundOverText = "strikeout! click to start next round.";
@@ -100,7 +119,7 @@ if(cueStartAgain){
   cueStartAgain = false;
 }
 
-fill(0);
+fill(255);
 textSize(45);
 text(roundOverText, width/2, height-50);
 }
@@ -113,15 +132,58 @@ function readyForNewRound(){
 
 
 function mousePressed(){
-
-  if(readyToContinue){
+if(startScreen){
+  startScreen = false;
+  currentlyGuessing = true;
+  setTimeout(function(){ currentlyGuessing = false; }, 300);
+}
+else if(gameOver&&gameOverClickable){
+  gameOverClickable = false;
+  gameOver = false;
+  guesses =0;
+  points =0;
+  failedRounds =0;
+  gameOverY  =0;
+  game = new GameSetup();
+}
+else  if(readyToContinue){
     readyToContinue = false;
     startNewRound();
   }
 }
 
-function startNewRound(){
+function displayStartScreen(){
 
+  background(235);
+
+  textSize(20);
+  let startTitle = "welcome to real, different or fake!";
+  text(startTitle, width/2, height/4, width-50, (height-50)/4);
+  let startDescription =
+  "that day mr. parrot put on his smartee brand pants and flew to the dictionary, flapping through pages and stopping on random ones. "
+  + "\nhe squawked: 'rwaak! let's play a game! i'll state word, then i'll suggest a definition. "
+  + "\nyou tell me if it's the real definition, a definition for a different word, or a fake definition. "
+  + "\nsquawk! real, different or fake! perhaps all i can do is repeat things, but i bet you can't tell what's true!"
+  + "\n\n\nclick to start";
+  text(startDescription, width/2, height/2, width-50, (height-50)/2);
+}
+
+function displayGameOverScreen(){
+
+fill(145, 215, 110, 3+gameOverY/10);
+rect(width/2, height/2, width, height);
+gameOverY+=2;
+if(gameOverY<1*height/2){
+  fill(255-gameOverY);
+  textSize(45+gameOverY*3);
+  text("game over!", width/2, height/2+gameOverY*0.3, width, height);
+  roundOverText = "";
+}
+roundOverText = "click to restart";
+
+}
+
+function startNewRound(){
 
   cueStartAgain = false;
   currentlyGuessing = false;
@@ -149,7 +211,6 @@ function displayEllipses(){
     noFill();
     ellipse(ellipseX, ellipseY, ellipseR, ellipseR);
   }
-
 }
 
 
@@ -163,5 +224,21 @@ let positions = [];
   for(let i=0; i<numberOfCards; i++){
     cards[i].x = shuffledPositions[i];
   }
+}
 
+function handleScore(){
+
+  // display score
+  fill(0);
+  text("score : "+points, width-30, height-30);
+
+  if(guesses>=10){
+ cueStartAgain = true;
+  }
+
+  if(failedRounds >= maxFailedRounds){
+    // game over. display score and restart.à
+    gameOver = true;
+    setTimeout(function(){gameOverClickable = true}, 500);
+  }
 }

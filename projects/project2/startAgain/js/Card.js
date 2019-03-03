@@ -180,6 +180,11 @@ updatePosition(){
 
     ){
       this.reaction = "correct!"
+      switch(checkForWhat){
+        case "main word": points += 4 - game.incorrectGuesses; break;
+        case "random word": points += 3 - game.incorrectGuesses; break;
+        case "composite": points += 1; break;
+      }
     }
     else {
       game.incorrectGuesses +=1;
@@ -188,6 +193,7 @@ updatePosition(){
       if(game.incorrectGuesses>=strikeOut){
 
         cueStartAgain = true;
+        failedRounds +=1;
       }
     }
     // ^^^^
