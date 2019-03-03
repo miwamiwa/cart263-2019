@@ -126,14 +126,29 @@ class GameSetup{
     let queryTextStart = "https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w=";
     let queryTextEnd = "&xml=1";
     let xml = [];
-    xml  = loadStrings( queryTextStart + input + queryTextEnd, this.gotRandomWord );
+    xml  = loadStrings( queryTextStart + input + queryTextEnd, {mode: "no-cors"}, this.gotRandomWord );
   }
 
   getRelatedWord(input){
 
     let queryTextStart = "https://cors-anywhere.herokuapp.com/https://api.datamuse.com/words?ml=";
     let xml = [];
-    xml  = loadJSON( queryTextStart + input, this.gotRelatedWords);
+    xml  = loadJSON( queryTextStart + input, {mode: "no-cors"}, this.gotRelatedWords);
+    /*
+    fetch(url, {
+        method: "GET", // *GET, POST, PUT, DELETE, etc.
+        mode: "no-cors", // no-cors, cors, *same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+            "Content-Type": "application/json",
+            // "Content-Type": "application/x-www-form-urlencoded",
+        },
+        redirect: "follow", // manual, *follow, error
+        referrer: "no-referrer", // no-referrer, *client
+        body: JSON.stringify(data), // body data type must match "Content-Type" header
+    })
+    */
   }
 
 
@@ -202,7 +217,7 @@ else {
     let queryTextStart = "https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w=";
     let queryTextEnd = "&xml=1";
     let xml = [];
-    xml  = loadStrings( queryTextStart + input +"&xml=1" , this.gotSynonymDefinition );
+    xml  = loadStrings( queryTextStart + input +"&xml=1" , {mode: "no-cors"}, this.gotSynonymDefinition );
     console.log("synonym  definition searched")
 
   }

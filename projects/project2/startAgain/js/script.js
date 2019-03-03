@@ -41,6 +41,37 @@ let roundOverText;
 let numberOfEllipses = 8;
 let gameOver = false;
 let gameOverClickable = false;
+let whichCard;
+let gameStarted = false;
+
+let parrot;
+
+let sample = [];
+sample[0] = new Audio("assets/sounds/parrot1.wav");
+ sample[1] = new Audio("assets/sounds/parrot2.wav");
+ sample[2] = new Audio("assets/sounds/parrot3.wav");
+ sample[3] = new Audio("assets/sounds/parrot4.wav");
+ sample[4] = new Audio("assets/sounds/parrot5.wav");
+ sample[5] = new Audio("assets/sounds/parrot6.wav");
+ sample[6] = new Audio("assets/sounds/parrot7.wav");
+
+ let commands;
+/*
+if(annyang){
+  annyang.removeCommands("okay");
+
+  commands = {
+    'I give up': giveUp,
+  'say it again': sayAgain,
+'I think it is *answer': proposeAnswer
+};
+
+  // initialize annyang, overwriting any previously added commands
+  annyang.addCommands(commands);
+}
+
+*/
+
 // preload()
 //
 // Description of preload
@@ -63,6 +94,18 @@ for(let i=0; i<numberOfEllipses; i++){
 }
   createCanvas(window.innerWidth-50, window.innerHeight);
   game = new GameSetup();
+  parrot = new Parrot();
+
+  if(annyang){
+    let permaCommands = {
+      'nice': parrot.thank,
+
+  };
+
+    // initialize annyang, overwriting any previously added commands
+    annyang.addCommands(permaCommands);
+    annyang.start();
+}
 
 }
 
@@ -79,8 +122,26 @@ if(startScreen){
 else {
 
 if(game.readyToStart && !gameOver){
-  background(235);
 
+  if(!gameStarted){
+
+    gameStarted = true;
+    squak("the word is "+game.theWord);
+
+    if(annyang){
+      commands = {
+        'say the word again': parrot.sayWordAgain,
+      'define the word': parrot.defineWord,
+    'can we start over': parrot.startOver
+    };
+      // initialize annyang, overwriting any previously added commands
+      annyang.addCommands(commands);
+  }
+
+  }
+
+
+  background(235);
 fill(0);
 textSize(100);
 textAlign(CENTER);
@@ -95,6 +156,9 @@ for (let j=0; j<game.numberOfCards; j++){
 for (let j=0; j<game.numberOfCards; j++){
   if(game.cards[j].optionsRevealed){
     game.cards[j].options();
+  }
+  else {
+    game.cards[j].commandsSetup = false;
   }
 }
 
@@ -112,6 +176,7 @@ else {
   displayEllipses();
 }
 }
+
 if(cueStartAgain){
 
   roundOverText = "strikeout! click to start next round.";
@@ -130,11 +195,28 @@ function readyForNewRound(){
   readyToContinue = true;
 }
 
+function   squak(input){
+    let randomPick = floor(random(7));
+    sample[randomPick].currentTime = 0;
+    sample[randomPick].volume = 0.9;
+    sample[randomPick].play();
+
+    sample[randomPick].onended = function(){
+      responsiveVoice.speak(input, this.voice, {
+        pitch: this.pitch,
+        rate: this.rate,
+
+      });
+    }
+  }
 
 function mousePressed(){
+
 if(startScreen){
+
   startScreen = false;
   currentlyGuessing = true;
+  squak("Hello and welcome to true different or fake! You can talk to me, or go ahead and click through the game.");
   setTimeout(function(){ currentlyGuessing = false; }, 300);
 }
 else if(gameOver&&gameOverClickable){
