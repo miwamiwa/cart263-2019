@@ -278,6 +278,9 @@ class GameSetup{
       animationTimer = frameCount + animationLength;
     }
 
+    // count results obtained
+    game.synonymResults +=1;
+
     // if we've yet to find all the synonym definitions we need
     if(game.synonymsChosen < game.startingWordTypes[0]){
 
