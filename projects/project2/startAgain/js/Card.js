@@ -1,3 +1,11 @@
+/*
+Card.js
+
+this script contains the Card class.
+
+
+*/
+
 class Card{
 
   constructor(index, type, word, definition){
@@ -8,13 +16,16 @@ class Card{
     this.word = word;
     this.definition= definition;
     this.type = type;
-    this.fill = color(255);
+
     this.defRevealed = false;
     this.wordRevealed = false;
     this.typeRevealed = false;
     this.optionsRevealed = false;
     this.reaction = "";
     this.wasChecked = false;
+    this.bearing;
+    this.displacement =0;
+    this.motion = true;
 
     this.options.fill = 45;
     this.options.hoverFill = 95;
@@ -23,13 +34,23 @@ class Card{
     this.options.x = this.x;
     this.options.y = this.y + this.h/2 + this.options.h/2;
 
+    if(this.index%2===0){
+      this.bearing = "up";
+    }
+    else {
+      this.bearing = "down"
+    }
 
+
+// set fill according to card type.
+// displayed once card is turned and guess was made. also useful for testing.
     switch(this.type){
       case "main word": this.fill = color(215, 85, 85); break;
       case "random word": this.fill = color(85, 215, 85); break;
       case "synonym": this.fill = color(85, 85, 215); break;
       case "composite": this.fill = color(125, 185, 185); break;
     };
+
     this.currentFill = this.fill;
 
     this.x =0;
@@ -42,79 +63,127 @@ class Card{
 
   display(){
 
+// setup card wobble effect
+  let maxDisplacement = 10;
+  // "reverse" is used to calculate
+    let reverse =1;
+    if(this.y === cardY + this.h + 30){
+      reverse =-1;
+    }
 
-    rectMode(CENTER);
-    textAlign(CENTER);
 
-    if(!this.typeRevealed){
+  if( (this.x-this.w/2-windowMargin)/(this.w+cardMargin)%2===0 && this.motion){
+    this.displacement = reverse*sin( radians(frameCount)) *( maxDisplacement );
+  }
+  else if(this.motion){
+    this.displacement = -reverse*sin( radians(frameCount)) * ( maxDisplacement );
+  }
+  else {
+    this.displacement =0;
+  }
+
+  let yPos = this.y + this.displacement;
+  let skew=0;
+      if(reactionY<reactYlimit && guesses>=maxGuesses){
+        skew = reactionY;
+      }
+  let cardWidth = this.w - 55 + skew/2;
+  let cardHeight = this.h - 50 + skew/2;
+
+// pick color:
+
+// if this card hasn't been turned yet
+if(!this.typeRevealed){
       this.currentFill = color(195);
+
+      // if this is the currently selected card
+      if(this.optionsRevealed){
+        this.currentFill = 255;
+      }
     }
     else{
+      // if this card has been turned
       this.currentFill = this.fill
     }
-
+    // set color value
     fill(this.currentFill);
 
+// display card rectangle
     stroke(0);
-    rect(this.x, this.y, this.w, this.h);
+    strokeWeight(5);
+    rect(this.x, yPos, cardWidth, cardHeight, 12);
 
+// display text over card
     noStroke();
     fill(0);
-    textSize(12);
-    text(this.index, this.x, this.y+100);
-    text(this.reaction, this.x, this.y-this.h/2-10, this.w, 14);
-    /*
-if(this.optionsRevealed){
-  this.options();
-}
-*/
+    textSize(20);
+    text(this.reaction, this.x, yPos-cardHeight/2-100, cardWidth, 14);
+
+// display card definition
     if(this.defRevealed){
         fill(0);
-      textSize(12);
-      text(this.definition, this.x, this.y+40, this.w-10, this.h);
-
+      textSize(20);
+      text(this.definition, this.x, yPos+height/20, cardWidth-10, cardHeight - height/20);
     }
+
+// display card's word
     if(this.wordRevealed){
         fill(245);
-      textSize(14);
-      text(this.word, this.x, this.y+10, this.w, this.h)
-
+      textSize(25);
+      text(this.word, this.x, yPos+10, cardWidth, cardHeight)
     }
-
   }
+
+    // update()
+    //
+    // listens for mouse click hovering over and clicking on the card.
+    // starts and stops card motion on hover.
+    // triggers guessing options if mouse if clicked.
 
   update(){
 
+      // if mouse is hovering over card
     if(mouseX>this.x-this.w/2
       && mouseX<this.x+this.w/2
       && mouseY>this.y-this.h/2
       && mouseY<this.y+this.h/2
     ){
 
+        // stop motion
+this.motion = false;
+
+// if mouse is pressed and user is not already guessing
       if(mouseIsPressed&&!currentlyGuessing){
+
+        // set display state
         this.defRevealed = true;
         this.optionsRevealed = true;
+
         this.wasChecked = true;
         currentlyGuessing = true;
       }
+    }
+    else if(!this.wordRevealed){
+      this.motion = true;
     }
   }
 
 
 updatePosition(){
-  let cardMargin = 10;
+
+   cardMargin = 10;
   let totalMargin = (game.numberOfCards)*cardMargin;
 
   let cardWidth =  ( width - totalMargin ) / (game.numberOfCards/2);
-  let cardHeight = height / ( 3.5 );
+  let cardHeight = height / ( 3 );
 
   let cardsInARow = ceil(game.numberOfCards /2);
 
-  let windowMargin = (width - ( cardsInARow* cardWidth + (cardsInARow)* cardMargin ))/2;
+   windowMargin = (width - ( cardsInARow* cardWidth + (cardsInARow)* cardMargin ))/2;
 
   let cardIndex =this.index;
   let cardX = 0.5*cardWidth + cardIndex * (cardWidth+cardMargin) + windowMargin;
-  let cardY = height/3+30;
+  cardY = height/3+30;
 
   if( cardIndex >= cardsInARow ){
     cardX -= cardsInARow*cardWidth + (cardsInARow)*cardMargin;
@@ -132,9 +201,10 @@ updatePosition(){
 
   options(){
 
+this.motion = false;
 
     this.options.w = this.w;
-    this.options.h = this.h/6;
+    this.options.h = this.h/8;
     this.options.x = this.x;
     this.options.y = this.y + this.h/2 + this.options.h/2;
 
@@ -143,8 +213,8 @@ updatePosition(){
       let posy = this.options.y + i * this.options.h;
       let textToDisplay;
       switch(i){
-        case 0: textToDisplay = "THAT'S IT"; break;
-        case 1: textToDisplay = "NOT IT"; break;
+        case 0: textToDisplay = "TRUE"; break;
+        case 1: textToDisplay = "DIFFERENT"; break;
         case 2: textToDisplay = "FAKE"; break;
       }
       let optionsFill;
@@ -172,6 +242,7 @@ updatePosition(){
       fill(optionsFill);
       rect(this.options.x, posy, this.options.w, this.options.h);
       fill(255);
+      textSize(15);
       text(textToDisplay, this.options.x, posy, this.options.w, this.options.h/2);
     }
   }
@@ -189,32 +260,38 @@ game.cards[game.whichCard].checkGuess("composite", 0);
   }
 
   sayDefinition(){
-squak(game.cards[ game.whichCard ].definition);
+parrot.squawk(game.cards[ game.whichCard ].definition);
   }
 
   checkGuess(checkForWhat, checkOther){
-guesses +=1;
-    if(this.type === checkForWhat
-      || ( this.type === checkOther && checkOther != 0 )
-      || ( checkForWhat==="main word" && this.definition === game.itsDefinition )
 
-    ){
-      this.reaction = "correct!"
-      switch(checkForWhat){
-        case "main word": points += 4 - incorrectGuess; break;
-        case "random word": points += 3 - incorrectGuess; break;
-        case "composite": points += 1; break;
-      }
 
-      parrot.correctGuess();
+if(!this.wordRevealed){
+
+  guesses +=1;
+
+  if(this.type === checkForWhat
+    || ( this.type === checkOther && checkOther != 0 )
+    || ( checkForWhat==="main word" && this.definition === game.itsDefinition )
+
+  ){
+
+    switch(checkForWhat){
+      case "main word": points += 4 - incorrectGuess; break;
+      case "random word": points += 3 - incorrectGuess; break;
+      case "composite": points += 1; break;
     }
-    else {
-      incorrectGuess +=1;
-      this.reaction = "incorrect!";
-      parrot.incorrectGuess();
 
-      
-    }
+    parrot.correctGuess();
+  }
+  else {
+    incorrectGuess +=1;
+
+    parrot.incorrectGuess();
+
+  }
+}
+
     // ^^^^
     // overwrite reaction in the case where player checked if card is correct definition,
     // and the correct definition matches the contents of the card.
@@ -225,6 +302,8 @@ guesses +=1;
     this.wordRevealed = true;
     this.typeRevealed = true;
     this.optionsRevealed = false;
+    this.motion = false;
+
   }
 
   resumePlay(){

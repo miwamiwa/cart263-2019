@@ -1,65 +1,98 @@
+/*
+GameSetup.js
+
+The gamesetup class triggers a series of queries and actions on setup. It will:
+- pick a random word from the RiTa lexicon. this is our main word,
+- find its definition on onelook dictionary,
+- pick a given number of extra random words,
+- find their definitions,
+- find extra random words if definition result is null,
+- get a list of related words from onelook dictionary,
+- get definitions until a given number of related words are defined,
+- create composite definitions by replacing nouns in a definition with random nouns
+from any definition in use,
+- load cards using words and definitions,
+- shuffle cards,
+- done!
+
+not really sure what i'm doing when it comes to api calls, anyhow i tried using loadJSON
+and loadStrings. each query can fail by returning unusable results; in that case
+either a part of the query chain or the entire chain is restarted (though i've
+fixed some buggy behaviors, most of them i hope). Sometimes all this can take a while,
+thus the loading screen and animation.
+*/
+
 class GameSetup{
 
   constructor(){
 
+        // animation trigger: animationTimer = frameCount + animationLength;
+
+    // number of related words, random words and composites to start with.
+    this.startingWordTypes = [3, 1, 5]// synonyms, random words, composites
+
+    // indicates that game is ready to run
     this.readyToStart = false;
 
-
-    this.theWord = RiTa.randomWord("nn");
+    // words and definitions
     this.itsDefinition;
-
     this.itsSynonyms = [];
     this.synonymDefinitions = [];
     this.synonymBank=[];
-
     this.moreRandomWords = [];
     this.randomWordsDefinitions = [];
-
     this.compositeDefinitions = [];
     this.compositeWords = [];
-
-    this.startingWordTypes = [3, 1, 5]// synonyms, random words, composites
-
     this.randomWordChosen = false;
     this.randomWordsChosen = 0;
     this.synonymsChosen = 0;
-
     this.allNouns = [];
     this.allDefinitions=[];
     this.synonymResults =0;
 
+    // cards
     this.cards = [];
     this.numberOfCards = 1 + this.startingWordTypes[0]+this.startingWordTypes[1]+this.startingWordTypes[2];
     this.cardIndex=0;
-
     this.whichCard;
 
+    // start the query chain:
+    // get random word
+    this.theWord = RiTa.randomWord("nn");
+    // get its definition
     this.getRandomWordDefinition(this.theWord);
-
   }
 
+  // getrandomworddefinition()
+  //
+  // builds a query for a definition to send to onelook dictionary.
+  // callback triggers gotRandomWord()
 
+  getRandomWordDefinition(input){
+
+    let queryTextStart = "https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w=";
+    let queryTextEnd = "&xml=1";
+    let xml = [];
+    xml  = loadStrings( queryTextStart + input + queryTextEnd, {mode: "no-cors"}, this.gotRandomWord );
+  }
 
   // gotrandomword()
   //
-  // function to fire upon getting the callback response for a
-  // random word's definition.
+  // function to fire upon getting the callback response from
+  // getRandomWordsDefinition().
 
   gotRandomWord(data){
 
     // extract definition from xml
     let definition = game.extractDefinition(data);
 
-    // if there was some kind of issue with fetching this random word
+    // --- if there was some kind of issue with fetching this random word:
 
     if((definition===""|| definition===undefined)&& game.randomWordChosen){
-      // remove last random word found
+      // if this was an extra random word, remove last random word found
       if(game.randomWordsChosen.length>0){
         game.randomWordsChosen.shift();
       }
-      // for a lack of tangible results, make the loading screen animation
-      // move a bit, so that the user doesn't feel like the program crashed.
-      animationTimer = frameCount + animationLength;
       // search new random word
       game.newRandomWord();
       return;
@@ -74,7 +107,7 @@ class GameSetup{
       return;
     }
 
-    // if there was no issue in finding this random word's definition
+    // --- if there was no issue in:
 
     // pick what to do with it
     if( game.randomWordsChosen < game.startingWordTypes[1]-1 || (game.startingWordTypes[1]===1 && game.randomWordsChosen===0) ){
@@ -82,25 +115,31 @@ class GameSetup{
 
         // if it's our main word - theWord,
         // save the definition and get a new random word
-        game.randomWordChosen = true;
-        game.itsDefinition = definition;
-        game.loadACard("main word", game.theWord,game.itsDefinition);
-        game.newRandomWord();
 
-        //console.log("main random word :"+game.theWord +"\n and definition :"+game.itsDefinition)
+        // mark word as chosen
+        game.randomWordChosen = true;
+        // save definition
+        game.itsDefinition = definition;
+        // load card
+        game.loadACard("main word", game.theWord,game.itsDefinition);
+        // start new query
+        game.newRandomWord();
       }
       else {
         // if we need more random words, save this definition and get a new one
-        game.randomWordsDefinitions.push(definition);
-        game.loadACard("random word", game.moreRandomWords[game.randomWordsChosen],game.randomWordsDefinitions[game.randomWordsChosen]);
-        game.randomWordsChosen +=1;
 
-        // get a new random word
+        // save definition
+        game.randomWordsDefinitions.push(definition);
+        // load card
+        game.loadACard("random word", game.moreRandomWords[game.randomWordsChosen],game.randomWordsDefinitions[game.randomWordsChosen]);
+        // count random words chosen so far
+        game.randomWordsChosen +=1;
+        // start new query
         if(game.startingWordTypes[1]>1){
           game.newRandomWord();
         }
         // that is unless we only needed one extra random word.
-        // in that case move on.
+        // in that case move on to related words.
         else {
           game.getRelatedWord(game.theWord);
         }
@@ -113,75 +152,58 @@ class GameSetup{
       game.randomWordsDefinitions.push(definition);
       game.loadACard("random word", game.moreRandomWords[game.randomWordsChosen],game.randomWordsDefinitions[game.randomWordsChosen]);
 
-      // move on to seeking out synonyms
+      // move on to seeking words related to the main word.
       game.getRelatedWord(game.theWord);
     }
   }
 
 
-  // getrandomworddefinition()
-  //
-  // builds a query for a definition to send to onelook dictionary.
-  // treats result as a randomWord definition.
-
-  getRandomWordDefinition(input){
-
-    let queryTextStart = "https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w=";
-    let queryTextEnd = "&xml=1";
-    let xml = [];
-    xml  = loadStrings( queryTextStart + input + queryTextEnd, {mode: "no-cors"}, this.gotRandomWord );
-  }
+// getrelatedword()
+//
+// build a query for datamuse (onelook) api to search for related words.
+// triggers gotRelatedWords();
 
   getRelatedWord(input){
-
 
     game.synonymBank = [];
     let queryTextStart = "https://cors-anywhere.herokuapp.com/https://api.datamuse.com/words?ml=";
     let xml = [];
     xml  = loadJSON( queryTextStart + input, {mode: "no-cors"}, this.gotRelatedWords);
-    /*
-    fetch(url, {
-    method: "GET", // *GET, POST, PUT, DELETE, etc.
-    mode: "no-cors", // no-cors, cors, *same-origin
-    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-    credentials: "same-origin", // include, *same-origin, omit
-    headers: {
-    "Content-Type": "application/json",
-    // "Content-Type": "application/x-www-form-urlencoded",
-  },
-  redirect: "follow", // manual, *follow, error
-  referrer: "no-referrer", // no-referrer, *client
-  body: JSON.stringify(data), // body data type must match "Content-Type" header
-})
-*/
 }
 
+
+// newrandomword()
+//
+// picks a random word and gets its definition.
 
 newRandomWord(){
 
   // look for a new random word
   let newWord = RiTa.randomWord("nn");
+  // save the word
   this.moreRandomWords.push(newWord);
   // get its definition
   this.getRandomWordDefinition(newWord)
 }
 
+
+// startagain()
+//
+// in the event of a faulty callback, reset the entire chain.
+
 startAgain(){
 
   this.readyToStart = false;
-
   this.randomWordChosen = false;
   this.randomWordsChosen = 0;
   this.synonymsChosen = 0;
   this.synonymBank = [];
-
   this.theWord=0;
   this.itsDefinition="";
   this.allNouns = [];
   this.allDefinitions = [];
   this.itsSynonyms = [];
   this.synonymDefinitions = [];
-
   this.synonymResults ;
   this.moreRandomWords = [];
   this.randomWordsDefinitions = [];
@@ -189,16 +211,11 @@ startAgain(){
   this.compositeWords = [];
   this.cardIndex=0;
   this.cards = [];
-
   this.startOver = false;
-
 
   // start search
   this.theWord = RiTa.randomWord("nn");
   this.getRandomWordDefinition(this.theWord);
-
-
-
 }
 
 // gotrelatedwords()
@@ -208,19 +225,25 @@ startAgain(){
 gotRelatedWords(data){
   if(data != undefined){
 
+// create a bank of 25 'synonyms'
     for( let i=0; i< 25; i++){
       game.synonymBank.push( data[i].word );
-      console.log("word added : "+data[i].word );
     }
-    console.log("successfully fetched synonyms list : "+game.synonymBank);
 
+// get first synonym's definition
     game.getSynonymDefinition( game.synonymBank[0] );
   }
   else {
-    console.log("restarted. failed to retrieve related words ")
+    // if data is undefined start over
     game.startOver = true;
   }
 }
+
+// getsynonymdefinition()
+//
+// builds a query to get a given word's definition. same as
+// getrandomwordsDefinition() except  the callback function is
+// gotSynonymDefinition().
 
 getSynonymDefinition(input){
 
@@ -228,100 +251,111 @@ getSynonymDefinition(input){
   let queryTextEnd = "&xml=1";
   let xml = [];
   xml  = loadStrings( queryTextStart + input +"&xml=1" , {mode: "no-cors"}, this.gotSynonymDefinition );
-  console.log("synonym  definition searched")
-
 }
 
+// gotsynonymdefinition()
+//
+//
 
 gotSynonymDefinition(data){
-  // save definition and count synonym definitions received
+
+  // extract definition
   let definition = game.extractDefinition(data);
 
-
+  // save and count definitions
   if(definition!=""){
+
     game.itsSynonyms.push( game.synonymBank[game.synonymResults]);
     game.synonymDefinitions.push(definition);
+    // load card
     game.loadACard("synonym", game.itsSynonyms[game.synonymsChosen],game.synonymDefinitions[game.synonymsChosen]);
     game.synonymsChosen +=1;
-
   }
 
-  game.synonymResults +=1;
-
-  // in case my code sux this prevents an infinite loop
-  // of synonym queries from being fired.
-  // cors-anywhere banned my ip the other day cause i was
-  // accidentally flooding them with queries
-
-  if(game.synonymResults>=20){
-    console.log("fail");
-    console.log("last data element: "+data)
-    game.startOver = true;
-    return;
-  }
-
-
-
+// if we've yet to find all the synonym definitions we need
   if(game.synonymsChosen < game.startingWordTypes[0]){
 
+// get the definition from the next synonym in the bank
     game.getSynonymDefinition( game.synonymBank[game.synonymResults] );
   }
+
+  // if we have found all the synonym definitions we need
   else if(game.synonymsChosen === game.startingWordTypes[0]){
 
-    if(game.startOver){
+    // if game.startOver was cued (meaning some words or definitions are null)
+        if(game.startOver){
+    // restart query chain
+          game.startAgain();
+          return;
+        }
 
-      console.log("restart");
-      animationTimer = frameCount + animationLength;
-      game.startAgain();
-      return;
-    }
-
-
+        // throw all definitions into one big array to be used later
     game.allDefinitions = concat(game.randomWordsDefinitions, game.synonymDefinitions);
     game.allDefinitions.push( game.itsDefinition );
 
-    // create bank of all nouns
+    // create bank of all nouns:
+
+    // make an array of all words in the definitions
     let allDefinitionWords = game.itsDefinition + game.synonymDefinitions.join(" ") + game.randomWordsDefinitions.join(" ");
     let allWordsArray = split(allDefinitionWords, " ");
 
+// use RiTa to look for nouns:
+// for all words:
     for( let k=0; k < allWordsArray.length; k++){
       let thisWord = allWordsArray[k];
+      // if this word is a noun:
       if(RiTa.isNoun(thisWord)){
+        // add to nouns array.
         game.allNouns.push(thisWord);
       }
     }
 
-    // create composite definitions
+    // once that's done, create composite definitions
     game.createComposites();
   }
-
 }
+
+// extractdefinition()
+//
+// find the definition inside an xml result from onelook dictionary.
 
 extractDefinition(data){
 
-  //console.log("input data : "+data)
-
-  let definition = "";
+  // go to line #4
   let xmlString = data[4];
+  let definition = "";
 
-  if(xmlString!="<OLResName>"){
+  // this would indicate an erronous result
+  if(xmlString != "<OLResName>"){
 
+    // line #4 is formatted as such:
+    // "noun : definition [...] &examplesandstuff or &specialcharacters"
+
+    // remove everthing before first ":"
     let xmlArray = splitTokens(xmlString, ":");
     let firstCut = xmlArray[1];
 
-    if( match(firstCut, "&") != null){
+    // remove everything after "&". this removes things like apostrophes,
+    // and any text that may follow, unfortunately, but it also removes much
+    // more common things like examples, links and other related items with
+    // different styling (they all start with "&"). apostrophes are rather
+    // rare since there are not many contractions in dictionary language.
 
+    if( match(firstCut, "&") != null){
       let secondCut = splitTokens(firstCut, "&");
-      return secondCut[0];
+
+      // trim and return result.
+      definition = trim(secondCut[0]);
+      return
     }
     else {
+      // if there are no "&" trim and return result.
       definition = trim(firstCut);
       return definition;
     }
   }
   else {
-    console.log("parsing error. starting up again");
-
+// if there's any issue here start over.
     this.startOver = true;
     return;
   }
@@ -402,6 +436,11 @@ loadACard(type, word, definition){
   this.cardIndex+=1;
 }
 
+// shufflecards()
+//
+// shuffle card positions at the beginning of a round (because the correct and
+// incorrect ones are always generated in the same order).
+// mixes up the "real" x-positions. separation into rows happens later, inside card.js.
 
 shuffleCards(){
 

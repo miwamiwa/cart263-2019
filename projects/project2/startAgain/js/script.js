@@ -2,55 +2,68 @@
 
 /*****************
 
-Title of Project
-Author Name
-
-This is a template. You must fill in the title,
-author, and this description to match your project!
-
-https://od-api.oxforddictionaries.com/api/v1
-app_id 8e3dbc60
-app_key 	46ee0a1c78e6ca4d0c6a3856fbfede81
-
-
-https://cors-anywhere.herokuapp.com/
+TRUE DIFFERENT OR FAKE or when mr parrot put on his smartee brand pants
+by Samuel Paré-Chouinard
 
 
 ******************/
 
+// level design:
+
+// maximum guesses per round
 let maxGuesses = 3;
+// number of incorrect guesses that will trigger game over
+let strikeOut = 5;
+
+
+// game objects:
+
+// - creating a new Game() starts a search for new words and definitions.
+let game;
+
+// - the Parrot() class will handle functions triggered by annyang,
+// and the parrot's voice.
+let parrot;
+
+// GAME VARIABLES
+// game counters
 let guesses =0;
 let points =0;
-let failedRounds =0;
 let incorrectGuess =0;
-
-let gameRestarted = false;
-
+// stores timeout to start new round
 let newGame;
+// cues new round to start at the end of draw()
+let cueStartAgain = false;
+// prevents other cards from being selected while guessing
+let currentlyGuessing = false;
+// the card which is selected
+let whichCard;
+// prevents multiple new words and definitions searches from starting in a loop
+let gameRestarted = false;
+// game states
+let startScreen  = true;
+let gameOver = false;
+let gameOverClickable = false;
+let gameStarted = false;
 
-let gameOverY  =0;
-let strikeOut = 5;
-let maxFailedRounds = 1;
-
+// ANIMATIONS
+// loading animation
+let numberOfEllipses = 8;
 let animator =[];
 let animationLength = 40;
 let animationTimer = animationLength;
+// values used to define card wobble direction
+let windowMargin;
+let cardMargin;
+let cardY;
+// text animation
+let reactionY;
+let gameOverY=0;
+let reaction;
+let reactYlimit;
 
-let cueStartAgain = false;
-let readyToContinue = false;
-let currentlyGuessing = false;
-
-let startScreen  = true;
-let game;
-let roundOverText;
-let numberOfEllipses = 8;
-let gameOver = false;
-let gameOverClickable = false;
-let whichCard;
-let gameStarted = false;
-
-let parrot;
-
+// SOUND
+// parrot sound samples
 let sample = [];
 sample[0] = new Audio("assets/sounds/parrot1.wav");
 sample[1] = new Audio("assets/sounds/parrot2.wav");
@@ -59,190 +72,224 @@ sample[3] = new Audio("assets/sounds/parrot4.wav");
 sample[4] = new Audio("assets/sounds/parrot5.wav");
 sample[5] = new Audio("assets/sounds/parrot6.wav");
 sample[6] = new Audio("assets/sounds/parrot7.wav");
-
- let commands;
-/*
-if(annyang){
-  annyang.removeCommands("okay");
-
-  commands = {
-    'I give up': giveUp,
-  'say it again': sayAgain,
-'I think it is *answer': proposeAnswer
-};
-
-  // initialize annyang, overwriting any previously added commands
-  annyang.addCommands(commands);
-}
-
-*/
-
-// preload()
-//
-// Description of preload
-
-function preload() {
-
-}
+// annyang voice commands
+let commands;
 
 
 // setup()
 //
-// Description of setup
+// create canvas, create new game objects and start annyang.
 
 function setup() {
+
+  // set canvas to match window size
+  createCanvas(window.innerWidth-50, window.innerHeight);
+
   textAlign(CENTER);
   rectMode(CENTER);
 
-for(let i=0; i<numberOfEllipses; i++){
-  animator.push(i);
-}
-  createCanvas(window.innerWidth-50, window.innerHeight);
+  // create game objects:
+
   game = new GameSetup();
   parrot = new Parrot();
 
+  // annyang initial setup:
+
+  // add parrot.thank() and parrot.startover() commands.
   if(annyang){
     let permaCommands = {
       'nice': parrot.thank,
-
-  };
-
-    // initialize annyang, overwriting any previously added commands
+      "let's start again": parrot.startOver,
+    };
     annyang.addCommands(permaCommands);
-    annyang.start();
-}
 
+    // start annyang
+    annyang.start();
+
+    // set different starting values for each ellipse in the loading animation
+    for(let i=0; i<numberOfEllipses; i++){
+      animator.push(i);
+    }
+  }
 }
 
 
 // draw()
 //
-// Description of draw()
+// runs the different game states: start screen, runGame, game over, loading screen.
+// new rounds are triggered at the end of draw() when cued. most game values are
+// reset while the new round is being set up, so it seems to me like this works better
+// if i prevent the change from happening in the middle of an update() or display()
+// function.
 
 function draw() {
 
+  // check game states:
 
+  // ------- if START SCREEN is running
+  if(startScreen){
 
-if(startScreen){
-  displayStartScreen();
+    displayStartScreen();
+  }
+
+  // ------- if GAME IS RUNNING
+  else {
+    if(game.readyToStart && !gameOver){
+
+      // run the game
+      runGame();
+
+      // display score and listen for round over and game over.
+      handleScore();
+    }
+
+    // ------- if GAME OVER is running.
+    else if(gameOver){
+
+      // display game over screen
+      displayGameOverScreen();
+    }
+
+    // ------- if LOADING SCREEN IS RUNNING
+    else {
+      background(125);
+
+      // display text
+      fill(255);
+      text("loading!", width/2, height/2);
+
+      // display animated ellipses.
+      displayEllipses();
+    }
+  }
+
+  // if new round command was triggered, start a new round.
+  if(cueStartAgain && !gameRestarted){
+
+    // start new round
+    clearTimeout(newGame);
+    newGame = setTimeout( startNewRound, 2000);
+
+    // squawk it
+    parrot.squawk("new round!");
+
+    // set states
+    gameRestarted = true;
+    cueStartAgain = false;
+  }
 }
-else {
 
-if(game.readyToStart && !gameOver){
 
+// rungame()
+//
+// setup annyang commands on first frame.
+// trigger and update animations.
+// update and display cards and guessing option buttons.
+
+function runGame(){
+
+  // if this is the first frame
   if(gameStarted){
     gameStarted = false;
 
-      squak("the word is "+game.theWord);
+    // say the word
+    parrot.squawk("the word is "+game.theWord);
 
-      if(annyang){
-        commands = {
-          'say the word again': parrot.sayWordAgain,
-        'define the word': parrot.defineWord,
-      'can we start over': parrot.startOver
+    // setup annyang commands: repeat the word, or pick a random definition.
+    if(annyang){
+      commands = {
+        'say the word again': parrot.sayWordAgain,
+        'pick one for me': parrot.defineWord,
       };
-        // initialize annyang, overwriting any previously added commands
-        annyang.addCommands(commands);
+      annyang.addCommands(commands);
     }
-
   }
 
-  background(235);
-fill(0);
-textSize(100);
-textAlign(CENTER);
-text(game.theWord, width/2, 112);
-
-
-for (let j=0; j<game.numberOfCards; j++){
-  game.cards[j].display();
-  game.cards[j].update();
-}
-
-for (let j=0; j<game.numberOfCards; j++){
-  if(game.cards[j].optionsRevealed){
-    game.cards[j].options();
+  // if reaction animation is running, display animation (and not the background).
+  if(reactionY<reactYlimit){
+    // animate reaction text
+    react();
+    // animate main word display
+    textSize(100+reactionY);
+    fill(0, 0 +reactionY, 0 +reactionY*3);
   }
   else {
-    game.cards[j].commandsSetup = false;
+    // if reaction animation is not running, display the background.
+    background(235);
+    // stylize main word display
+    textSize(100);
   }
-}
 
-handleScore();
-}
-else if(gameOver){
+  fill(0);
+  // display the word being "defined"
+  text(game.theWord, width/2, 112);
 
-  displayGameOverScreen();
-}
-else {
-  background(125);
-  fill(255);
-  text("loading!", width/2, height/2);
+  // display the cards
+  for (let j=0; j<game.numberOfCards; j++){
+    game.cards[j].display();
+    game.cards[j].update();
+  }
 
-  displayEllipses();
-}
-}
-
-if(cueStartAgain && !gameRestarted){
-
-  roundOverText = "click to start next round.";
-  clearTimeout(newGame);
-  console.log("CUE NEW ROUND")
-  newGame = setTimeout( startNewRound, 1000);
-  gameRestarted = true;
-  cueStartAgain = false;
-
-}
-
-fill(255);
-textSize(45);
-text(roundOverText, width/2, height-50);
-}
-
-
-function   squak(input){
-    let randomPick = floor(random(7));
-    sample[randomPick].currentTime = 0;
-    sample[randomPick].volume = 0.9;
-    sample[randomPick].play();
-
-    sample[randomPick].onended = function(){
-      responsiveVoice.speak(input, parrot.voice, {
-        pitch: parrot.pitch,
-        rate: parrot.rate,
-
-      });
+  // display options over the cards
+  for (let j=0; j<game.numberOfCards; j++){
+    if(game.cards[j].optionsRevealed){
+      game.cards[j].options();
     }
   }
+}
+
+
+// mousepressed()
+//
+// listens for click that will start the game at the start screen or after a gameover.
 
 function mousePressed(){
 
-if(startScreen){
+  // if starting screen is active
+  if(startScreen){
 
-  startScreen = false;
-  currentlyGuessing = true;
-  squak("Hello and welcome to true different or fake! You can talk to me, or go ahead and click through the game.");
-  setTimeout(function(){ currentlyGuessing = false; }, 300);
-}
-else if(gameOver&&gameOverClickable){
-  gameOverClickable = false;
-  gameOver = false;
-  guesses =0;
-  points =0;
-  failedRounds =0;
-  gameOverY  =0;
-  game = new GameSetup();
+    // squawk introduction text
+    parrot.squawk("Hello and welcome to true different or fake! You can talk to me, or go ahead and click through the game.");
+
+    // set states
+    startScreen = false;
+
+    // prevent clicking on cards for a hot second, to prevent a card from
+    // being selected at the same click as the game start.
+    currentlyGuessing = true;
+    setTimeout(function(){ currentlyGuessing = false; }, 300);
+  }
+
+  // if game over screen is active
+  else if(gameOver&&gameOverClickable){
+
+    // set states
+    gameOverClickable = false;
+    gameOver = false;
+    // start new round
+    cueStartAgain = true;
+    // reset counters
+    points =0;
+    incorrectGuess =0;
+  }
 }
 
-}
+
+// displaystartscreen()
+//
+// displays a starting screen with some kind of introduction to the game
 
 function displayStartScreen(){
 
   background(235);
 
+  // title
+  fill(0);
   textSize(20);
   let startTitle = "welcome to real, different or fake!";
   text(startTitle, width/2, height/4, width-50, (height-50)/4);
+
+  // body
   let startDescription =
   "that day mr. parrot put on his smartee brand pants and flew to the dictionary, flapping through pages and stopping on random ones. "
   + "\nhe squawked: 'rwaak! let's play a game! i'll state word, then i'll suggest a definition. "
@@ -252,47 +299,99 @@ function displayStartScreen(){
   text(startDescription, width/2, height/2, width-50, (height-50)/2);
 }
 
+
+// displaygameoverscren()
+//
+// displays the animated game over text
+
 function displayGameOverScreen(){
 
-fill(145, 215, 110, 3+gameOverY/10);
-rect(width/2, height/2, width, height);
-gameOverY+=2;
-if(gameOverY<1*height/2){
-  fill(255-gameOverY);
-  textSize(45+gameOverY*3);
-  text("game over!", width/2, height/2+gameOverY*0.3, width, height);
-  roundOverText = "";
-}
-roundOverText = "click to restart";
+  // display a colored rectangle behind it
+  fill(145, 215, 110, 3+gameOverY/10);
+  rect(width/2, height/2, width, height);
 
+  // increment animation
+  gameOverY+=2;
+
+  // display text
+  if(gameOverY<1*height/2){
+    fill(255-gameOverY);
+    textSize(45+gameOverY*3);
+    text("game over!", width/2, height/2+gameOverY*0.3, width, height);
+  }
 }
+
+
+// react()
+//
+// text triggered when user makes a guess.
+// displays the reaction text (either "correct" or "incorrect").
+// animates its size and position.
+
+function react(){
+
+  // set animation limit
+  reactYlimit= 1*height/3;
+  // increment animation
+  reactionY+=2;
+
+  // display text.
+  if(reactionY<reactYlimit){
+    fill(255-reactionY);
+    textSize(45+reactionY*3);
+    text(reaction, width/2, height/2+reactionY*0.3, width, height);
+  }
+}
+
+// startnewround()
+//
+// starts a new round (new word and definitions).
 
 function startNewRound(){
 
+  // set states
   cueStartAgain = false;
   currentlyGuessing = false;
   gameStarted = true;
+
+  // reset counter
   guesses = 0;
-  incorrectGuess =0;
-  roundOverText = "";
-console.log("NEW ROUND")
+
+  // stop animation
+  reactionY += reactYlimit;
+
+  // search for new words and definitions
   game = new GameSetup();
 }
 
+// displayellipses()
+//
+// display a bunch of ellipses.
+// vary their radii.
+
 function displayEllipses(){
 
+  // for each ellipse
   for(let i=0; i<numberOfEllipses; i++){
+
+    // set position
     let ellipseX = width/3;
     let ellipseY = height/2;
     let ellipseR;
 
+    // increment animation
     if(frameCount<animationTimer){
+      // animationTimer is active, speed up animation
       animator[i]+=10;
     } else {
+      // else play at normal speed
       animator[i] +=i;
     }
 
+    // calculate radius
     ellipseR = 12*i + sin( radians( 180*animator[i]/100 ) )*20;
+
+    // display ellipse
     stroke(255);
     noFill();
     ellipse(ellipseX, ellipseY, ellipseR, ellipseR);
@@ -300,39 +399,31 @@ function displayEllipses(){
 }
 
 
-function shuffleCards(){
-
-let positions = [];
-  for(let i=0; i<game.numberOfCards; i++){
-    positions.push(game.cards[i].x);
-  }
-  let shuffledPositions = shuffle(positions);
-  for(let i=0; i<game.numberOfCards; i++){
-    game.cards[i].x = shuffledPositions[i];
-  }
-}
+// handlescore()
+//
+// displays score and checks if game or round is over.
 
 function handleScore(){
 
-  // display score
+  // display score.
   fill(0);
-  text("score : "+points, width-30, height-30);
+  textSize(20);
+  noStroke();
+  let guessesLeft = strikeOut - incorrectGuess;
+  text("score : "+points+", incorrect guesses left: "+guessesLeft, width/2, 28);
 
+  // trigger game over if user runs out of incorrect guesses
   if(incorrectGuess>=strikeOut){
 
-    cueStartAgain = true;
-    failedRounds +=1;
-  }
-
-  if(guesses>=maxGuesses){
- cueStartAgain = true;
-  }
-
-  if(failedRounds >= maxFailedRounds){
-    // game over. display score and restart.à
+    // squawk game over and set state.
+    parrot.squawk("game over!");
     gameOver = true;
-    points =0;
+    //  prevent clicking for a hot second.
     setTimeout(function(){gameOverClickable = true}, 500);
+  }
 
+  // trigger new round if maximum number of guesses was reached for this round.
+  if(guesses>=maxGuesses){
+    cueStartAgain = true;
   }
 }
