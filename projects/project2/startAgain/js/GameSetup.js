@@ -17,8 +17,8 @@ from any definition in use,
 
 not really sure what i'm doing when it comes to api calls, anyhow i tried using loadJSON
 and loadStrings. each query can fail by returning unusable results; in that case
-either a part of the query chain or the entire chain is restarted (though i've
-fixed some buggy behaviors, most of them i hope). Sometimes all this can take a while,
+either a part of the query chain or the entire chain is restarted (hopefully i
+fixed most buggy behaviours though). Sometimes all this can take a while,
 thus the loading screen and animation.
 */
 

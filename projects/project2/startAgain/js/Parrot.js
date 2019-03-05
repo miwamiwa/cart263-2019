@@ -115,10 +115,10 @@ class Parrot{
 
         // annyang will check if true, different or false, or repeat this definition.
         commands = {
-          'true': game.cards[randomPick].checkTrue,
-          'different': game.cards[randomPick].checkDifferent,
-          'fake': game.cards[randomPick].checkComposite,
-          'say the definition again': game.cards[randomPick].sayDefinition,
+          'true': parrot.checkTrue,
+          'different': parrot.checkDifferent,
+          'fake': parrot.checkComposite,
+          'say the definition again': parrot.sayDefinition,
         };
         voiceCommandsDescription += ", 'true', 'different', 'fake', 'say the definition again'";
         annyang.addCommands(commands);
@@ -152,6 +152,50 @@ class Parrot{
   thank(){
 
     parrot.squawk("thank you");
+  }
+
+
+// checktrue()
+//
+// triggered by voice command "true".
+// triggers guess checking function.
+
+  checkTrue(){
+
+game.cards[game.whichCard].checkGuess("main word", 0);
+  }
+
+
+  // checkdifferent()
+  //
+  // triggered by voice command "different".
+  // triggers guess checking function.
+
+  checkDifferent(){
+
+game.cards[game.whichCard].checkGuess("random word", "synonym");
+  }
+
+
+  // checkcomposite()
+  //
+  // triggered by voice command "fake".
+  // triggers guess checking function.
+
+  checkComposite(){
+
+game.cards[game.whichCard].checkGuess("composite", 0);
+  }
+
+
+  // saydefinition()
+  //
+  // triggered by voice command "say the definition again".
+  // triggers guess checking function.
+
+  sayDefinition(){
+
+parrot.squawk(game.cards[ game.whichCard ].definition);
   }
 
 

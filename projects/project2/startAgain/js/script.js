@@ -86,10 +86,11 @@ let startingVoiceCommands = "voice commands: 'nice', 'let's start again'";
 function setup() {
 
   // set canvas to match window size
-  createCanvas(window.innerWidth-50, window.innerHeight);
+  createCanvas(window.innerWidth-20, window.innerHeight);
 
   textAlign(CENTER);
   rectMode(CENTER);
+  textFont('Srisakdi')
 
   // create game objects:
 
@@ -232,7 +233,7 @@ function runGame(){
   text(game.theWord, width/2, 112);
 
   textSize(18);
-  text(voiceCommandsDescription, width/2, 150);
+  text(voiceCommandsDescription, width/2, 170);
 
   // display the cards
   for (let j=0; j<game.numberOfCards; j++){
@@ -295,18 +296,19 @@ function displayStartScreen(){
 
   // title
   fill(0);
-  textSize(20);
+  textSize(80);
   let startTitle = "welcome to real, different or fake!";
   text(startTitle, width/2, height/4, width-50, (height-50)/4);
 
   // body
+  textSize(30);
   let startDescription =
-  "that day mr. parrot put on his smartee brand pants and flew to the dictionary, flapping through pages and stopping on random ones. "
-  + "\nhe squawked: 'rwaak! let's play a game! i'll state word, then i'll suggest a definition. "
-  + "\nyou tell me if it's the real definition, a definition for a different word, or a fake definition. "
-  + "\nsquawk! real, different or fake! perhaps all i can do is repeat things, but i bet you can't tell what's true!"
-  + "\n\n\nclick to start";
-  text(startDescription, width/2, height/2, width-50, (height-50)/2);
+  "\n\n\nthat day mr. parrot put on his smartee brand pants and flew to the dictionary, flapping through pages and stopping on random ones. "
+  + "\n\nhe squawked: 'rwaak! let's play a game! i'll state word, then i'll suggest a definition. "
+  + "\n\nyou tell me if it's the real definition, a definition for a different word, or a fake definition. "
+  + "\n\nsquawk! real, different or fake! perhaps all i can do is repeat things, but i bet you can't tell what's true!"
+  + "\n\nclick to start";
+  text(startDescription, width/2, 3*height/5, width-50, 3*(height-50)/4,);
 }
 
 

@@ -5,6 +5,7 @@ In this case it's just padding and margin to 0
 so the canvas is flush with the top left corner.
 
 **********************************************/
+@import url('https://fonts.googleapis.com/css?family=Srisakdi');
 
 body {
   padding: 0;
