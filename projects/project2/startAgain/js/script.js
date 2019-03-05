@@ -45,6 +45,8 @@ let startScreen  = true;
 let gameOver = false;
 let gameOverClickable = false;
 let gameStarted = false;
+// text display what voice commands are available
+let voiceCommandsDescription = "";
 
 // ANIMATIONS
 // loading animation
@@ -74,6 +76,7 @@ sample[5] = new Audio("assets/sounds/parrot6.wav");
 sample[6] = new Audio("assets/sounds/parrot7.wav");
 // annyang voice commands
 let commands;
+let startingVoiceCommands = "voice commands: 'nice', 'let's start again'";
 
 
 // setup()
@@ -101,6 +104,8 @@ function setup() {
       'nice': parrot.thank,
       "let's start again": parrot.startOver,
     };
+
+    voiceCommandsDescription = startingVoiceCommands;
     annyang.addCommands(permaCommands);
 
     // start annyang
@@ -155,6 +160,7 @@ function draw() {
       background(125);
 
       // display text
+      noStroke();
       fill(255);
       text("loading!", width/2, height/2);
 
@@ -201,6 +207,7 @@ function runGame(){
         'say the word again': parrot.sayWordAgain,
         'pick one for me': parrot.defineWord,
       };
+      voiceCommandsDescription += ", 'say the word again', 'pick one for me'";
       annyang.addCommands(commands);
     }
   }
@@ -223,6 +230,9 @@ function runGame(){
   fill(0);
   // display the word being "defined"
   text(game.theWord, width/2, 112);
+
+  textSize(18);
+  text(voiceCommandsDescription, width/2, 150);
 
   // display the cards
   for (let j=0; j<game.numberOfCards; j++){
@@ -353,6 +363,7 @@ function startNewRound(){
   cueStartAgain = false;
   currentlyGuessing = false;
   gameStarted = true;
+  voiceCommandsDescription = startingVoiceCommands;
 
   // reset counter
   guesses = 0;
@@ -385,7 +396,7 @@ function displayEllipses(){
       animator[i]+=10;
     } else {
       // else play at normal speed
-      animator[i] +=i;
+      animator[i] +=i*0.5;
     }
 
     // calculate radius
@@ -393,6 +404,7 @@ function displayEllipses(){
 
     // display ellipse
     stroke(255);
+    strokeWeight(2);
     noFill();
     ellipse(ellipseX, ellipseY, ellipseR, ellipseR);
   }

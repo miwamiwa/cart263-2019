@@ -12,7 +12,7 @@ says an input text using responsive voice.
 class Parrot{
 
   constructor(){
-    
+
     // voice style
     this.voice = "US English Female";
     this.pitch = 1.4;
@@ -112,6 +112,7 @@ class Parrot{
 
       // add guessing voice commands to annyang
       if(annyang){
+
         // annyang will check if true, different or false, or repeat this definition.
         commands = {
           'true': game.cards[randomPick].checkTrue,
@@ -119,6 +120,7 @@ class Parrot{
           'fake': game.cards[randomPick].checkComposite,
           'say the definition again': game.cards[randomPick].sayDefinition,
         };
+        voiceCommandsDescription += ", 'true', 'different', 'fake', 'say the definition again'";
         annyang.addCommands(commands);
       };
     }

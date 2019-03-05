@@ -9,24 +9,27 @@ this script contains the Card class.
 class Card{
 
   constructor(index, type, word, definition){
-    /*
 
-    */
+    // index is used to calculate x, y position
     this.index =index;
+
+    // this card's data
     this.word = word;
     this.definition= definition;
     this.type = type;
 
+    // card states
     this.defRevealed = false;
     this.wordRevealed = false;
     this.typeRevealed = false;
     this.optionsRevealed = false;
-    this.reaction = "";
     this.wasChecked = false;
-    this.bearing;
-    this.displacement =0;
     this.motion = true;
 
+    // wobble animation
+    this.displacement =0;
+
+    // option buttons
     this.options.fill = 45;
     this.options.hoverFill = 95;
     this.options.w = this.w;
@@ -34,38 +37,34 @@ class Card{
     this.options.x = this.x;
     this.options.y = this.y + this.h/2 + this.options.h/2;
 
-    if(this.index%2===0){
-      this.bearing = "up";
-    }
-    else {
-      this.bearing = "down"
-    }
-
-
 // set fill according to card type.
-// displayed once card is turned and guess was made. also useful for testing.
+// displayed once card is turned and guess was made. was also useful for testing.
     switch(this.type){
+
       case "main word": this.fill = color(215, 85, 85); break;
       case "random word": this.fill = color(85, 215, 85); break;
       case "synonym": this.fill = color(85, 85, 215); break;
       case "composite": this.fill = color(125, 185, 185); break;
     };
-
     this.currentFill = this.fill;
 
+    // declare x, y, w, h parameters
     this.x =0;
     this.y=0;
     this.w=0;
     this.h=0;
 
+    // calculate position and size given the index number
     this.updatePosition();
   }
 
   display(){
 
 // setup card wobble effect
+
+// displacement amount
   let maxDisplacement = 10;
-  // "reverse" is used to calculate
+  // "reverse" is used to calculate the mir
     let reverse =1;
     if(this.y === cardY + this.h + 30){
       reverse =-1;
@@ -113,14 +112,9 @@ if(!this.typeRevealed){
     strokeWeight(5);
     rect(this.x, yPos, cardWidth, cardHeight, 12);
 
-// display text over card
-    noStroke();
-    fill(0);
-    textSize(20);
-    text(this.reaction, this.x, yPos-cardHeight/2-100, cardWidth, 14);
-
 // display card definition
     if(this.defRevealed){
+      noStroke();
         fill(0);
       textSize(20);
       text(this.definition, this.x, yPos+height/20, cardWidth-10, cardHeight - height/20);
@@ -128,6 +122,7 @@ if(!this.typeRevealed){
 
 // display card's word
     if(this.wordRevealed){
+      noStroke();
         fill(245);
       textSize(25);
       text(this.word, this.x, yPos+10, cardWidth, cardHeight)
@@ -204,9 +199,9 @@ updatePosition(){
 this.motion = false;
 
     this.options.w = this.w;
-    this.options.h = this.h/8;
+    this.options.h = this.h/10;
     this.options.x = this.x;
-    this.options.y = this.y + this.h/2 + this.options.h/2;
+    this.options.y = this.y + this.h/2;
 
     for(let i=0; i<3; i++){
 
@@ -240,7 +235,7 @@ this.motion = false;
       }
 
       fill(optionsFill);
-      rect(this.options.x, posy, this.options.w, this.options.h);
+      rect(this.options.x, posy, this.options.w, this.options.h, 10);
       fill(255);
       textSize(15);
       text(textToDisplay, this.options.x, posy, this.options.w, this.options.h/2);
