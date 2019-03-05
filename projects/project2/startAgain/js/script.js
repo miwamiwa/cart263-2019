@@ -215,8 +215,6 @@ function runGame(){
 
   // if reaction animation is running, display animation (and not the background).
   if(reactionY<reactYlimit){
-    // animate reaction text
-    react();
     // animate main word display
     textSize(100+reactionY);
     fill(0, 0 +reactionY, 0 +reactionY*3);
@@ -247,6 +245,9 @@ function runGame(){
       game.cards[j].options();
     }
   }
+
+  // animate reaction text
+  react();
 }
 
 
@@ -349,8 +350,10 @@ function react(){
 
   // display text.
   if(reactionY<reactYlimit){
-    fill(255-reactionY);
-    textSize(45+reactionY*3);
+    stroke(0);
+    strokeWeight(1);
+    fill(0+reactionY);
+    textSize(25+reactionY*1);
     text(reaction, width/2, height/2+reactionY*0.3, width, height);
   }
 }
