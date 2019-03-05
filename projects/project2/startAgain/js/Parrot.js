@@ -2,9 +2,9 @@ class Parrot{
 
   constructor(){
     this.voice = "US English Female";
-    this.pitch = 1;
+    this.pitch = 1.4;
     this.rate = 0.7;
-
+this.guessTimeout;
   }
 
 
@@ -61,23 +61,31 @@ console.log("startover")
   }
 
   correctGuess(){
+
     squak("correct!");
     if(guesses<maxGuesses){
-      setTimeout( parrot.defineWord, 3000);
+      clearTimeout(parrot.guessTimeout);
+    parrot.guessTimeout = setTimeout( parrot.defineWord, 3000);
     }
     else {
-      cueStartAgain = true;
+      if(incorrectGuess<strikeOut){
+// fire on round over
+      }
     }
 
   }
 
   incorrectGuess(){
+
     squak("incorrect!");
     if(guesses<maxGuesses){
-      setTimeout( parrot.defineWord, 3000);
+      clearTimeout(parrot.guessTimeout);
+    parrot.guessTimeout = setTimeout( parrot.defineWord, 3000);
     }
     else {
-      cueStartAgain = true;
+        if(incorrectGuess<strikeOut){
+    // fire on round over
+  }
     }
   }
 }

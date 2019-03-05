@@ -24,6 +24,10 @@ let points =0;
 let failedRounds =0;
 let incorrectGuess =0;
 
+let gameRestarted = false;
+
+let newGame;
+
 let gameOverY  =0;
 let strikeOut = 5;
 let maxFailedRounds = 1;
@@ -49,12 +53,12 @@ let parrot;
 
 let sample = [];
 sample[0] = new Audio("assets/sounds/parrot1.wav");
- sample[1] = new Audio("assets/sounds/parrot2.wav");
- sample[2] = new Audio("assets/sounds/parrot3.wav");
- sample[3] = new Audio("assets/sounds/parrot4.wav");
- sample[4] = new Audio("assets/sounds/parrot5.wav");
- sample[5] = new Audio("assets/sounds/parrot6.wav");
- sample[6] = new Audio("assets/sounds/parrot7.wav");
+sample[1] = new Audio("assets/sounds/parrot2.wav");
+sample[2] = new Audio("assets/sounds/parrot3.wav");
+sample[3] = new Audio("assets/sounds/parrot4.wav");
+sample[4] = new Audio("assets/sounds/parrot5.wav");
+sample[5] = new Audio("assets/sounds/parrot6.wav");
+sample[6] = new Audio("assets/sounds/parrot7.wav");
 
  let commands;
 /*
@@ -117,6 +121,8 @@ for(let i=0; i<numberOfEllipses; i++){
 
 function draw() {
 
+
+
 if(startScreen){
   displayStartScreen();
 }
@@ -124,23 +130,22 @@ else {
 
 if(game.readyToStart && !gameOver){
 
-  if(!gameStarted){
+  if(gameStarted){
+    gameStarted = false;
 
-    gameStarted = true;
-    squak("the word is "+game.theWord);
+      squak("the word is "+game.theWord);
 
-    if(annyang){
-      commands = {
-        'say the word again': parrot.sayWordAgain,
-      'define the word': parrot.defineWord,
-    'can we start over': parrot.startOver
-    };
-      // initialize annyang, overwriting any previously added commands
-      annyang.addCommands(commands);
+      if(annyang){
+        commands = {
+          'say the word again': parrot.sayWordAgain,
+        'define the word': parrot.defineWord,
+      'can we start over': parrot.startOver
+      };
+        // initialize annyang, overwriting any previously added commands
+        annyang.addCommands(commands);
+    }
+
   }
-
-  }
-
 
   background(235);
 fill(0);
@@ -178,11 +183,15 @@ else {
 }
 }
 
-if(cueStartAgain){
+if(cueStartAgain && !gameRestarted){
 
   roundOverText = "click to start next round.";
-  setTimeout( startNewRound, 1000);
+  clearTimeout(newGame);
+  console.log("CUE NEW ROUND")
+  newGame = setTimeout( startNewRound, 1000);
+  gameRestarted = true;
   cueStartAgain = false;
+
 }
 
 fill(255);
@@ -262,10 +271,11 @@ function startNewRound(){
 
   cueStartAgain = false;
   currentlyGuessing = false;
+  gameStarted = true;
   guesses = 0;
   incorrectGuess =0;
   roundOverText = "";
-
+console.log("NEW ROUND")
   game = new GameSetup();
 }
 
@@ -293,12 +303,12 @@ function displayEllipses(){
 function shuffleCards(){
 
 let positions = [];
-  for(let i=0; i<numberOfCards; i++){
-    positions.push(cards[i].x);
+  for(let i=0; i<game.numberOfCards; i++){
+    positions.push(game.cards[i].x);
   }
   let shuffledPositions = shuffle(positions);
-  for(let i=0; i<numberOfCards; i++){
-    cards[i].x = shuffledPositions[i];
+  for(let i=0; i<game.numberOfCards; i++){
+    game.cards[i].x = shuffledPositions[i];
   }
 }
 
@@ -308,6 +318,12 @@ function handleScore(){
   fill(0);
   text("score : "+points, width-30, height-30);
 
+  if(incorrectGuess>=strikeOut){
+
+    cueStartAgain = true;
+    failedRounds +=1;
+  }
+
   if(guesses>=maxGuesses){
  cueStartAgain = true;
   }
@@ -315,6 +331,7 @@ function handleScore(){
   if(failedRounds >= maxFailedRounds){
     // game over. display score and restart.à
     gameOver = true;
+    points =0;
     setTimeout(function(){gameOverClickable = true}, 500);
 
   }

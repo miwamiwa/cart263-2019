@@ -35,14 +35,15 @@ class GameSetup{
     this.whichCard;
 
     this.getRandomWordDefinition(this.theWord);
+
   }
 
 
 
-// gotrandomword()
-//
-// function to fire upon getting the callback response for a
-// random word's definition.
+  // gotrandomword()
+  //
+  // function to fire upon getting the callback response for a
+  // random word's definition.
 
   gotRandomWord(data){
 
@@ -94,23 +95,23 @@ class GameSetup{
         game.loadACard("random word", game.moreRandomWords[game.randomWordsChosen],game.randomWordsDefinitions[game.randomWordsChosen]);
         game.randomWordsChosen +=1;
 
-      // get a new random word
+        // get a new random word
         if(game.startingWordTypes[1]>1){
-        game.newRandomWord();
-      }
+          game.newRandomWord();
+        }
         // that is unless we only needed one extra random word.
         // in that case move on.
-      else {
+        else {
           game.getRelatedWord(game.theWord);
-      }
+        }
       }
     }
     else {
 
       // if done looking for random words,
       // push this last definition
-        game.randomWordsDefinitions.push(definition);
-        game.loadACard("random word", game.moreRandomWords[game.randomWordsChosen],game.randomWordsDefinitions[game.randomWordsChosen]);
+      game.randomWordsDefinitions.push(definition);
+      game.loadACard("random word", game.moreRandomWords[game.randomWordsChosen],game.randomWordsDefinitions[game.randomWordsChosen]);
 
       // move on to seeking out synonyms
       game.getRelatedWord(game.theWord);
@@ -118,10 +119,10 @@ class GameSetup{
   }
 
 
-// getrandomworddefinition()
-//
-// builds a query for a definition to send to onelook dictionary.
-// treats result as a randomWord definition.
+  // getrandomworddefinition()
+  //
+  // builds a query for a definition to send to onelook dictionary.
+  // treats result as a randomWord definition.
 
   getRandomWordDefinition(input){
 
@@ -133,277 +134,309 @@ class GameSetup{
 
   getRelatedWord(input){
 
+
+    game.synonymBank = [];
     let queryTextStart = "https://cors-anywhere.herokuapp.com/https://api.datamuse.com/words?ml=";
     let xml = [];
     xml  = loadJSON( queryTextStart + input, {mode: "no-cors"}, this.gotRelatedWords);
     /*
     fetch(url, {
-        method: "GET", // *GET, POST, PUT, DELETE, etc.
-        mode: "no-cors", // no-cors, cors, *same-origin
-        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-        credentials: "same-origin", // include, *same-origin, omit
-        headers: {
-            "Content-Type": "application/json",
-            // "Content-Type": "application/x-www-form-urlencoded",
-        },
-        redirect: "follow", // manual, *follow, error
-        referrer: "no-referrer", // no-referrer, *client
-        body: JSON.stringify(data), // body data type must match "Content-Type" header
-    })
-    */
-  }
-
-
-  newRandomWord(){
-
-    // look for a new random word
-    let newWord = RiTa.randomWord("nn");
-    this.moreRandomWords.push(newWord);
-    // get its definition
-    this.getRandomWordDefinition(newWord)
-  }
-
-  startAgain(){
-
-    this.readyToStart = false;
-
-    this.randomWordChosen = false;
-    this.randomWordsChosen = 0;
-    this.synonymsChosen = 0;
-this.synonymBank = [];
-
-    this.theWord=0;
-    this.itsDefinition="";
-    this.allNouns = [];
-    this.allDefinitions = [];
-    this.itsSynonyms = [];
-    this.synonymDefinitions = [];
-
-    this.synonymResults ;
-    this.moreRandomWords = [];
-    this.randomWordsDefinitions = [];
-    this.compositeDefinitions = [];
-    this.compositeWords = [];
-    this.cardIndex=0;
-    this.cards = [];
-
-    this.startOver = false;
-
-    // start search
-    this.theWord = RiTa.randomWord("nn");
-    this.getRandomWordDefinition(this.theWord);
-
-  }
-
-  // gotrelatedwords()
-  //
-  // add a "synonym" to the synonyms list and look up its definition
-
-  gotRelatedWords(data){
-if(data != undefined){
-
-  for( let i=0; i< 25; i++){
-    game.synonymBank.push( data[i].word );
-    console.log("word added : "+data[i].word );
-  }
-console.log("successfully fetched synonyms list : "+game.synonymBank);
-
-  game.getSynonymDefinition( game.synonymBank[0] );
+    method: "GET", // *GET, POST, PUT, DELETE, etc.
+    mode: "no-cors", // no-cors, cors, *same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+    "Content-Type": "application/json",
+    // "Content-Type": "application/x-www-form-urlencoded",
+  },
+  redirect: "follow", // manual, *follow, error
+  referrer: "no-referrer", // no-referrer, *client
+  body: JSON.stringify(data), // body data type must match "Content-Type" header
+})
+*/
 }
-else {
-  console.log("restarted. failed to retrieve related words ")
-  this.startOver = true;
+
+
+newRandomWord(){
+
+  // look for a new random word
+  let newWord = RiTa.randomWord("nn");
+  this.moreRandomWords.push(newWord);
+  // get its definition
+  this.getRandomWordDefinition(newWord)
 }
+
+startAgain(){
+
+  this.readyToStart = false;
+
+  this.randomWordChosen = false;
+  this.randomWordsChosen = 0;
+  this.synonymsChosen = 0;
+  this.synonymBank = [];
+
+  this.theWord=0;
+  this.itsDefinition="";
+  this.allNouns = [];
+  this.allDefinitions = [];
+  this.itsSynonyms = [];
+  this.synonymDefinitions = [];
+
+  this.synonymResults ;
+  this.moreRandomWords = [];
+  this.randomWordsDefinitions = [];
+  this.compositeDefinitions = [];
+  this.compositeWords = [];
+  this.cardIndex=0;
+  this.cards = [];
+
+  this.startOver = false;
+
+
+  // start search
+  this.theWord = RiTa.randomWord("nn");
+  this.getRandomWordDefinition(this.theWord);
+
+
+
+}
+
+// gotrelatedwords()
+//
+// add a "synonym" to the synonyms list and look up its definition
+
+gotRelatedWords(data){
+  if(data != undefined){
+
+    for( let i=0; i< 25; i++){
+      game.synonymBank.push( data[i].word );
+      console.log("word added : "+data[i].word );
+    }
+    console.log("successfully fetched synonyms list : "+game.synonymBank);
+
+    game.getSynonymDefinition( game.synonymBank[0] );
+  }
+  else {
+    console.log("restarted. failed to retrieve related words ")
+    game.startOver = true;
+  }
+}
+
+getSynonymDefinition(input){
+
+  let queryTextStart = "https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w=";
+  let queryTextEnd = "&xml=1";
+  let xml = [];
+  xml  = loadStrings( queryTextStart + input +"&xml=1" , {mode: "no-cors"}, this.gotSynonymDefinition );
+  console.log("synonym  definition searched")
+
+}
+
+
+gotSynonymDefinition(data){
+  // save definition and count synonym definitions received
+  let definition = game.extractDefinition(data);
+
+
+  if(definition!=""){
+    game.itsSynonyms.push( game.synonymBank[game.synonymResults]);
+    game.synonymDefinitions.push(definition);
+    game.loadACard("synonym", game.itsSynonyms[game.synonymsChosen],game.synonymDefinitions[game.synonymsChosen]);
+    game.synonymsChosen +=1;
+
   }
 
-  getSynonymDefinition(input){
+  game.synonymResults +=1;
 
-    let queryTextStart = "https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w=";
-    let queryTextEnd = "&xml=1";
-    let xml = [];
-    xml  = loadStrings( queryTextStart + input +"&xml=1" , {mode: "no-cors"}, this.gotSynonymDefinition );
-    console.log("synonym  definition searched")
+  // in case my code sux this prevents an infinite loop
+  // of synonym queries from being fired.
+  // cors-anywhere banned my ip the other day cause i was
+  // accidentally flooding them with queries
 
+  if(game.synonymResults>=20){
+    console.log("fail");
+    console.log("last data element: "+data)
+    game.startOver = true;
+    return;
   }
 
 
-  gotSynonymDefinition(data){
-    // save definition and count synonym definitions received
-    let definition = game.extractDefinition(data);
 
+  if(game.synonymsChosen < game.startingWordTypes[0]){
 
-    if(definition!=""){
-      game.itsSynonyms.push( game.synonymBank[game.synonymResults]);
-      game.synonymDefinitions.push(definition);
-      game.loadACard("synonym", game.itsSynonyms[game.synonymsChosen],game.synonymDefinitions[game.synonymsChosen]);
-      game.synonymsChosen +=1;
-
-    }
-
-      game.synonymResults +=1;
-
-      // in case my code sux this prevents an infinite loop
-      // of synonym queries from being fired.
-      // cors-anywhere banned my ip the other day cause i was
-      // accidentally flooding them with queries
-
-      if(game.synonymResults>=20){
-        console.log("fail");
-        console.log("last data element: "+data)
-        game.startOver = false;
-        return;
-      }
-
-
-    if(game.synonymsChosen < game.startingWordTypes[0]){
-
-      game.getSynonymDefinition( game.synonymBank[game.synonymResults] );
-    }
-    else if(game.synonymsChosen === game.startingWordTypes[0]){
-
-      if(game.startOver){
-        console.log("restart");
-        animationTimer = frameCount + animationLength;
-        game.startAgain();
-        return;
-      }
-
-      game.allDefinitions = concat(game.randomWordsDefinitions, game.synonymDefinitions);
-      game.allDefinitions.push( game.itsDefinition );
-
-      // create bank of all nouns
-      let allDefinitionWords = game.itsDefinition + game.synonymDefinitions.join(" ") + game.randomWordsDefinitions.join(" ");
-      let allWordsArray = split(allDefinitionWords, " ");
-
-      for( let k=0; k < allWordsArray.length; k++){
-        let thisWord = allWordsArray[k];
-        if(RiTa.isNoun(thisWord)){
-          game.allNouns.push(thisWord);
-        }
-      }
-
-      // create composite definitions
-      game.createComposites();
-    }
-
+    game.getSynonymDefinition( game.synonymBank[game.synonymResults] );
   }
+  else if(game.synonymsChosen === game.startingWordTypes[0]){
 
-  extractDefinition(data){
+    if(game.startOver){
 
-    //console.log("input data : "+data)
-
-    let definition = "";
-    let xmlString = data[4];
-
-    if(xmlString!="<OLResName>"){
-
-      let xmlArray = splitTokens(xmlString, ":");
-      let firstCut = xmlArray[1];
-
-      if( match(firstCut, "&") != null){
-
-        let secondCut = splitTokens(firstCut, "&");
-        return secondCut[0];
-      }
-      else {
-        definition = trim(firstCut);
-        return definition;
-      }
-    }
-    else {
-      console.log("parsing error. starting up again")
-      this.startOver = true;
+      console.log("restart");
+      animationTimer = frameCount + animationLength;
+      game.startAgain();
       return;
     }
+
+
+    game.allDefinitions = concat(game.randomWordsDefinitions, game.synonymDefinitions);
+    game.allDefinitions.push( game.itsDefinition );
+
+    // create bank of all nouns
+    let allDefinitionWords = game.itsDefinition + game.synonymDefinitions.join(" ") + game.randomWordsDefinitions.join(" ");
+    let allWordsArray = split(allDefinitionWords, " ");
+
+    for( let k=0; k < allWordsArray.length; k++){
+      let thisWord = allWordsArray[k];
+      if(RiTa.isNoun(thisWord)){
+        game.allNouns.push(thisWord);
+      }
+    }
+
+    // create composite definitions
+    game.createComposites();
   }
 
+}
 
-  createComposites(){
+extractDefinition(data){
 
-    for(let i=0; i<this.startingWordTypes[2]; i++){
+  //console.log("input data : "+data)
 
-      let chanceToComposite = 0.6;
+  let definition = "";
+  let xmlString = data[4];
 
-      let whichTypeToCopy = floor(random(this.allDefinitions.length));
+  if(xmlString!="<OLResName>"){
 
-      let whichDef = this.allDefinitions[ whichTypeToCopy ];
-      let wordsArray = splitTokens( whichDef, " ");
-      let composited = false;
+    let xmlArray = splitTokens(xmlString, ":");
+    let firstCut = xmlArray[1];
+
+    if( match(firstCut, "&") != null){
+
+      let secondCut = splitTokens(firstCut, "&");
+      return secondCut[0];
+    }
+    else {
+      definition = trim(firstCut);
+      return definition;
+    }
+  }
+  else {
+    console.log("parsing error. starting up again");
+
+    this.startOver = true;
+    return;
+  }
+}
 
 
-      for (let j=0; j<wordsArray.length; j++){
+createComposites(){
 
-        // RiTa.isNoun() returns true if the word is a noun
-        let checkIfNoun = RiTa.isNoun( wordsArray[j] );
+  for(let i=0; i<this.startingWordTypes[2]; i++){
 
-        if( checkIfNoun && random() < chanceToComposite ){
+    let chanceToComposite = 0.6;
 
-          composited = true;
-          wordsArray[j] = this.getDifferentRandomNoun( wordsArray[j], wordsArray[j]);
-        }
+    let whichTypeToCopy = floor(random(this.allDefinitions.length));
 
+    let whichDef = game.allDefinitions[ whichTypeToCopy ];
+    let wordsArray;
+    let composited;
+
+    if(whichDef!=""||whichDef!=null){
+      wordsArray = splitTokens( whichDef, " ");
+     composited = false;
+    }
+    else  {
+      console.log("definition missing while compositing. start over")
+      this.startOver = true;
+    }
+
+
+
+    for (let j=0; j<wordsArray.length; j++){
+
+      // RiTa.isNoun() returns true if the word is a noun
+      let checkIfNoun = RiTa.isNoun( wordsArray[j] );
+
+      if( checkIfNoun && random() < chanceToComposite ){
+
+        composited = true;
+        wordsArray[j] = this.getDifferentRandomNoun( wordsArray[j], wordsArray[j]);
       }
 
-      if(!composited){
-        console.log("forced compositing")
-        animationTimer = frameCount + animationLength;
-        // if we failed to swap a noun, pick a random word and swap it
-
-        let whichWord = floor(random(0, wordsArray.length));
-        let thisWord = wordsArray[whichWord];
-        wordsArray[ whichWord ] = this.getDifferentRandomNoun( wordsArray[whichWord], wordsArray[whichWord]);
-
-      }
-      let definition2 = wordsArray.join(" ");
-      this.compositeDefinitions.push(definition2);
-      this.loadACard("composite", "composite",this.compositeDefinitions[i]);
     }
 
-    this.tellMeWhatsUp();
-    this.shuffleCards();
-    this.readyToStart = true;
-  }
+    if(!composited){
+      console.log("forced compositing")
+      animationTimer = frameCount + animationLength;
+      // if we failed to swap a noun, pick a random word and swap it
 
-  loadACard(type, word, definition){
+      let whichWord = floor(random(0, wordsArray.length));
+      let thisWord = wordsArray[whichWord];
+      wordsArray[ whichWord ] = this.getDifferentRandomNoun( wordsArray[whichWord], wordsArray[whichWord]);
 
-      this.cards.push( new Card(this.cardIndex, type, word, definition));
-      this.cardIndex+=1;
-  }
-
-
-  shuffleCards(){
-
-    let positions = [];
-    for(let i=0; i<this.numberOfCards; i++){
-      positions.push(this.cards[i].index);
     }
-    let shuffledPositions = shuffle(positions);
-    for(let i=0; i<this.numberOfCards; i++){
-      this.cards[i].index = shuffledPositions[i];
-      this.cards[i].updatePosition();
-    }
-
+    let definition2 = wordsArray.join(" ");
+    this.compositeDefinitions.push(definition2);
+    this.loadACard("composite", "composite",this.compositeDefinitions[i]);
   }
 
-  getDifferentRandomNoun( varToChange, varToCompare ){
-    while( varToCompare === varToChange ){
+  if(game.startOver){
 
-      let randomPick = floor(random(this.allNouns.length));
-      let randomNoun = this.allNouns[randomPick];
-      varToChange = randomNoun;
-    }
-    return varToChange;
+    console.log("restart");
+    animationTimer = frameCount + animationLength;
+    game.startAgain();
+    return;
   }
 
-  tellMeWhatsUp(){
-    console.log("----- COMPLETE LIST OF ITEMS -----")
-    console.log("main word: "+this.theWord);
-    console.log("its definition: "+this.itsDefinition);
-    console.log("more random words: "+this.moreRandomWords);
-    console.log("their definition: "+this.randomWordsDefinitions);
-    console.log("related words: "+this.itsSynonyms);
-    console.log("their definitions: "+this.synonymDefinitions);
-    console.log("composite definitions: "+this.compositeDefinitions);
-    console.log(" ---------- ")
+  this.tellMeWhatsUp();
+  this.shuffleCards();
+  gameStarted = true;
+  gameRestarted = false;
+  this.readyToStart = true;
+
+
+}
+
+loadACard(type, word, definition){
+
+  this.cards.push( new Card(this.cardIndex, type, word, definition));
+  this.cardIndex+=1;
+}
+
+
+shuffleCards(){
+
+  let positions = [];
+  for(let i=0; i<game.numberOfCards; i++){
+    positions.push(game.cards[i].index);
   }
+  let shuffledPositions = shuffle(positions);
+  for(let i=0; i<game.numberOfCards; i++){
+  game.cards[i].index = shuffledPositions[i];
+  game.cards[i].updatePosition();
+  }
+
+}
+
+getDifferentRandomNoun( varToChange, varToCompare ){
+  while( varToCompare === varToChange ){
+
+    let randomPick = floor(random(this.allNouns.length));
+    let randomNoun = this.allNouns[randomPick];
+    varToChange = randomNoun;
+  }
+  return varToChange;
+}
+
+tellMeWhatsUp(){
+
+  console.log("----- COMPLETE LIST OF ITEMS -----")
+  console.log("main word: "+this.theWord);
+  console.log("its definition: "+this.itsDefinition);
+  console.log("more random words: "+this.moreRandomWords);
+  console.log("their definition: "+this.randomWordsDefinitions);
+  console.log("related words: "+this.itsSynonyms);
+  console.log("their definitions: "+this.synonymDefinitions);
+  console.log("composite definitions: "+this.compositeDefinitions);
+  console.log(" ---------- ")
+}
 }

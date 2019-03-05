@@ -213,11 +213,7 @@ guesses +=1;
       this.reaction = "incorrect!";
       parrot.incorrectGuess();
 
-      if(incorrectGuess>=strikeOut){
-
-        cueStartAgain = true;
-        failedRounds +=1;
-      }
+      
     }
     // ^^^^
     // overwrite reaction in the case where player checked if card is correct definition,
