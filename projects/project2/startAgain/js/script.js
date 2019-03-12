@@ -85,19 +85,22 @@ let timerDisplay = 0;
 // SOUND
 // parrot sound samples
 let sample = [];
-sample[0] = new Audio("assets/sounds/parrot1.wav");
-sample[1] = new Audio("assets/sounds/parrot2.wav");
-sample[2] = new Audio("assets/sounds/parrot3.wav");
-sample[3] = new Audio("assets/sounds/parrot4.wav");
-sample[4] = new Audio("assets/sounds/parrot5.wav");
-sample[5] = new Audio("assets/sounds/parrot6.wav");
-sample[6] = new Audio("assets/sounds/parrot7.wav");
+
 // annyang voice commands
 let commands;
 let startingVoiceCommands = "voice commands: 'nice', 'let's start again'";
 let cardVoiceCommands = ", 'say the word again', 'pick one for me'";
 let optionsVoiceCommands = ", 'true', 'different', 'fake', 'say the definition again'";
 
+function preload(){
+  sample[0] = loadSound("assets/sounds/parrot1.wav");
+  sample[1] = loadSound("assets/sounds/parrot2.wav");
+  sample[2] = loadSound("assets/sounds/parrot3.wav");
+  sample[3] = loadSound("assets/sounds/parrot4.wav");
+  sample[4] = loadSound("assets/sounds/parrot5.wav");
+  sample[5] = loadSound("assets/sounds/parrot6.wav");
+  sample[6] = loadSound("assets/sounds/parrot7.wav");
+}
 
 // setup()
 //
@@ -181,8 +184,11 @@ function draw() {
       if(!loadScreenStarted){
         loadScreenStarted = true;
         background(125);
+        parrot.x = width/3;
+        parrot.y = height/2;
       }
 
+      parrot.display();
       // display animated ellipses.
       displayEllipses();
 
@@ -190,8 +196,6 @@ function draw() {
       noStroke();
       fill(255);
       text("loading!", width/2, height/2);
-
-
     }
   }
 
@@ -230,8 +234,14 @@ function runGame(){
 
   // if this is the first frame
   if(gameStarted){
+    // set states
     gameStarted = false;
     loadScreenStarted = false;
+
+    // set parrot location
+    parrot.x = width/8;
+    parrot.y = height/8;
+    parrot.beakLength = width/8;
 
     // say the word
     parrot.squawk("the word is "+game.theWord);
@@ -288,6 +298,9 @@ function runGame(){
         game.cards[j].options();
       }
     }
+
+    // display parrot
+    parrot.display();
   }
 
 
@@ -345,6 +358,10 @@ function displayStartScreen(){
   textSize(height/10);
   let startTitle = "welcome to real, different or fake!";
   text(startTitle, width/2, height/4, width-50, (height-50)/4);
+  parrot.x = width/2;
+  parrot.y = height/2;
+  parrot.motion+=0.5;
+  parrot.display();
 
   // body
   textSize(height/30);

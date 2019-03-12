@@ -18,6 +18,14 @@ class Parrot{
     this.pitch = 1.4;
     this.rate = 0.7;
 
+    this.motion = 0;
+    this.mouthAngle = 0;
+    this.beakLength = 200;
+    this.x =0;
+    this.y =0;
+    this.maxMouthMotion=3;
+    this.amp = new p5.Amplitude();
+
     // this variable stores the timeout that triggers a new word definition,
     // for the purpose of being cleared when needed with clearTimeout().
     this.guessTimeout;
@@ -45,8 +53,8 @@ class Parrot{
       let randomPick = floor(random(7));
 
       // set time and volume
-      sample[randomPick].currentTime = 0;
-      sample[randomPick].volume = 0.9;
+      sample[randomPick].playMode("restart");
+      sample[randomPick].setVolume(0.9);
 
       // play the file
       sample[randomPick].play();
@@ -55,13 +63,13 @@ class Parrot{
 // stop previous voice
       responsiveVoice.cancel();
 // once parrot sound is done playing
-      sample[randomPick].onended = function(){
+      sample[randomPick].onended(function(){
         // say the input outloud
         responsiveVoice.speak(input, parrot.voice, {
           pitch: parrot.pitch,
           rate: parrot.rate,
         });
-      }
+      });
     }
   }
 
@@ -218,7 +226,7 @@ parrot.squawk(game.cards[ game.whichCard ].definition);
     reaction= "correct!!";
     // set animation frame to 0.
     reactionY=0;
-    
+
 
 // squawk a reaction
     parrot.squawk("correct!");
@@ -256,5 +264,103 @@ parrot.squawk(game.cards[ game.whichCard ].definition);
       clearTimeout(parrot.guessTimeout);
       parrot.guessTimeout = setTimeout( parrot.defineWord, 3000);
     }
+  }
+
+  display(){
+
+let origin = -0.1*PI;
+
+    for( let i=0; i<sample.length; i++){
+      if(sample[i].isPlaying()){
+        this.motion =0;
+
+        let level = this.amp.getLevel();
+        this.mouthAngle = radians(map( level, 0, 0.5, 2, this.maxMouthMotion*30));
+      }
+    }
+
+
+      if(this.motion!=0){
+        if (responsiveVoice.isPlaying()){
+          this.motion +=15;
+        }
+        this.mouthAngle = radians( this.maxMouthMotion*(1.1+sin(radians(this.motion))) );
+      }
+
+
+      let beakRamp = 0.6*this.beakLength;
+      let lowerBeakRamp = 0.4*this.beakLength;
+
+      let topRamp = 1.1*this.beakLength;
+      let tipRamp = 1.25*this.beakLength;
+      let bottomRamp = 1.25*this.beakLength;
+
+      let rampAngle = radians(75);
+      let lowerRampAngle = radians(55);
+
+      let aX = this.x;
+      let aY = this.y;
+
+      let bX = aX+this.beakLength * cos(origin+this.mouthAngle);
+      let bY = aY-this.beakLength * sin(origin+this.mouthAngle);
+
+      let cX = aX+ beakRamp * cos(origin+this.mouthAngle+rampAngle);
+      let cY = aY- beakRamp * sin(origin+this.mouthAngle+rampAngle);
+
+      let dX = aX+ topRamp * cos(origin+this.mouthAngle+rampAngle/4);
+      let dY = aY- topRamp * sin(origin+this.mouthAngle+rampAngle/4);
+
+      let eX = aX+ tipRamp * cos(origin+this.mouthAngle+rampAngle/8);
+      let eY = aY- tipRamp * sin(origin+this.mouthAngle+rampAngle/8);
+
+      let fX = aX+ bottomRamp * cos(origin+this.mouthAngle-rampAngle/4);
+      let fY = aY- bottomRamp * sin(origin+this.mouthAngle-rampAngle/4);
+
+      let gX = aX+ lowerBeakRamp * cos(origin-this.mouthAngle/2-lowerRampAngle);
+      let gY = aY- lowerBeakRamp * sin(origin-this.mouthAngle/2-lowerRampAngle);
+
+      let hX = aX+this.beakLength * cos(origin-this.mouthAngle );
+      let hY = aY-this.beakLength * sin(origin-this.mouthAngle );
+
+      background(255);
+
+
+      let faceDiameter = 1.4*this.beakLength;
+      let faceOffset = this.beakLength/5;
+      noStroke();
+      let faceX = aX-faceOffset * cos(-origin);
+      let faceY = aY-faceOffset * sin(-origin);
+
+      fill(65, 5, 5);
+
+      let jawDiameter = faceOffset*2.3;
+
+      arc(aX, aY, 0.5*faceDiameter, 0.5*faceDiameter, -origin+this.mouthAngle, -origin-this.mouthAngle);
+      fill(125, 0, 0);
+      arc(faceX, faceY, faceDiameter, 1.1*faceDiameter, -origin+this.mouthAngle, -origin-this.mouthAngle);
+
+      stroke(0);
+      strokeWeight(this.beakLength/18);
+      line(aX, aY, bX, bY);
+      line(aX, aY, hX, hY);
+      noStroke();
+
+      fill(185, 185, 20);
+      triangle(aX, aY, cX, cY, dX, dY);
+      fill(0, 125, 0);
+      triangle(aX, aY, dX, dY, eX, eY);
+      fill(0, 0, 185);
+      triangle(aX, aY, eX, eY, bX, bY);
+      fill(25, 185, 125);
+      triangle(bX, bY, eX, eY, fX, fY);
+      fill(125, 0, 125);
+      triangle(aX, aY, hX, hY, gX, gY);
+
+      let eyeDiameter = faceDiameter/6;
+      let eyeTwitch = sin( radians( this.motion )) * eyeDiameter/8;
+      fill(255);
+      ellipse(faceX, faceY,eyeDiameter, eyeDiameter );
+      fill(0);
+      ellipse(faceX + eyeTwitch, faceY, eyeDiameter/2, eyeDiameter/2);
   }
 }
