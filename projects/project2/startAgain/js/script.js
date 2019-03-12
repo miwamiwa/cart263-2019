@@ -25,7 +25,7 @@ load time is just slow.
 // level design:
 
 // maximum guesses per round
-let maxGuesses = 9;
+let maxGuesses = 3;
 // number of incorrect guesses that will trigger game over
 let strikeOut = 5;
 
@@ -59,12 +59,14 @@ let startScreen  = true;
 let gameOver = false;
 let gameOverClickable = false;
 let gameStarted = false;
+let loadScreenStarted = false;
 // text display what voice commands are available
 let voiceCommandsDescription = "";
 
 // ANIMATIONS
 // loading animation
-let numberOfEllipses = 8;
+let numberOfEllipses = 50;
+let ellipseSpacing = 100;
 let animator =[];
 let animationLength = 40;
 let animationTimer = animationLength;
@@ -77,6 +79,9 @@ let reactionY=0;
 let gameOverY=0;
 let reaction;
 let reactYlimit=0;
+// new round
+let newRoundTimer;
+let roundClickable=false;
 
 // SOUND
 // parrot sound samples
@@ -174,15 +179,20 @@ function draw() {
 
     // ------- if LOADING SCREEN IS RUNNING
     else {
-      background(125);
+      if(!loadScreenStarted){
+        loadScreenStarted = true;
+        background(125);
+      }
+
+      // display animated ellipses.
+      displayEllipses();
 
       // display text
       noStroke();
       fill(255);
       text("loading!", width/2, height/2);
 
-      // display animated ellipses.
-      displayEllipses();
+
     }
   }
 
@@ -191,12 +201,13 @@ function draw() {
 
     // start new round
     clearTimeout(newGame);
-    newGame = setTimeout( startNewRound, 2000);
+    newGame = setTimeout( startNewRound, 400);
 
     // squawk it
     parrot.squawk("new round!");
 
     // set states
+    roundClickable = false;
     gameRestarted = true;
     cueStartAgain = false;
   }
@@ -214,6 +225,7 @@ function runGame(){
   // if this is the first frame
   if(gameStarted){
     gameStarted = false;
+    loadScreenStarted = false;
 
     // say the word
     parrot.squawk("the word is "+game.theWord);
@@ -311,6 +323,10 @@ function mousePressed(){
     points =0;
     incorrectGuess =0;
   }
+  else if(roundClickable){
+    roundClickable = false;
+    cueStartAgain = true;
+  }
 }
 
 
@@ -324,12 +340,12 @@ function displayStartScreen(){
 
   // title
   fill(0);
-  textSize(80);
+  textSize(height/10);
   let startTitle = "welcome to real, different or fake!";
   text(startTitle, width/2, height/4, width-50, (height-50)/4);
 
   // body
-  textSize(30);
+  textSize(height/30);
   let startDescription =
   "\n\n\nthat day mr. parrot put on his smartee brand pants and flew to the dictionary, flapping through pages and stopping on random ones. "
   + "\n\nhe squawked: 'rwaak! let's play a game! i'll state word, then i'll suggest a definition. "
@@ -432,10 +448,10 @@ function displayEllipses(){
     }
 
     // calculate radius
-    ellipseR = 12*i + sin( radians( 180*animator[i]/100 ) )*20;
+    ellipseR = ellipseSpacing*i + sin( radians( 180*animator[i]/100 ) )*ellipseSpacing/2;
 
     // display ellipse
-    stroke(255);
+    stroke(125+sin(radians(frameCount))*100, 255*mouseX/width, 255*mouseY/height, 10);
     strokeWeight(2);
     noFill();
     ellipse(ellipseX, ellipseY, ellipseR, ellipseR);
@@ -461,13 +477,22 @@ function handleScore(){
 
     // squawk game over and set state.
     parrot.squawk("game over!");
+
     gameOver = true;
     //  prevent clicking for a hot second.
-    setTimeout(function(){gameOverClickable = true}, 500);
+    setTimeout(function(){ gameOverClickable = true; }, 400);
   }
 
   // trigger new round if maximum number of guesses was reached for this round.
   if(guesses>=maxGuesses){
-    cueStartAgain = true;
+
+    for(let i=0; i<game.cards.length; i++){
+      game.cards[i].wordRevealed = true;
+      game.cards[i].typeRevealed = true;
+      game.cards[i].defRevealed = true;
+
+    }
+
+    roundClickable = true;
   }
 }
