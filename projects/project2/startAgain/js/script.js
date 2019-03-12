@@ -79,9 +79,7 @@ let reactionY=0;
 let gameOverY=0;
 let reaction;
 let reactYlimit=0;
-// new round
-let newRoundTimer;
-let roundClickable=false;
+let timerDisplay = 0;
 
 // SOUND
 // parrot sound samples
@@ -201,15 +199,25 @@ function draw() {
 
     // start new round
     clearTimeout(newGame);
-    newGame = setTimeout( startNewRound, 400);
+    newGame = setTimeout( startNewRound, 2000);
 
     // squawk it
     parrot.squawk("new round!");
 
     // set states
-    roundClickable = false;
     gameRestarted = true;
     cueStartAgain = false;
+  }
+
+  if(timerDisplay>0){
+    timerDisplay -= 1/frameRate();
+    fill(235);
+    rect(width/2, height-30, 300, 50)
+    textSize(25);
+    fill(0);
+    noStroke();
+    voiceCommandsDescription = "new round in "+ceil(timerDisplay)+" seconds";
+
   }
 }
 
@@ -322,10 +330,6 @@ function mousePressed(){
     // reset counters
     points =0;
     incorrectGuess =0;
-  }
-  else if(roundClickable){
-    roundClickable = false;
-    cueStartAgain = true;
   }
 }
 
@@ -448,10 +452,10 @@ function displayEllipses(){
     }
 
     // calculate radius
-    ellipseR = ellipseSpacing*i + sin( radians( 180*animator[i]/100 ) )*ellipseSpacing/2;
+    ellipseR = ellipseSpacing*i + sin( radians( 180*animator[i]/100 ) )*30;
 
     // display ellipse
-    stroke(125+sin(radians(frameCount))*100, 255*mouseX/width, 255*mouseY/height, 10);
+    stroke(125+sin(radians(frameCount))*100, 255*mouseX/width, 255*mouseY/height, 20);
     strokeWeight(2);
     noFill();
     ellipse(ellipseX, ellipseY, ellipseR, ellipseR);
@@ -493,6 +497,10 @@ function handleScore(){
 
     }
 
-    roundClickable = true;
+    guesses =0;
+      timerDisplay = 10;
+    setTimeout(function(){cueStartAgain = true;}, 10000);
+
+
   }
 }
