@@ -110,22 +110,28 @@ class Parrot{
       // indicate which card we are looking at
       game.whichCard = randomPick;
 
-      // add guessing voice commands to annyang
-      if(annyang){
-
-        // annyang will check if true, different or false, or repeat this definition.
-        commands = {
-          'true': parrot.checkTrue,
-          'different': parrot.checkDifferent,
-          'fake': parrot.checkComposite,
-          'say the definition again': parrot.sayDefinition,
-        };
-        voiceCommandsDescription += ", 'true', 'different', 'fake', 'say the definition again'";
-        annyang.addCommands(commands);
-      };
+      parrot.guessingAnnyang();
     }
   }
 
+// guessingAnnyang()
+//
+// this function setups annyang for guesses by voice command.
+
+guessingAnnyang(){
+  // add guessing voice commands to annyang
+  if(annyang){
+
+    // annyang will check if true, different or false, or repeat this definition.
+    commands = {
+      'true': parrot.checkTrue,
+      'different': parrot.checkDifferent,
+      'fake': parrot.checkComposite,
+      'say the definition again': parrot.sayDefinition,
+    };
+    annyang.addCommands(commands);
+  };
+}
 
 // startover()
 //

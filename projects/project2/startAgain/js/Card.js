@@ -47,10 +47,10 @@ class Card{
     // displayed once card is turned and guess was made. was also useful for testing.
     switch(this.type){
 
-      case "main word": this.fill = color(215, 85, 85); break;
-      case "random word": this.fill = color(85, 215, 85); break;
-      case "synonym": this.fill = color(85, 85, 215); break;
-      case "composite": this.fill = color(125, 185, 185); break;
+      case "main word": this.fill = color(215, 85, 85); this.typeDescription = "Correct Definition"; break;
+      case "random word": this.fill = color(85, 215, 85); this.typeDescription = "Unrelated word"; break;
+      case "synonym": this.fill = color(85, 85, 215); this.typeDescription = "Related word"; break;
+      case "composite": this.fill = color(125, 185, 185); this.typeDescription = "Fake definition"; break;
     };
     this.currentFill = this.fill;
 
@@ -141,21 +141,33 @@ class Card{
     strokeWeight(5);
     rect(this.x, yPos, cardWidth, cardHeight, 12);
 
+    push();
+
+    textFont('Helvetica');
+
     // display card definition
     if(this.defRevealed){
       noStroke();
       fill(0);
-      textSize(20);
-      text(this.definition, this.x, yPos+height/20, cardWidth-10, cardHeight - height/20);
+      textSize(height/48);
+      text(this.definition, this.x, yPos+ 9*cardHeight/48, cardWidth-10, cardHeight - 6*cardHeight/48);
     }
+
+    textFont('Srisakdi');
 
     // display card's word
     if(this.wordRevealed){
       noStroke();
       fill(245);
-      textSize(25);
-      text(this.word, this.x, yPos+10, cardWidth, cardHeight)
+      textSize(height/36);
+      text(this.word, this.x, yPos + 2*cardHeight/48, cardWidth, cardHeight);
+
+      textFont('Helvetica');
+
+      textSize(height/48);
+      text(this.typeDescription, this.x, yPos + 8*cardHeight/48, cardWidth, cardHeight);
     }
+    pop();
   }
 
 
@@ -180,9 +192,13 @@ class Card{
       // if mouse is pressed and user is not already guessing
       if(mouseIsPressed&&!currentlyGuessing){
 
+        // trigger voice commands
+        parrot.guessingAnnyang();
+
         // set display state
         this.defRevealed = true;
         this.optionsRevealed = true;
+        game.whichCard = (this.x-this.w/2-windowMargin)/(this.w+cardMargin);
         // mark this card as checked.
         this.wasChecked = true;
         // toggle guessing state to active.
@@ -208,14 +224,14 @@ class Card{
     let totalMargin = (game.numberOfCards)*cardMargin;
 
     // get card width and height using page dimensions and margin values.
-    let cardWidth =  ( width - totalMargin ) / (game.numberOfCards/2);
-    let cardHeight = height / ( 3 );
+    let cardWidth =  floor(( width - totalMargin ) / (game.numberOfCards/2));
+    let cardHeight = floor(height / ( 3 ));
 
     // find number of cards in a row, given that we're splitting them in 2 rows.
     let cardsInARow = ceil(game.numberOfCards /2);
 
     // calculate the remaining x-margin on each side of the table
-    windowMargin = (width - ( cardsInARow* cardWidth + (cardsInARow)* cardMargin ))/2;
+    windowMargin = floor((width - ( cardsInARow* cardWidth + (cardsInARow)* cardMargin ))/2);
 
     // calculate this card's x, y position given the values above and
     // this card's index number (this places them all on one row).
@@ -296,13 +312,20 @@ class Card{
 
       // display button rectangle
       fill(optionsFill);
-      rect(this.options.x, posy, this.options.w, this.options.h, 10);
+      rect(this.options.x, posy, 2*this.options.w/5, this.options.h, 10);
+
       // display button text
+      push();
+
+      textFont('Helvetica');
       noStroke();
       fill(255);
-      textSize(15);
-      text(textToDisplay, this.options.x, posy, this.options.w, this.options.h/2);
+      textSize(height/48);
+      text(textToDisplay, this.options.x, posy + this.options.h/4);
+      pop();
     }
+    // update voice commands text display
+    voiceCommandsDescription = startingVoiceCommands + cardVoiceCommands + optionsVoiceCommands;
   }
 
 

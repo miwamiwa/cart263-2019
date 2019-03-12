@@ -6,6 +6,20 @@ TRUE DIFFERENT OR FAKE or when mr parrot put on his smartee brand pants
 by Samuel Paré-Chouinard
 
 
+known bugs:
+
+- sometimes related words and their definitions get mixed up. not sure why. keep
+playing and the next round will most likely be ok. but not your score.
+- if something looks fishy you can always check the onelook.com what the actual
+definition they have is. we're always using the first item on the list of "Quick
+definitions from WordNet".
+
+- some loading bugs still cause the program to stop. gotta refresh sometimes.
+
+- slow loading is also a thing, since your browser make time some time to
+connect with onelook.com. If the page still seems responsive, maybe your
+load time is just slow.
+
 ******************/
 
 // level design:
@@ -59,10 +73,10 @@ let windowMargin;
 let cardMargin;
 let cardY;
 // text animation
-let reactionY;
+let reactionY=0;
 let gameOverY=0;
 let reaction;
-let reactYlimit;
+let reactYlimit=0;
 
 // SOUND
 // parrot sound samples
@@ -77,6 +91,8 @@ sample[6] = new Audio("assets/sounds/parrot7.wav");
 // annyang voice commands
 let commands;
 let startingVoiceCommands = "voice commands: 'nice', 'let's start again'";
+let cardVoiceCommands = ", 'say the word again', 'pick one for me'";
+let optionsVoiceCommands = ", 'true', 'different', 'fake', 'say the definition again'";
 
 
 // setup()
@@ -90,7 +106,7 @@ function setup() {
 
   textAlign(CENTER);
   rectMode(CENTER);
-  textFont('Srisakdi')
+  textFont('Srisakdi');
 
   // create game objects:
 
@@ -208,43 +224,54 @@ function runGame(){
         'say the word again': parrot.sayWordAgain,
         'pick one for me': parrot.defineWord,
       };
-      voiceCommandsDescription += ", 'say the word again', 'pick one for me'";
+      voiceCommandsDescription = startingVoiceCommands + cardVoiceCommands;
       annyang.addCommands(commands);
     }
   }
 
+  // ------------ DISPLAY TEXT
+  fill(0);
+
   // if reaction animation is running, display animation (and not the background).
   if(reactionY<reactYlimit){
     // animate main word display
-    textSize(100+reactionY);
+    textSize(height/9+reactionY/4);
     fill(0, 0 +reactionY, 0 +reactionY*3);
   }
   else {
     // if reaction animation is not running, display the background.
     background(235);
     // stylize main word display
-    textSize(100);
+    textSize(height/9);
   }
+
+  // display the word being "defined"
+  text(game.theWord, width/2, height/8);
+
+  // dislay voice commands description below the title
+  push();
+  textFont('Helvetica');
 
   fill(0);
-  // display the word being "defined"
-  text(game.theWord, width/2, 112);
-
-  textSize(18);
-  text(voiceCommandsDescription, width/2, 170);
+  textSize(height/36);
+  text(voiceCommandsDescription, width/2, height/8 + height/16);
+  pop();
 
   // display the cards
-  for (let j=0; j<game.numberOfCards; j++){
-    game.cards[j].display();
-    game.cards[j].update();
-  }
+  if(reactionY>=reactYlimit){
+    for (let j=0; j<game.numberOfCards; j++){
+      game.cards[j].display();
+      game.cards[j].update();
+    }
 
-  // display options over the cards
-  for (let j=0; j<game.numberOfCards; j++){
-    if(game.cards[j].optionsRevealed){
-      game.cards[j].options();
+    // display options over the cards
+    for (let j=0; j<game.numberOfCards; j++){
+      if(game.cards[j].optionsRevealed){
+        game.cards[j].options();
+      }
     }
   }
+
 
   // animate reaction text
   react();
@@ -344,7 +371,7 @@ function displayGameOverScreen(){
 function react(){
 
   // set animation limit
-  reactYlimit= 1*height/3;
+  reactYlimit= 1*height/4;
   // increment animation
   reactionY+=2;
 
@@ -354,7 +381,7 @@ function react(){
     strokeWeight(1);
     fill(0+reactionY);
     textSize(25+reactionY*1);
-    text(reaction, width/2, height/2+reactionY*0.3, width, height);
+    text(reaction, width/2, height/2+reactionY*0.15, width, height);
   }
 }
 
@@ -424,10 +451,10 @@ function handleScore(){
 
   // display score.
   fill(0);
-  textSize(20);
+  textSize(height/36);
   noStroke();
   let guessesLeft = strikeOut - incorrectGuess;
-  text("score : "+points+", incorrect guesses left: "+guessesLeft, width/2, 28);
+  text("score : "+points+", incorrect guesses left: "+guessesLeft, width/2, height/32);
 
   // trigger game over if user runs out of incorrect guesses
   if(incorrectGuess>=strikeOut){

@@ -337,7 +337,7 @@ class GameSetup{
     let definition = "";
 
     // this would indicate an erronous result
-    if(xmlString != "<OLResName>"){
+    if(xmlString != "<OLResName>" && xmlString!=undefined){
 
       // line #4 is formatted as such:
       // "noun : definition [...] &examplesandstuff or &specialcharacters"
