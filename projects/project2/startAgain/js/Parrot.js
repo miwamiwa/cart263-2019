@@ -218,8 +218,7 @@ parrot.squawk(game.cards[ game.whichCard ].definition);
     reaction= "correct!!";
     // set animation frame to 0.
     reactionY=0;
-    // display it
-    react();
+    
 
 // squawk a reaction
     parrot.squawk("correct!");
@@ -245,7 +244,7 @@ parrot.squawk(game.cards[ game.whichCard ].definition);
     //  - trigger reaction text:
     reaction= "incorrect!!"
     reactionY=0;
-    react();
+
 
 // squawk a reaction
     parrot.squawk("incorrect!");

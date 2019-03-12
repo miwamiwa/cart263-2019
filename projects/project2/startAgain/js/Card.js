@@ -325,7 +325,7 @@ class Card{
       pop();
     }
     // update voice commands text display
-    voiceCommandsDescription = startingVoiceCommands + cardVoiceCommands + optionsVoiceCommands;
+  //  voiceCommandsDescription = startingVoiceCommands + cardVoiceCommands + optionsVoiceCommands;
   }
 
 

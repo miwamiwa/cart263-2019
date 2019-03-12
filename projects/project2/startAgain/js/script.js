@@ -60,6 +60,7 @@ let gameOver = false;
 let gameOverClickable = false;
 let gameStarted = false;
 let loadScreenStarted = false;
+let reactionStarted = false;
 // text display what voice commands are available
 let voiceCommandsDescription = "";
 
@@ -125,7 +126,7 @@ function setup() {
       "let's start again": parrot.startOver,
     };
 
-    voiceCommandsDescription = startingVoiceCommands;
+  //  voiceCommandsDescription = startingVoiceCommands;
     annyang.addCommands(permaCommands);
 
     // start annyang
@@ -211,13 +212,10 @@ function draw() {
 
   if(timerDisplay>0){
     timerDisplay -= 1/frameRate();
-    fill(235);
-    rect(width/2, height-30, 300, 50)
-    textSize(25);
-    fill(0);
-    noStroke();
     voiceCommandsDescription = "new round in "+ceil(timerDisplay)+" seconds";
-
+  }
+  else {
+    voiceCommandsDescription = startingVoiceCommands + cardVoiceCommands + optionsVoiceCommands;
   }
 }
 
@@ -244,7 +242,7 @@ function runGame(){
         'say the word again': parrot.sayWordAgain,
         'pick one for me': parrot.defineWord,
       };
-      voiceCommandsDescription = startingVoiceCommands + cardVoiceCommands;
+    //  voiceCommandsDescription = startingVoiceCommands + cardVoiceCommands;
       annyang.addCommands(commands);
     }
   }
@@ -369,6 +367,9 @@ function displayGameOverScreen(){
   // display a colored rectangle behind it
   fill(145, 215, 110, 3+gameOverY/10);
   rect(width/2, height/2, width, height);
+  fill(255);
+  textSize(30);
+  text("click to restart!", width/2, height/2);
 
   // increment animation
   gameOverY+=2;
@@ -390,19 +391,34 @@ function displayGameOverScreen(){
 
 function react(){
 
+  if(!reactionStarted){
+    voiceCommandsDescription = "";
+    background(235);
+    reactionStarted = true;
+  }
+
+voiceCommandsDescription = "";
   // set animation limit
   reactYlimit= 1*height/4;
   // increment animation
   reactionY+=2;
-
+  voiceCommandsDescription = "";
   // display text.
   if(reactionY<reactYlimit){
+
     stroke(0);
     strokeWeight(1);
     fill(0+reactionY);
     textSize(25+reactionY*1);
     text(reaction, width/2, height/2+reactionY*0.15, width, height);
+
   }
+else if(reactionY === reactYlimit-1){
+  reactionStarted = false;
+  voiceCommandsDescription = startingVoiceCommands + cardVoiceCommands + optionsVoiceCommands;
+}
+
+
 }
 
 // startnewround()
@@ -482,6 +498,7 @@ function handleScore(){
     // squawk game over and set state.
     parrot.squawk("game over!");
 
+    guesses =0;
     gameOver = true;
     //  prevent clicking for a hot second.
     setTimeout(function(){ gameOverClickable = true; }, 400);
@@ -498,7 +515,7 @@ function handleScore(){
     }
 
     guesses =0;
-      timerDisplay = 10;
+    timerDisplay = 10;
     setTimeout(function(){cueStartAgain = true;}, 10000);
 
 
