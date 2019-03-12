@@ -25,7 +25,7 @@ load time is just slow.
 // level design:
 
 // maximum guesses per round
-let maxGuesses = 3;
+let maxGuesses = 9;
 // number of incorrect guesses that will trigger game over
 let strikeOut = 5;
 
