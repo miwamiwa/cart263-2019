@@ -65,6 +65,8 @@ class Card{
   }
 
 
+
+
   // display()
   //
   // set card's current up-down wobble position, its size and its color.
@@ -171,6 +173,8 @@ class Card{
   }
 
 
+
+
   // update()
   //
   // listens for mouse click hovering over and clicking on the card.
@@ -210,6 +214,10 @@ class Card{
       this.motion = true;
     }
   }
+
+
+
+
 
   // updatePosition()
   //
@@ -251,6 +259,8 @@ class Card{
     this.w =cardWidth;
     this.h =cardHeight;
   }
+
+
 
 
   // options()
@@ -324,9 +334,9 @@ class Card{
       text(textToDisplay, this.options.x, posy + this.options.h/4);
       pop();
     }
-    // update voice commands text display
-  //  voiceCommandsDescription = startingVoiceCommands + cardVoiceCommands + optionsVoiceCommands;
   }
+
+
 
 
   // checkguess( checkforwhat, checkother )

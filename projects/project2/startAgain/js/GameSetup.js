@@ -2,6 +2,7 @@
 GameSetup.js
 
 The gamesetup class triggers a series of queries and actions on setup. It will:
+- start the queries from within the constructor,
 - pick a random word from the RiTa lexicon. this is our main word,
 - find its definition on onelook dictionary,
 - pick a given number of extra random words,
@@ -15,11 +16,22 @@ from any definition in use,
 - shuffle cards,
 - done!
 
-not really sure what i'm doing when it comes to api calls, anyhow i tried using loadJSON
-and loadStrings. each query can fail by returning unusable results; in that case
-either a part of the query chain or the entire chain is restarted (hopefully i
-fixed most buggy behaviours though). Sometimes all this can take a while,
-thus the loading screen and animation.
+in the last weeks i tried figuring out how to use loadJSON and loadStrings -
+ obviously now that i'm done with all the trial and error we see those in class ;D
+
+each query can make the program fail by returning unusable results; in that case
+either a part of the query chain or the entire chain is restarted
+Sometimes all this can take a while, thus the loading screen and animation.
+
+"The show must go on" was my philosophy here. I tried preventing the program
+from stopping on load as much as possible.
+that "match" error is still there (it tends to crash the program, you'll see it
+appear in the console maybe 1/10 times) ..
+it's been there for a while but i've been trying to move away from endless bug
+fixing and more towards some work on visual aspects.
+
+ps this is a pretty long file but i didn't make sense for me to split it since
+this is all one big chain of actions.
 */
 
 class GameSetup{
@@ -60,25 +72,35 @@ class GameSetup{
     this.getRandomWordDefinition(this.theWord);
   }
 
+
+
+
+
   // getrandomworddefinition()
   //
   // builds a query for a definition to send to onelook dictionary.
-  // callback triggers gotRandomWord()
+  // callback triggers gotRandomWordDefinition()
 
   getRandomWordDefinition(input){
 
     let queryTextStart = "https://cors-anywhere.herokuapp.com/http://www.onelook.com/?w=";
     let queryTextEnd = "&xml=1";
     let xml = [];
-    xml  = loadStrings( queryTextStart + input + queryTextEnd, {mode: "no-cors"}, this.gotRandomWord );
+    xml  = loadStrings( queryTextStart + input + queryTextEnd, {mode: "no-cors"}, this.gotRandomWordDefinition );
   }
 
-  // gotrandomword()
+
+
+
+  // gotRandomWordDefinition()
   //
   // function to fire upon getting the callback response from
   // getRandomWordsDefinition().
+  // check for any issues with the results, then save the definition and
+  // create a card. then, either look for more random words or start
+  // looking for synonyms if we have all the random words we need.
 
-  gotRandomWord(data){
+  gotRandomWordDefinition(data){
 
     // extract definition from xml
     let definition = game.extractDefinition(data);
@@ -155,6 +177,9 @@ class GameSetup{
   }
 
 
+
+
+
   // getrelatedword()
   //
   // build a query for datamuse (onelook) api to search for related words.
@@ -167,6 +192,8 @@ class GameSetup{
     let xml = [];
     xml  = loadJSON( queryTextStart + input, {mode: "no-cors"}, this.gotRelatedWords);
   }
+
+
 
 
   // newrandomword()
@@ -187,39 +214,12 @@ class GameSetup{
   }
 
 
-  // startagain()
-  //
-  // in the event of a faulty callback, reset the entire chain.
 
-  startAgain(){
 
-    this.readyToStart = false;
-    this.randomWordChosen = false;
-    this.randomWordsChosen = 0;
-    this.synonymsChosen = 0;
-    this.synonymBank = [];
-    this.theWord=0;
-    this.itsDefinition="";
-    this.allNouns = [];
-    this.allDefinitions = [];
-    this.itsSynonyms = [];
-    this.synonymDefinitions = [];
-    this.synonymResults ;
-    this.moreRandomWords = [];
-    this.randomWordsDefinitions = [];
-    this.compositeDefinitions = [];
-    this.compositeWords = [];
-    this.cardIndex=0;
-    this.cards = [];
-    this.startOver = false;
-
-    // start search
-    this.theWord = RiTa.randomWord("nn");
-    this.getRandomWordDefinition(this.theWord);
-  }
 
   // gotrelatedwords()
   //
+  // triggered on callback for getrelatedwords.
   // add a "synonym" to the synonyms list and look up its definition
 
   gotRelatedWords(data){
@@ -242,6 +242,10 @@ class GameSetup{
     }
   }
 
+
+
+
+
   // getsynonymdefinition()
   //
   // builds a query to get a given word's definition. same as
@@ -256,9 +260,17 @@ class GameSetup{
     xml  = loadStrings( queryTextStart + input +"&xml=1" , {mode: "no-cors"}, this.gotSynonymDefinition );
   }
 
+
+
+
   // gotsynonymdefinition()
   //
-  //
+  // triggered on callback for getsynonymdefinition().
+  // synonyms from the onelook dictionary are related words. not all are
+  // actual synonyms.
+  // save synonym definitions and create cards. and once all have been found:
+  // create banks of nouns and full definitions,
+  // then starting creating composite definitions
 
   gotSynonymDefinition(data){
 
@@ -291,7 +303,8 @@ class GameSetup{
     // if we have found all the synonym definitions we need
     else if(game.synonymsChosen === game.startingWordTypes[0]){
 
-      // if game.startOver was cued (meaning some words or definitions are null)
+      // if game.startOver was cued
+      // if it happens here, it usually means some words or definitions are null
       if(game.startOver){
         // restart query chain
         game.startAgain();
@@ -324,6 +337,9 @@ class GameSetup{
       game.createComposites();
     }
   }
+
+
+
 
 
   // extractdefinition()
@@ -372,10 +388,23 @@ class GameSetup{
     }
   }
 
+
+
+
+
   // createcomposites()
   //
   // triggered once all related word definitions have been found.
-  //
+  // creates composite defintions by:
+  // -  picking a random definition from the list of full definitions,
+  // - then it looks for nouns and for each noun there is a chance to replace
+  // it with a non-matching noun from the list of all nouns.
+  // - if rita failed to do its thing with finding the nouns (not sure if my application
+  // of the library has mistakes but it just fails sometimes), then pick a
+  // random word regardless of part of speech and swap it with a non-matching noun.
+  // - do that for each composite definition, create cards and we're finally done with this
+  // definitions business.
+  // - shuffle cards and tell the main game loop it can start.
 
   createComposites(){
 
@@ -463,7 +492,7 @@ class GameSetup{
 
     // if NOTHING WENT WRONG, THREE CHEERS!
 
-    // uncomment this to print data:
+    // uncomment this to print final list of words and definitions:
     // this.tellMeWhatsUp();
 
     // shuffle cards
@@ -474,6 +503,10 @@ class GameSetup{
     gameRestarted = false;
     this.readyToStart = true;
   }
+
+
+
+
 
   // loadacard()
   //
@@ -486,6 +519,10 @@ class GameSetup{
     this.cardIndex+=1;
   }
 
+
+
+
+
   // shufflecards()
   //
   // shuffle card positions at the beginning of a round (definitions of different type
@@ -496,7 +533,6 @@ class GameSetup{
 
     // create empty positions array
     let positions = [];
-
     // push all index values
     for(let i=0; i<game.numberOfCards; i++){
       positions.push(game.cards[i].index);
@@ -504,14 +540,16 @@ class GameSetup{
 
     // shuffle array
     let shuffledPositions = shuffle(positions);
-
     // re-assign positions
     for(let i=0; i<game.numberOfCards; i++){
       game.cards[i].index = shuffledPositions[i];
       game.cards[i].updatePosition();
     }
-
   }
+
+
+
+
 
   // getdifferentrandomnoun()
   //
@@ -534,6 +572,9 @@ class GameSetup{
   }
 
 
+
+
+
   // tellmewhatsup()
   //
   // print final query results.
@@ -550,4 +591,40 @@ class GameSetup{
     console.log("composite definitions: "+this.compositeDefinitions);
     console.log(" ---------- ")
   }
+
+
+
+
+
+  // startagain()
+  //
+  // in the event of a faulty callback, reset the entire chain.
+
+  startAgain(){
+
+    this.readyToStart = false;
+    this.randomWordChosen = false;
+    this.randomWordsChosen = 0;
+    this.synonymsChosen = 0;
+    this.synonymBank = [];
+    this.theWord=0;
+    this.itsDefinition="";
+    this.allNouns = [];
+    this.allDefinitions = [];
+    this.itsSynonyms = [];
+    this.synonymDefinitions = [];
+    this.synonymResults ;
+    this.moreRandomWords = [];
+    this.randomWordsDefinitions = [];
+    this.compositeDefinitions = [];
+    this.compositeWords = [];
+    this.cardIndex=0;
+    this.cards = [];
+    this.startOver = false;
+
+    // start search
+    this.theWord = RiTa.randomWord("nn");
+    this.getRandomWordDefinition(this.theWord);
+  }
+
 }

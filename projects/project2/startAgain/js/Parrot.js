@@ -29,13 +29,15 @@ class Parrot{
     // this variable stores the timeout that triggers a new word definition,
     // for the purpose of being cleared when needed with clearTimeout().
     this.guessTimeout;
+    this.state = "start";
+    this.fills = [];
   }
 
 
-// squawk(input)
-//
-// picks and plays a random parrot sound
-// says the input text outloud using responsiveVoice.
+  // squawk(input)
+  //
+  // picks and plays a random parrot sound
+  // says the input text outloud using responsiveVoice.
 
   squawk(input){
 
@@ -43,7 +45,7 @@ class Parrot{
     // this is meant to prevent some bugs in voice triggers
     if(!gameOver){
 
-// parrot sound:
+      // parrot sound:
       // pause any currently playing parrot sample
       for(let i=0; i<sample.length; i++){
         sample[i].pause();
@@ -59,10 +61,10 @@ class Parrot{
       // play the file
       sample[randomPick].play();
 
-// say the input:
-// stop previous voice
+      // say the input:
+      // stop previous voice
       responsiveVoice.cancel();
-// once parrot sound is done playing
+      // once parrot sound is done playing
       sample[randomPick].onended(function(){
         // say the input outloud
         responsiveVoice.speak(input, parrot.voice, {
@@ -73,10 +75,10 @@ class Parrot{
     }
   }
 
-// sayWordAgain()
-//
-// triggered by voice command "say the word again".
-// get responsivevoice to restate the current word
+  // sayWordAgain()
+  //
+  // triggered by voice command "say the word again".
+  // get responsivevoice to restate the current word
 
   sayWordAgain(){
 
@@ -96,10 +98,10 @@ class Parrot{
     // pick a random card
     let randomPick = floor( random(game.numberOfCards));
 
-      // if this card was checked, find a random card that wasn't checked
-      while(game.cards[randomPick].wasChecked ){
-        randomPick = floor( random(game.numberOfCards));
-      }
+    // if this card was checked, find a random card that wasn't checked
+    while(game.cards[randomPick].wasChecked ){
+      randomPick = floor( random(game.numberOfCards));
+    }
 
     // stop if already in the process of guessing
     if(!currentlyGuessing){
@@ -122,29 +124,29 @@ class Parrot{
     }
   }
 
-// guessingAnnyang()
-//
-// this function setups annyang for guesses by voice command.
+  // guessingAnnyang()
+  //
+  // this function setups annyang for guesses by voice command.
 
-guessingAnnyang(){
-  // add guessing voice commands to annyang
-  if(annyang){
+  guessingAnnyang(){
+    // add guessing voice commands to annyang
+    if(annyang){
 
-    // annyang will check if true, different or false, or repeat this definition.
-    commands = {
-      'true': parrot.checkTrue,
-      'different': parrot.checkDifferent,
-      'fake': parrot.checkComposite,
-      'say the definition again': parrot.sayDefinition,
+      // annyang will check if true, different or false, or repeat this definition.
+      commands = {
+        'true': parrot.checkTrue,
+        'different': parrot.checkDifferent,
+        'fake': parrot.checkComposite,
+        'say the definition again': parrot.sayDefinition,
+      };
+      annyang.addCommands(commands);
     };
-    annyang.addCommands(commands);
-  };
-}
+  }
 
-// startover()
-//
-// triggered by voice command "let's start over shall we".
-// start game from the top.
+  // startover()
+  //
+  // triggered by voice command "let's start over shall we".
+  // start game from the top.
 
   startOver(){
 
@@ -158,10 +160,10 @@ guessingAnnyang(){
   }
 
 
-// thank()
-//
-// triggered by voice command "nice"
-// parrot thanks you when you say nice.
+  // thank()
+  //
+  // triggered by voice command "good bird"
+  // parrot thanks you when you say nice.
 
   thank(){
 
@@ -169,14 +171,14 @@ guessingAnnyang(){
   }
 
 
-// checktrue()
-//
-// triggered by voice command "true".
-// triggers guess checking function.
+  // checktrue()
+  //
+  // triggered by voice command "true".
+  // triggers guess checking function.
 
   checkTrue(){
 
-game.cards[game.whichCard].checkGuess("main word", 0);
+    game.cards[game.whichCard].checkGuess("main word", 0);
   }
 
 
@@ -187,7 +189,7 @@ game.cards[game.whichCard].checkGuess("main word", 0);
 
   checkDifferent(){
 
-game.cards[game.whichCard].checkGuess("random word", "synonym");
+    game.cards[game.whichCard].checkGuess("random word", "synonym");
   }
 
 
@@ -198,7 +200,7 @@ game.cards[game.whichCard].checkGuess("random word", "synonym");
 
   checkComposite(){
 
-game.cards[game.whichCard].checkGuess("composite", 0);
+    game.cards[game.whichCard].checkGuess("composite", 0);
   }
 
 
@@ -209,29 +211,29 @@ game.cards[game.whichCard].checkGuess("composite", 0);
 
   sayDefinition(){
 
-parrot.squawk(game.cards[ game.whichCard ].definition);
+    parrot.squawk(game.cards[ game.whichCard ].definition);
   }
 
 
-// correctguess()
-//
-// triggered by guessing (both by voice command or clicking buttons).
-// triggers reaction text display.
-// triggers defining a new word after a timeout delay.
+  // correctguess()
+  //
+  // triggered by guessing (both by voice command or clicking buttons).
+  // triggers reaction text display.
+  // triggers defining a new word after a timeout delay.
 
   correctGuess(){
 
-//  - trigger reaction text:
-// set reaction text display
+    //  - trigger reaction text:
+    // set reaction text display
     reaction= "correct!!";
     // set animation frame to 0.
     reactionY=0;
 
 
-// squawk a reaction
+    // squawk a reaction
     parrot.squawk("correct!");
 
-//  - define a new word:
+    //  - define a new word:
     // if we haven't reached the end of the round
     if(guesses<maxGuesses){
       // set a timeout after which to define a new word.
@@ -254,113 +256,189 @@ parrot.squawk(game.cards[ game.whichCard ].definition);
     reactionY=0;
 
 
-// squawk a reaction
+    // squawk a reaction
     parrot.squawk("incorrect!");
 
     //  - define a new word:
-        // if we haven't reached the end of the round
+    // if we haven't reached the end of the round
     if(guesses<maxGuesses){
-        // set a timeout after which to define a new word.
+      // set a timeout after which to define a new word.
       clearTimeout(parrot.guessTimeout);
       parrot.guessTimeout = setTimeout( parrot.defineWord, 3000);
     }
   }
 
+  // display()
+  //
+  // handles the parrot animation, its moving along to sound,
+  // and displaying its parts.
+  //
+  // i used trig rather than rotate() to move the parrot's parts.. that's in part
+  // because i had something easier in mind when i started writing this section,
+  // but then i also figured this method at least had the advantage of allowing
+  // me to scale my irregular triangles more easily. so i scaled it, duh.
+  //
+  // the position of everything is calculated from the beak length (including
+  // the rest of the face), and mouthAngle (or difference in beak angle from a
+  // closed position), and the position of the point where the jaws converge.
+
+  // the beak (and eyes) moves with sound! mapping amplitude from a soundfile is rather
+  // easy, but it seems like reading real time TTS like audio is completely impossible,
+  // other than through paid services. drats. 
+  // the result is that the beak follows the chirping sounds exaclty,
+  // but kind of yaps randomly while it is "speaking".
+
+
   display(){
 
-let origin = -0.1*PI;
-
+    // while an audio file is playing, stop the animation and control
+    // the beak angle directly using the audio input
     for( let i=0; i<sample.length; i++){
       if(sample[i].isPlaying()){
+        // stop beak's continuous motion
         this.motion =0;
-
+        // get a reading from the amplifier object
         let level = this.amp.getLevel();
+        // map the sound level to an acceptable range of beak motion
         this.mouthAngle = radians(map( level, 0, 0.5, 2, this.maxMouthMotion*30));
       }
     }
 
+    // if the above isn't happening
+    if(this.motion!=0){
 
-      if(this.motion!=0){
-        if (responsiveVoice.isPlaying()){
-          this.motion +=15;
-        }
-        this.mouthAngle = radians( this.maxMouthMotion*(1.1+sin(radians(this.motion))) );
+      // if responsive voice is saying stuff
+      if (responsiveVoice.isPlaying()){
+        // accelerate beak motion
+        this.motion +=15;
       }
+      // calculate beak angle
+      this.mouthAngle = radians( this.maxMouthMotion*(1.1+sin(radians(this.motion))) );
+    }
 
+    // closed beak angle (beak inclination)
+    let origin = -0.1*PI;
 
-      let beakRamp = 0.6*this.beakLength;
-      let lowerBeakRamp = 0.4*this.beakLength;
+    // distance from the center to the outer points of the beak, from
+    // left to right.
 
-      let topRamp = 1.1*this.beakLength;
-      let tipRamp = 1.25*this.beakLength;
-      let bottomRamp = 1.25*this.beakLength;
+    // top side
+    let beakRamp = 0.6*this.beakLength;
+    let topRamp = 1.1*this.beakLength;
+    let tipRamp = 1.25*this.beakLength;
+    // bottom side
+    let lowerBeakRamp = 0.4*this.beakLength;
+    // tip at the bottom
+    let bottomRamp = 1.25*this.beakLength;
 
-      let rampAngle = radians(75);
-      let lowerRampAngle = radians(55);
+    // center point
+    let aX = this.x;
+    let aY = this.y;
 
-      let aX = this.x;
-      let aY = this.y;
+    // do the trig dance
+    // (calculate x, y pos using distance to point and angle from closed position)
+    let rampAngle = radians(75);
+    let lowerRampAngle = radians(55);
+    let bX = aX+this.beakLength * cos(origin+this.mouthAngle);
+    let bY = aY-this.beakLength * sin(origin+this.mouthAngle);
+    let cX = aX+ beakRamp * cos(origin+this.mouthAngle+rampAngle);
+    let cY = aY- beakRamp * sin(origin+this.mouthAngle+rampAngle);
+    let dX = aX+ topRamp * cos(origin+this.mouthAngle+rampAngle/4);
+    let dY = aY- topRamp * sin(origin+this.mouthAngle+rampAngle/4);
+    let eX = aX+ tipRamp * cos(origin+this.mouthAngle+rampAngle/8);
+    let eY = aY- tipRamp * sin(origin+this.mouthAngle+rampAngle/8);
+    let fX = aX+ bottomRamp * cos(origin+this.mouthAngle-rampAngle/4);
+    let fY = aY- bottomRamp * sin(origin+this.mouthAngle-rampAngle/4);
+    let gX = aX+ lowerBeakRamp * cos(origin-this.mouthAngle/2-lowerRampAngle);
+    let gY = aY- lowerBeakRamp * sin(origin-this.mouthAngle/2-lowerRampAngle);
+    let hX = aX+this.beakLength * cos(origin-this.mouthAngle );
+    let hY = aY-this.beakLength * sin(origin-this.mouthAngle );
 
-      let bX = aX+this.beakLength * cos(origin+this.mouthAngle);
-      let bY = aY-this.beakLength * sin(origin+this.mouthAngle);
+    // setup face
+    let faceDiameter = 1.4*this.beakLength;
+    let faceOffset = this.beakLength/5;
+    noStroke();
+    let faceX = aX-faceOffset * cos(-origin);
+    let faceY = aY-faceOffset * sin(-origin);
 
-      let cX = aX+ beakRamp * cos(origin+this.mouthAngle+rampAngle);
-      let cY = aY- beakRamp * sin(origin+this.mouthAngle+rampAngle);
+    // assign a different set of colours depending on if we're on load screen,
+    // start screen, or game screen.
+    // *these are probably not the colours of a parrot's beak but hey
 
-      let dX = aX+ topRamp * cos(origin+this.mouthAngle+rampAngle/4);
-      let dY = aY- topRamp * sin(origin+this.mouthAngle+rampAngle/4);
+    switch(this.state){
+      case "start":
+      this.fills =   [
+        color(65, 5, 5, 85),
+        color(125, 0, 0, 85),
+        color(185, 185, 20, 85),
+        color(0, 125, 0,85),
+        color(0, 0, 185, 85),
+        color(25, 185, 125, 85),
+        color(125, 0, 125, 85),
+        color(255, 85),
+        color(0, 85)
+      ];
+      break;
+      case "load":
+      this.fills =   [
+        color(125, 180),
+        color(185, 180),
+        color(200, 180),
+        color(210, 180),
+        color(220, 180),
+        color(230, 180),
+        color(240, 180),
+        color(255, 180),
+        color(0, 180)
+      ];
+      break;
+      case "game":
+      this.fills =   [
+        color(65, 5, 5),
+        color(125, 0, 0),
+        color(185, 185, 20),
+        color(0, 125, 0),
+        color(0, 0, 185),
+        color(25, 185, 125),
+        color(125, 0, 125),
+        color(255),
+        color(0)
+      ];
+      break;
+    }
 
-      let eX = aX+ tipRamp * cos(origin+this.mouthAngle+rampAngle/8);
-      let eY = aY- tipRamp * sin(origin+this.mouthAngle+rampAngle/8);
+    // display face
+    fill(this.fills[0]);
+    let jawDiameter = faceOffset*2.3;
+    arc(aX, aY, 0.5*faceDiameter, 0.5*faceDiameter, -origin+this.mouthAngle, -origin-this.mouthAngle);
+    fill(this.fills[1]);
+    arc(faceX, faceY, faceDiameter, 1.1*faceDiameter, -origin+this.mouthAngle, -origin-this.mouthAngle);
 
-      let fX = aX+ bottomRamp * cos(origin+this.mouthAngle-rampAngle/4);
-      let fY = aY- bottomRamp * sin(origin+this.mouthAngle-rampAngle/4);
+    // dislay lips
+    stroke(this.fills[8]);
+    strokeWeight(this.beakLength/18);
+    line(aX, aY, bX, bY);
+    line(aX, aY, hX, hY);
 
-      let gX = aX+ lowerBeakRamp * cos(origin-this.mouthAngle/2-lowerRampAngle);
-      let gY = aY- lowerBeakRamp * sin(origin-this.mouthAngle/2-lowerRampAngle);
+    // display beak
+    noStroke();
+    fill(this.fills[2]);
+    triangle(aX, aY, cX, cY, dX, dY);
+    fill(this.fills[3]);
+    triangle(aX, aY, dX, dY, eX, eY);
+    fill(this.fills[4]);
+    triangle(aX, aY, eX, eY, bX, bY);
+    fill(this.fills[5]);
+    triangle(bX, bY, eX, eY, fX, fY);
+    fill(this.fills[6]);
+    triangle(aX, aY, hX, hY, gX, gY);
 
-      let hX = aX+this.beakLength * cos(origin-this.mouthAngle );
-      let hY = aY-this.beakLength * sin(origin-this.mouthAngle );
-
-      background(255);
-
-
-      let faceDiameter = 1.4*this.beakLength;
-      let faceOffset = this.beakLength/5;
-      noStroke();
-      let faceX = aX-faceOffset * cos(-origin);
-      let faceY = aY-faceOffset * sin(-origin);
-
-      fill(65, 5, 5);
-
-      let jawDiameter = faceOffset*2.3;
-
-      arc(aX, aY, 0.5*faceDiameter, 0.5*faceDiameter, -origin+this.mouthAngle, -origin-this.mouthAngle);
-      fill(125, 0, 0);
-      arc(faceX, faceY, faceDiameter, 1.1*faceDiameter, -origin+this.mouthAngle, -origin-this.mouthAngle);
-
-      stroke(0);
-      strokeWeight(this.beakLength/18);
-      line(aX, aY, bX, bY);
-      line(aX, aY, hX, hY);
-      noStroke();
-
-      fill(185, 185, 20);
-      triangle(aX, aY, cX, cY, dX, dY);
-      fill(0, 125, 0);
-      triangle(aX, aY, dX, dY, eX, eY);
-      fill(0, 0, 185);
-      triangle(aX, aY, eX, eY, bX, bY);
-      fill(25, 185, 125);
-      triangle(bX, bY, eX, eY, fX, fY);
-      fill(125, 0, 125);
-      triangle(aX, aY, hX, hY, gX, gY);
-
-      let eyeDiameter = faceDiameter/6;
-      let eyeTwitch = sin( radians( this.motion )) * eyeDiameter/8;
-      fill(255);
-      ellipse(faceX, faceY,eyeDiameter, eyeDiameter );
-      fill(0);
-      ellipse(faceX + eyeTwitch, faceY, eyeDiameter/2, eyeDiameter/2);
+    // display eyes
+    let eyeDiameter = faceDiameter/6;
+    let eyeTwitch = sin( radians( this.motion )) * eyeDiameter/8;
+    fill(this.fills[7]);
+    ellipse(faceX, faceY,eyeDiameter, eyeDiameter );
+    fill(this.fills[8]);
+    ellipse(faceX + eyeTwitch, faceY, eyeDiameter/2, eyeDiameter/2);
   }
 }
