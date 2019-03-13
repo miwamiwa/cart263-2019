@@ -64,7 +64,7 @@ function displayGameOverScreen(){
   fill(255);
   noStroke();
   textSize(30);
-  text("click to restart!\nor say 'let's start again'\nor say 'good parrot!'", width/2, height/2);
+  text("click to restart!", width/2, height/2);
 
   // increment animation
   gameOverY+=2;
