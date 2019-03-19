@@ -17,6 +17,7 @@ let  legRunMotion;
 let legJumpMotion;
 let armRunMotion;
 let armJumpMotion;
+let armRunMotion2;
 let legSpecs;
 let armSpecs;
 
@@ -27,7 +28,40 @@ let offsetX=0;
 let offsetY =0;
 let offsetZ =0;
 
+let groundFill =0;
+
+let beatStarted1 = false;
+let beatStarted2 = false;
+let synth;
+let synth2;
+let env2;
+let env1;
+let mouseHasBeenPressedOnce = false;
+
 function setup(){
+
+  synth = new p5.Oscillator();
+  env1 = new p5.Envelope();
+
+  env1.setADSR(0.05, 0.2, 0.8, 0.4);
+  env1.setRange(1, 0);
+
+  synth.setType("sine");
+  synth.freq(50);
+  synth.amp(env1);
+  synth.start();
+
+  synth2 = new p5.Oscillator();
+  env2 = new p5.Envelope();
+
+  env2.setADSR(0.05, 0.2, 0.8, 0.4);
+  env2.setRange(1, 0);
+
+  synth2.setType("sine");
+  synth2.freq(50);
+  synth2.amp(env2);
+  synth2.start();
+
 
   armSpecs = {
     thighAngle: 20,
@@ -37,9 +71,10 @@ function setup(){
     thighOrigin2: 10,
     thighDisplacement2: 10,
     kneeAngle: 100,
-    kneeOrigin: 1.5*PI,
+    kneeOrigin: 0.8*PI,
     kneeDisplacement: 0.8*PI,
-    kneeConstrain:0,
+    kneeConstraint1:1* PI,
+    kneeConstraint2:2* PI,
     leanX: 4,
     leanY: 10
   }
@@ -54,18 +89,19 @@ function setup(){
     kneeAngle: 100,
     kneeOrigin: 20*PI/19,
     kneeDisplacement: 5*PI/7,
-    kneeConstrain:1* PI,
+    kneeConstraint1: PI,
+    kneeConstraint2:1.9* PI,
     leanX:0,
     leanY:-4,
   }
 
   legRunMotion = {
    thighPos:0.2*PI,
-   kneePos:0.3*PI,
+   kneePos:0.5*PI,
    thighDif:0.2*PI,
-   kneeDif:0.5,
+   kneeDif:0.2*PI,
    speedDif:1,
-   thighPos2:100,
+   thighPos2:30,
    thighDif2:-10,
  }
 
@@ -80,14 +116,23 @@ function setup(){
  thighDif2:-60,
  }
 
- armRunMotion = {
+ armRunMotion2 = {
   thighPos:1.4,
-  kneePos:-0.3*PI,
+  kneePos:1*PI,
   thighDif:0,
-  kneeDif:-0.3*PI,
+  kneeDif:0.5*PI,
   speedDif:1,
   thighPos2:-15,
   thighDif2:-30,
+}
+armRunMotion = {
+ thighPos:.5*PI,
+ kneePos:-0.3*PI,
+ thighDif:1.8*PI,
+ kneeDif:0.6*PI,
+ speedDif:1,
+ thighPos2:-20,
+ thighDif2:-50,
 }
 
 
@@ -136,17 +181,18 @@ if(keyIsPressed){
 }
 
 
-camera(-200, 0, 800, 0, 0, 0, 0, 1, 0);
-rotateX(-PI/2);
-
+camera(-200, 0, 400, 0, 0, 0, 0, 1, 0);
+//rotateX(-PI/2);
 
   translate(offsetX, offsetY, offsetZ);
+
+displayGround();
 //  rotateY(PI+offsetY);
 //translate(0, 0, 10);
 rotateZ(PI);
 //rotateY(radians(mouseY));
 rotateX( radians(back.leanForward));
-rotateY( sin(radians(frameCount/4))*10 );
+//rotateY( sin(radians(frameCount/4))*10 );
 translate(10,0,0)
 push();
 
@@ -174,8 +220,8 @@ head.display();
 
 
 
-velocity = 1;
-
+velocity = map(mouseX, 0, width, 0, 2);
+//velocity = 1;
 
 noStroke();
 fill(0);
@@ -195,6 +241,8 @@ function keyPressed(){
 }
 
 function mousePressed(){
+
+  mouseHasBeenPressedOnce = true;
   let legClickMotion = {
  thighPos:-(1.5+mouseX/width)*PI,
  kneePos:4,
@@ -218,4 +266,14 @@ thighDif2:20,
   limbs[1].fireTempMotion(legClickMotion, 25, 10);
   limbs[3].fireTempMotion(legClickMotion, 25, 10);
   back.leanForward *=-1;
+}
+
+
+function displayGround(){
+  push();
+  fill(groundFill);
+  translate(-100, 100, -100)
+  rotateX(PI/2.1)
+  rect(0, 0, 200, 200);
+  pop();
 }

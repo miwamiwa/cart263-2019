@@ -46,7 +46,8 @@ class Limb{
       angle: specs.kneeAngle,
       origin: specs.kneeOrigin,
       displacement: specs.kneeDisplacement,
-      constraint: specs.kneeConstrain
+      constraint1: specs.kneeConstraint1,
+      constraint2: specs.kneeConstraint2
     }
 
     this.shin = {
@@ -87,7 +88,8 @@ class Limb{
     }
 
     let frame = frameCount * velocity - this.phase;
-    let speedFact = map(mouseX, 0, width, 0, 0.5) * thisFrame.speedDif;
+    let speedFact = map(mouseX, 0, width, 0, 1) * thisFrame.speedDif;
+//let speedFact = 0.5;
 
     let thighDisplacement = this.thigh.displacement * speedFact * thisFrame.thighPos;
     let thighDisplacement2 = this.thigh.displacement2 * speedFact * thisFrame.thighPos2;
@@ -101,28 +103,40 @@ class Limb{
     let leanX = this.leanX*velocity;
     let leanY = this.leanY*velocity;
 
-    this.waist.y = this.centerY + map (sin( radians(frame*this.speed)), -1, 1, this.waist.minDY, this.waist.maxDY)+leanX;
-    this.waist.x = this.centerX + map (sin( radians(frame*this.speed)), -1, 1, this.waist.minDX, this.waist.maxDX)+leanY;
-    this.thigh.angle = map (sin( radians(frame*this.speed )), -1, 1, thighOrigin- thighDisplacement, thighOrigin+thighDisplacement);
+    let currentAngle = radians(frame*this.speed);
 
-    this.thigh.angle2 = map (cos( radians(frame*this.speed)), -1, 1,thighOrigin2 + thighDisplacement2, thighOrigin2- thighDisplacement2);
-
-    this.knee.angle = map (sin( radians(frame*this.speed)), -1, 1, kneeOrigin- kneeDisplacement, kneeOrigin+ kneeDisplacement);
-
-    if(this.knee.constraint!=0){
-      this.knee.angle = constrain(this.knee.angle,  this.knee.constraint, 2*PI  )
+    let inverseMotion=1;
+    if(this.xflip===-1 ){
+      inverseMotion = -1;
+      console.log("HI")
     }
+    else {
+      console.log("HEY")
+    }
+
+    this.waist.y = this.centerY + map (sin( currentAngle), -1, 1, this.waist.minDY, this.waist.maxDY)+leanX;
+    this.waist.x = this.centerX + map (sin( currentAngle), -1, 1, this.waist.minDX, this.waist.maxDX)+leanY;
+    this.thigh.angle = map (sin( radians(frame*this.speed )), inverseMotion*(-1), inverseMotion*1, thighOrigin- thighDisplacement, thighOrigin+thighDisplacement);
+
+    this.thigh.angle2 = map (cos( currentAngle), -1, 1,thighOrigin2 + thighDisplacement2, thighOrigin2- thighDisplacement2);
+
+    this.knee.angle = map (sin( currentAngle), -1, 1, kneeOrigin- kneeDisplacement, kneeOrigin+ kneeDisplacement);
+
+    if(this.knee.constraint1!=0){
+      this.knee.angle = constrain(this.knee.angle,  this.knee.constraint1, this.knee.constraint2  )
+    }
+
 
     push();
     strokeWeight(1);
-    stroke(45, 185);
+    stroke(45, 255);
     let greenFill = 100+cos(radians(frameCount*2 ))*85;
     let redFill = 100+cos(radians(frameCount/1.1))*65;
     fill(redFill, greenFill, 45, 115);
 
     rotateZ(this.xflip*radians(this.thigh.angle2))
     rotateX(this.flip*this.thigh.angle - radians(back.leanForward));
-    rotateY(PI+this.direction);
+    rotateY(this.direction*PI);
 
     //rotateZ(this.xflip*this.thigh.angle2)
 
@@ -137,8 +151,56 @@ class Limb{
     translate(0,  this.thigh.length/2, 0);
 
     box(10, this.thigh.length, 10);
-
     pop();
+
+if(mouseHasBeenPressedOnce){
+    this.checkPos(thighOrigin);
+}
+
+  }
+
+  checkPos(input){
+
+    if(
+      this.thigh.angle - this.current.thighDif <= - 1/(4)
+    && this.flip === 1
+  ){
+      groundFill = color(255, 0, 0);
+
+
+        //console.log(this.thigh.angle);
+
+      if(this.xflip ===1){
+         beatStarted1 = false
+      }
+      else if (this.xflip ===-1){
+           beatStarted2 = false
+      }
+    }
+    else if(
+   this.flip === 1 && this.xflip ===1
+  ){
+      groundFill = color(0);
+      if(!beatStarted1){
+        beatStarted1 = true;
+      //  beatStarted1 = setTimeout(function(){ beatStarted1 = false }, velocity/4)
+        console.log("hey")
+        synth.freq( random(1, 4) * 100)
+        env1.play();
+      }
+    }
+    else if(
+   this.flip === 1 && this.xflip ===-1
+  ){
+      groundFill = color(0);
+      if(!beatStarted2){
+        beatStarted2 = true;
+    //    beatStarted2 = setTimeout(function(){ beatStarted2 = false }, velocity/4)
+        console.log("hey2")
+        synth2.freq( random(1, 4) * 100)
+        env2.play();
+      }
+    }
   }
 
   fireTempMotion(motion, length, transition){
