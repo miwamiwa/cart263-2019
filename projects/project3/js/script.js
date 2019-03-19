@@ -108,10 +108,10 @@ function setup(){
 
   legJumpMotion = {
  thighPos:0,
- kneePos:4,
- thighDif:0,
- kneeDif:0,
- speedDif:5,
+ kneePos:1*PI,
+ thighDif:.5*PI,
+ kneeDif:-1,
+ speedDif:1,
  thighPos2:30,
  thighDif2:-60,
  }
@@ -127,12 +127,12 @@ function setup(){
 }
 armRunMotion = {
  thighPos:.5*PI,
- kneePos:-0.3*PI,
- thighDif:1.8*PI,
+ kneePos:0.3*PI,
+ thighDif:-0.1*PI,
  kneeDif:0.6*PI,
  speedDif:1,
- thighPos2:-20,
- thighDif2:-50,
+ thighPos2:-3,
+ thighDif2:-80,
 }
 
 
@@ -185,7 +185,7 @@ camera(-200, 0, 400, 0, 0, 0, 0, 1, 0);
 //rotateX(-PI/2);
 
   translate(offsetX, offsetY, offsetZ);
-
+checkGround();
 displayGround();
 //  rotateY(PI+offsetY);
 //translate(0, 0, 10);
@@ -235,8 +235,8 @@ function keyPressed(){
 
     limbs[0].fireTempMotion(armJumpMotion, 50, 20);
     limbs[2].fireTempMotion(armJumpMotion, 50, 20);
-    limbs[1].fireTempMotion(legJumpMotion, 50, 50);
-    limbs[3].fireTempMotion(legJumpMotion, 50, 50);
+    limbs[1].fireTempMotion(legJumpMotion, 50, 20);
+    limbs[3].fireTempMotion(legJumpMotion, 50, 20);
   }
 }
 
@@ -253,12 +253,12 @@ function mousePressed(){
  thighDif2:-30,
  }
  let armClickMotion = {
-thighPos:-1.4*PI,
+thighPos:.4*PI,
 kneePos:-1,
-thighDif:0.75*PI,
+thighDif:-0.75*PI,
 kneeDif:0.25*PI,
 speedDif:0.7,
-thighPos2:40,
+thighPos2:-8,
 thighDif2:20,
 }
   limbs[0].fireTempMotion(armClickMotion, 25, 10);
@@ -276,4 +276,35 @@ function displayGround(){
   rotateX(PI/2.1)
   rect(0, 0, 200, 200);
   pop();
+}
+
+function checkGround(){
+  groundFill = color(0);
+
+if(
+ -1*abs(limbs[1].thigh.angle) + abs(limbs[1].current.thighDif) >= 0.163*PI
+){
+  groundFill = color(0, 255, 0);
+  if(!beatStarted1){
+    beatStarted1 = true;
+    beatStarted2 = false;
+
+    synth.freq( random(3, 6) * 100)
+    env1.play();
+    //console.log("one");
+  }
+}
+else if(
+abs(limbs[3].thigh.angle) - abs(limbs[3].current.thighDif) >= -0.1*PI
+){
+groundFill = color( 255, 0, 0);
+if(!beatStarted2){
+  beatStarted2 = true;
+  beatStarted1 = false;
+
+  synth2.freq( random(3, 6) * 100)
+  env2.play();
+//  console.log("two");
+}
+}
 }

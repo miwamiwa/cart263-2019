@@ -108,10 +108,10 @@ class Limb{
     let inverseMotion=1;
     if(this.xflip===-1 ){
       inverseMotion = -1;
-      console.log("HI")
+  //    console.log("HI")
     }
     else {
-      console.log("HEY")
+  //    console.log("HEY")
     }
 
     this.waist.y = this.centerY + map (sin( currentAngle), -1, 1, this.waist.minDY, this.waist.maxDY)+leanX;
@@ -154,54 +154,12 @@ class Limb{
     pop();
 
 if(mouseHasBeenPressedOnce){
-    this.checkPos(thighOrigin);
+    //this.checkPos(thighOrigin);
 }
 
   }
 
-  checkPos(input){
 
-    if(
-      this.thigh.angle - this.current.thighDif <= - 1/(4)
-    && this.flip === 1
-  ){
-      groundFill = color(255, 0, 0);
-
-
-        //console.log(this.thigh.angle);
-
-      if(this.xflip ===1){
-         beatStarted1 = false
-      }
-      else if (this.xflip ===-1){
-           beatStarted2 = false
-      }
-    }
-    else if(
-   this.flip === 1 && this.xflip ===1
-  ){
-      groundFill = color(0);
-      if(!beatStarted1){
-        beatStarted1 = true;
-      //  beatStarted1 = setTimeout(function(){ beatStarted1 = false }, velocity/4)
-        console.log("hey")
-        synth.freq( random(1, 4) * 100)
-        env1.play();
-      }
-    }
-    else if(
-   this.flip === 1 && this.xflip ===-1
-  ){
-      groundFill = color(0);
-      if(!beatStarted2){
-        beatStarted2 = true;
-    //    beatStarted2 = setTimeout(function(){ beatStarted2 = false }, velocity/4)
-        console.log("hey2")
-        synth2.freq( random(1, 4) * 100)
-        env2.play();
-      }
-    }
-  }
 
   fireTempMotion(motion, length, transition){
 
