@@ -156,10 +156,7 @@ class Limb{
 if(mouseHasBeenPressedOnce){
     //this.checkPos(thighOrigin);
 }
-
   }
-
-
 
   fireTempMotion(motion, length, transition){
 
@@ -242,11 +239,5 @@ if(mouseHasBeenPressedOnce){
       result.thighDif2 = this.current.thighDif2;
     }
     return result;
-  }
-
-  display(){
-
-    //line(this.waist.x,this.waist.y, this.knee.x, this.knee.y);
-    //line(this.knee.x, this.knee.y, this.foot.x, this.foot.y);
   }
 }
