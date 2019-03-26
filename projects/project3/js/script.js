@@ -29,10 +29,12 @@ let env2;
 let env1;
 let mouseHasBeenPressedOnce = false;
 
+let hipMove;
+
 function setup(){
 
   createCanvas(window.innerWidth, window.innerHeight, WEBGL);
-  setupInstruments();
+//  setupInstruments();
   loadMoves();
   setupBody();
 }
@@ -45,9 +47,9 @@ function setupBody(){
 
   for (let i=0; i<2; i++){
 
-    limbs.push(new Limb(200, 240, i*23, 50, armSpecs, 2,1-  2*i));
+    limbs.push(new Limb(200, 240, i*30, 50, armSpecs, 2,1-  2*i));
     limbs[limbs.length-1].changeCurrentMotion(armRunMotion, 10);
-    limbs.push(new Limb(200, 130, 23-i*23, 60, legSpecs, 0,1- 2*i));
+    limbs.push(new Limb(200, 130, 30-i*30, 60, legSpecs, 0,1- 2*i));
     limbs[limbs.length-1  ].changeCurrentMotion(legRunMotion, 10);
   }
 }
@@ -84,11 +86,17 @@ function handleInput(){
 
 function displayDude(){
 
-  rotateZ(PI);
+  hipMove = sin( radians(frameCount*4))/20;
+translate(hipMove*50, limbs[1].currentHeight, 0)
+  rotateZ(PI+hipMove);
+
   rotateX( radians(back.leanForward));
   translate(-shoulderDistance/2,0,0);
 
   push();
+
+
+     rotateZ(-5*hipMove);
   limbs[1].update();
 
   translate(shoulderDistance, 0, 0);
@@ -96,6 +104,7 @@ function displayDude(){
   pop();
 
   push();
+
   translate(0, back.length, hipDistance/2- shoulderDistance/2 );
   limbs[0].update();
 
@@ -116,7 +125,7 @@ function setupInstruments(){
   env1 = new p5.Envelope();
   env1.setADSR(0.05, 0.2, 0.8, 0.4);
   env1.setRange(1, 0);
-  synth.setType("sine");
+  synth.setType("square");
   synth.freq(50);
   synth.amp(env1);
   synth.start();
@@ -125,9 +134,8 @@ function setupInstruments(){
   env2 = new p5.Envelope();
   env2.setADSR(0.05, 0.2, 0.8, 0.4);
   env2.setRange(1, 0);
-  synth2.setType("sine");
+  synth2.setType("square");
   synth2.freq(50);
-  synth2.amp(env2);
   synth2.start();
 }
 
@@ -135,6 +143,7 @@ function setupInstruments(){
 function keyPressed(){
 
   if(key===" "){
+    mouseHasBeenPressedOnce = true;
 
     limbs[0].fireTempMotion(armJumpMotion, 50, 20);
     limbs[2].fireTempMotion(armJumpMotion, 50, 20);
@@ -148,10 +157,10 @@ function mousePressed(){
 
   mouseHasBeenPressedOnce = true;
 
-  limbs[0].fireTempMotion(armClickMotion, 250, 100);
-  limbs[2].fireTempMotion(armClickMotion, 250, 100);
-  limbs[1].fireTempMotion(legClickMotion, 32, 15);
-  limbs[3].fireTempMotion(legClickMotion, 32, 15);
+  limbs[0].fireTempMotion(armJumpMotion, 55, 10);
+  limbs[2].fireTempMotion(armJumpMotion, 55, 10);
+  limbs[1].fireTempMotion(legsOnTheFloor, 32, 25);
+  limbs[3].fireTempMotion(legsOnTheFloor, 32, 25);
 }
 
 
@@ -179,7 +188,7 @@ function checkGround(){
 
       beatStarted1 = true;
       beatStarted2 = false;
-      synth.freq( random(3, 6) * 100)
+      synth.freq( random(3, 6) * 20)
       env1.play();
     }
   }
@@ -191,7 +200,7 @@ function checkGround(){
 
       beatStarted2 = true;
       beatStarted1 = false;
-      synth2.freq( random(3, 6) * 100)
+      synth2.freq( random(3, 6) * 20)
       env2.play();
     }
   }

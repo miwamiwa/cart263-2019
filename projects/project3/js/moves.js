@@ -33,7 +33,8 @@ function loadMoves(){
   }
 
 // light dancing feet
-  legRun3Motion = {
+  legRunMotion = {
+    height:0,
    thighPos:0.2*PI,
    kneePos:0.5*PI,
    thighDif:0.2*PI,
@@ -45,17 +46,19 @@ function loadMoves(){
 
 // whip legs around
   legJumpMotion = {
+    height:-100,
   thighPos:0,
   kneePos:1*PI,
   thighDif:.5*PI,
   kneeDif:-1,
   speedDif:1,
   thighPos2:30,
-  thighDif2:-60,
+  thighDif2:40,
   }
 
   // swing left leg, stand/jump on right
-    legRunMotion = {
+    legJumpMotion2 = {
+      height:0,
       thighPos:(-1.1)*PI,
       kneePos:0.6*PI,
       thighDif:+0.2*PI,
@@ -65,8 +68,35 @@ function loadMoves(){
       thighDif2:-1*PI,
     }
 
+    // do it on the floor
+      legsOnTheFloor = {
+        height:100,
+
+        thighPos:(0.2)*PI,
+        thighDif:+0.8*PI,
+
+        thighPos2:-1.2*PI,
+        thighDif2:-0.5*PI,
+
+        kneePos:-0.5*PI,
+        kneeDif:+0.2*PI,
+
+        speedDif:0.3,
+      }
+
+      // macarena arms (touching shoulders)
+       armJumpMotion = {
+        thighPos:0.2*PI,
+        kneePos:-0.6*PI,
+        thighDif:-0.25*PI,
+        kneeDif:0.75*PI,
+        speedDif:0.7,
+        thighPos2:16,
+        thighDif2:-30,
+      }
+
     // macarena arms (touching shoulders)
-     armRunMotion = {
+     armRunMotion2 = {
       thighPos:0.2*PI,
       kneePos:-0.6*PI,
       thighDif:-0.25*PI,
@@ -77,7 +107,7 @@ function loadMoves(){
     }
 
 // back and forth elbows
-  armRunMotion2 = {
+  armRunMotionY = {
   thighPos:0.6*PI,
   kneePos:0.3*PI,
   thighDif:0,
@@ -88,7 +118,7 @@ function loadMoves(){
   }
 
   // party hands
-  armRun3Motion = {
+  armRunMotionZ = {
   thighPos:.5*PI,
   kneePos:0.3*PI,
   thighDif:-0.1*PI,
@@ -99,7 +129,7 @@ function loadMoves(){
   }
 
 // arms extended in front
-  armJumpMotion = {
+  armRunMotion2 = {
     thighPos:0.1,
     kneePos:0.4,
     thighDif:- 0.2*PI,
@@ -111,6 +141,7 @@ function loadMoves(){
 
   // kick left leg
     legClickMotion = {
+      height:0,
       thighPos:-(1.1)*PI,
       kneePos:4,
       thighDif:+0.2*PI,
@@ -119,6 +150,22 @@ function loadMoves(){
       thighPos2:15,
       thighDif2:-30,
     }
+
+    // hands in the air2
+     armRunMotion = {
+      thighPos:-.8*PI,
+      thighDif:-0.6*PI,
+
+      thighPos2:-30,
+      thighDif2:20,
+
+      kneePos:1*PI,
+      kneeDif:0.5*PI,
+      speedDif:0.1,
+
+    }
+
+
     // hands in the air
      armClickMotion = {
       thighPos:.4*PI,

@@ -16,7 +16,12 @@ class Back{
 
 update(){
 
-this.leanForward =  map(-velocity, 0, 1.8, 0, 50) + sin(radians(frameCount))*10;
+let backHeight = limbs[1].backHeight;
+if(backHeight<0){
+  backHeight = abs(backHeight*1.5);
+};
+
+this.leanForward =  map(-velocity, 0, 1.8, 0, 50) + sin(radians(frameCount))*10 + backHeight/2;
   this.neck = {
     x:0,
     y:0,
