@@ -38,20 +38,6 @@ function setup(){
 }
 
 
-function draw(){
-
-  handleInput();
-
-  background(25, 45, 135);
-  camera(-200, 0, 400, 0, 0, 0, 0, 1, 0);
-
-  translate(offsetX, offsetY, offsetZ);
-  checkGround();
-  displayGround();
-  displayDude();
-}
-
-
 function setupBody(){
 
   back = new Back();
@@ -67,10 +53,24 @@ function setupBody(){
 }
 
 
+function draw(){
+
+  handleInput();
+
+  background(25, 45, 135);
+  camera(-200, 0, 400, 0, 0, 0, 0, 1, 0);
+
+  translate(offsetX, offsetY, offsetZ);
+//  checkGround();
+  displayGround();
+  displayDude();
+}
+
+
 function handleInput(){
 
-  velocity = map(mouseX, 0, width, 0, 2);
-
+  //velocity = map(mouseX, 0, width, 0, 2);
+  velocity = 0.8;
   if(keyIsPressed){
     switch(key){
       case "w": offsetZ -=1; break;
@@ -161,6 +161,7 @@ function displayGround(){
   fill(groundFill);
   translate(-100, 100, -100)
   rotateX(PI/2.1)
+  noStroke();
   rect(0, 0, 200, 200);
   pop();
 }

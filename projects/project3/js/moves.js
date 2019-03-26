@@ -11,7 +11,7 @@ function loadMoves(){
     kneeOrigin: 0.8*PI,
     kneeDisplacement: 0.8*PI,
     kneeConstraint1:1* PI,
-    kneeConstraint2:2* PI,
+    kneeConstraint2:1.9* PI,
     leanX: 4,
     leanY: 10
   }
@@ -33,7 +33,7 @@ function loadMoves(){
   }
 
 // light dancing feet
-  legRunMotion = {
+  legRun3Motion = {
    thighPos:0.2*PI,
    kneePos:0.5*PI,
    thighDif:0.2*PI,
@@ -54,6 +54,28 @@ function loadMoves(){
   thighDif2:-60,
   }
 
+  // swing left leg, stand/jump on right
+    legRunMotion = {
+      thighPos:(-1.1)*PI,
+      kneePos:0.6*PI,
+      thighDif:+0.2*PI,
+      kneeDif:+0.15*PI,
+      speedDif:0.3,
+      thighPos2:-1*PI,
+      thighDif2:-1*PI,
+    }
+
+    // macarena arms (touching shoulders)
+     armRunMotion = {
+      thighPos:0.2*PI,
+      kneePos:-0.6*PI,
+      thighDif:-0.25*PI,
+      kneeDif:0.75*PI,
+      speedDif:0.7,
+      thighPos2:16,
+      thighDif2:-30,
+    }
+
 // back and forth elbows
   armRunMotion2 = {
   thighPos:0.6*PI,
@@ -66,7 +88,7 @@ function loadMoves(){
   }
 
   // party hands
-  armRunMotion = {
+  armRun3Motion = {
   thighPos:.5*PI,
   kneePos:0.3*PI,
   thighDif:-0.1*PI,
@@ -87,24 +109,24 @@ function loadMoves(){
     thighDif2:0,
   }
 
-// kick left leg
-  legClickMotion = {
-    thighPos:-(1.1)*PI,
-    kneePos:4,
-    thighDif:+0.2*PI,
-    kneeDif:+0.5*PI,
-    speedDif:0.8,
-    thighPos2:15,
-    thighDif2:-30,
-  }
-  // hands in the air
-   armClickMotion = {
-    thighPos:.4*PI,
-    kneePos:-1,
-    thighDif:-0.75*PI,
-    kneeDif:0.25*PI,
-    speedDif:0.7,
-    thighPos2:-8,
-    thighDif2:20,
-  }
+  // kick left leg
+    legClickMotion = {
+      thighPos:-(1.1)*PI,
+      kneePos:4,
+      thighDif:+0.2*PI,
+      kneeDif:+0.5*PI,
+      speedDif:0.8,
+      thighPos2:15,
+      thighDif2:-30,
+    }
+    // hands in the air
+     armClickMotion = {
+      thighPos:.4*PI,
+      kneePos:-1,
+      thighDif:-0.75*PI,
+      kneeDif:0.25*PI,
+      speedDif:0.7,
+      thighPos2:-8,
+      thighDif2:20,
+    }
 }
