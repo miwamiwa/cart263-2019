@@ -11,7 +11,7 @@ class Limb{
     if(direction===2){
       this.flip = 1;
     }
-
+this.footHitGround = false;
     this.centerX = x;
     this.centerY = y;
     this.phase = phase;
@@ -163,15 +163,33 @@ let speedFact = 0.5 * thisFrame.speedDif;
     box(10, this.thigh.length, 10);
     pop();
 
-    push();
+
+
+
+  // ----------------- DETECT COMBINED THIGH AND KNEE ANGLE!!!!!!! -------------------
+      push();
+let translate1 = this.thigh.length * ( sin(this.flip*this.thigh.angle - radians(back.leanForward)) + sin(this.knee.angle) );
+let translate2 = this.thigh.length * ( cos(this.direction*this.thigh.angle - radians(back.leanForward)) + cos(this.knee.angle) );
+let translate3 = this.thigh.length * ( this.xflip*radians(this.thigh.angle2) );
+
+if(translate2<0&& !this.footHitGround && this.direction === 0){
+  console.log("boomz")
+  this.footHitGround = true;
+}
+if(translate2>0 && this.footHitGround  && this.direction === 0){
+  this.footHitGround = false;
+}
+
+pop();
+/*
     translate(
-      this.thigh.length * ( sin(this.flip*this.thigh.angle - radians(back.leanForward)) + sin(this.knee.angle) ),
-      this.thigh.length * ( cos(this.flip*this.thigh.angle - radians(back.leanForward)) + cos(this.knee.angle) ),
-      this.thigh.length * ( sin(this.thigh.angle2) + sin( 0 ) ),
+translate3, translate2, translate1
     );
     fill(0);
     box(40);
-pop();
+    --------------------------------------------------------------------------
+    */
+
 
   }
 
