@@ -63,7 +63,7 @@ function draw(){
   camera(-200, 0, 400, 0, 0, 0, 0, 1, 0);
 
   translate(offsetX, offsetY, offsetZ);
-//  checkGround();
+  checkGround();
   displayGround();
   displayDude();
 }
@@ -142,13 +142,10 @@ function setupInstruments(){
 
 function keyPressed(){
 
-  if(key===" "){
-    mouseHasBeenPressedOnce = true;
-
-    limbs[0].fireTempMotion(armJumpMotion, 50, 20);
-    limbs[2].fireTempMotion(armJumpMotion, 50, 20);
-    limbs[1].fireTempMotion(legJumpMotion, 50, 20);
-    limbs[3].fireTempMotion(legJumpMotion, 50, 20);
+  switch(key){
+    case "z": tempMotion1(); break;
+    case "x": danceMotion1(); break;
+    case "c": danceMotion0(); break;
   }
 }
 
@@ -178,6 +175,9 @@ function displayGround(){
 
 function checkGround(){
 
+
+
+/*
   groundFill = color(0);
 
   if(
@@ -204,4 +204,6 @@ function checkGround(){
       env2.play();
     }
   }
+
+  */
 }

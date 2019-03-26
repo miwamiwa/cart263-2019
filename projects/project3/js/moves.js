@@ -32,17 +32,30 @@ function loadMoves(){
     leanY:-4,
   }
 
-// light dancing feet
-  legRunMotion = {
-    height:0,
-   thighPos:0.2*PI,
-   kneePos:0.5*PI,
-   thighDif:0.2*PI,
-   kneeDif:0.2*PI,
-   speedDif:1,
-   thighPos2:30,
-   thighDif2:-10,
-  }
+  // light dancing feet
+    legRunMotion = {
+      height:0,
+     thighPos:0.2*PI,
+     kneePos:0.5*PI,
+     thighDif:0.2*PI,
+     kneeDif:0.2*PI,
+     speedDif:1,
+     thighPos2:30,
+     thighDif2:-10,
+    }
+
+
+    // light dancing feet
+      legRunMotion2 = {
+        height:0,
+       thighPos:0.6*PI,
+       kneePos:0.5*PI,
+       thighDif:0.2*PI,
+       kneeDif:0.2*PI,
+       speedDif:1,
+       thighPos2:10,
+       thighDif2:-20,
+      }
 
 // whip legs around
   legJumpMotion = {
@@ -176,4 +189,26 @@ function loadMoves(){
       thighPos2:-8,
       thighDif2:20,
     }
+}
+
+
+function tempMotion1(){
+  limbs[0].fireTempMotion(armJumpMotion, 50, 20);
+  limbs[2].fireTempMotion(armJumpMotion, 50, 20);
+  limbs[1].fireTempMotion(legJumpMotion, 50, 20);
+  limbs[3].fireTempMotion(legJumpMotion, 50, 20);
+}
+
+function danceMotion1(){
+  limbs[0].changeCurrentMotion(armRunMotionY, 100);
+  limbs[2].changeCurrentMotion(armRunMotionY, 100);
+  limbs[1].changeCurrentMotion(legRunMotion2, 100);
+  limbs[3].changeCurrentMotion(legRunMotion2, 100);
+}
+
+function danceMotion0(){
+  limbs[0].changeCurrentMotion(armRunMotion, 10);
+  limbs[2].changeCurrentMotion(armRunMotion, 10);
+  limbs[1].changeCurrentMotion(legRunMotion, 10);
+  limbs[3].changeCurrentMotion(legRunMotion, 10);
 }

@@ -163,6 +163,15 @@ let speedFact = 0.5 * thisFrame.speedDif;
     box(10, this.thigh.length, 10);
     pop();
 
+    push();
+    translate(
+      this.thigh.length * ( sin(this.flip*this.thigh.angle - radians(back.leanForward)) + sin(this.knee.angle) ),
+      this.thigh.length * ( cos(this.flip*this.thigh.angle - radians(back.leanForward)) + cos(this.knee.angle) ),
+      this.thigh.length * ( sin(this.thigh.angle2) + sin( 0 ) ),
+    );
+    fill(0);
+    box(40);
+pop();
 
   }
 
@@ -180,6 +189,7 @@ let speedFact = 0.5 * thisFrame.speedDif;
     this.transitionLength = transition;
     this.last = this.current;
     this.current = motion;
+    this.transition = 1;
   }
 
   tempMotion(){
