@@ -179,7 +179,7 @@ class Limb{
     if(this.flip===-1){
       if(translate2<0&& !this.footHitGround){
 
-        nextLegNote();
+        //nextLegNote();
 
         this.footHitGround = true;
 
@@ -197,7 +197,7 @@ class Limb{
     if(this.flip===1){
       if(translate2<0&& !this.footHitGround){
 
-        nextArmNote();
+        //nextArmNote();
         this.footHitGround = true;
       }
       if(translate2>0 && this.footHitGround){

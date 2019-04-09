@@ -17,7 +17,20 @@ class UI{
     for (let i=0; i<16; i++){
       this.timelineNotes[i] = -1;
     }
-    this.timelineSelector = 0;
+    this.selectedTimelineElement = 0;
+    this.selectedTimeline =-1;
+    this.hoveredTimeline =-1;
+    this.hoveredElement = -1;
+
+    this.timelines = new Array(3);
+
+for (let i = 0; i < 3; i++) {
+  this.timelines[i] = new Array(16);
+  for(let j=0; j<16; j++){
+    this.timelines[i][j] = -1;
+  }
+
+}
 
   }
 
@@ -63,40 +76,88 @@ class UI{
     let beats = 16;
     let timelineX = -timelineW/2;
     let timelineY = this.h*0.38;
-    let timelineH = this.h/16;
+    let timelineH = this.h/32;
     let beatW = timelineW/beats;
+translate(0, timelineY, 0);
+
+push();
+for(let i=0; i<3; i++){
+  translate(0, timelineH, 0);
+  rect(timelineX, 0, timelineW, timelineH);
+}
+    pop();
 
 
-    translate(0, timelineY, 0);
-    rect(timelineX, 0, timelineW, timelineH);
+for(let j=0; j<3; j++){
+
 
     for(let i=0; i<16; i++){
-      fill(255);
 
-      if(this.timelineNotes[i]!=-1) fill(45, 145, 12);
-
-      if(this.noteEditMode && i=== this.timelineSelector) fill(185, 200, 85);
+      if(this.noteEditMode && i=== this.selectedTimelineElement) fill(185, 200, 85);
 
       if(
         mouseX > width/2+(timelineX+i*beatW)*this.camScaleX
         && mouseX < width/2+(timelineX+(i+1)*beatW)*this.camScaleX
-        && mouseY > height/2+(timelineY)*this.camScaleY
-        && mouseY < height/2+(timelineY+timelineH)*this.camScaleY
+        && mouseY > height/2+(timelineY+(j)*timelineH)*this.camScaleY
+        && mouseY < height/2+(timelineY+(j+1)*timelineH)*this.camScaleY
+
         && !this.noteEditMode
       ){
-        fill(255, 0, 0);
+        //fill(255, 0, 0);
+        this.hoveredTimeline = j;
+        this.hoveredElement = i;
 
         if(mouseIsPressed){
-          console.log("\n edit mode start");
+
           this.noteEditMode = true;
-          this.timelineSelector = i;
+          this.selectedTimelineElement = i;
+          this.selectedTimeline = j;
+
+          console.log("\n edit mode start. timeline is "+this.selectedTimeline+", element is "+this.selectedTimelineElement);
           // clicked on timeline element i
 
         }
       }
-
-      rect(timelineX+i*beatW, 0, beatW, timelineH);
     }
+  }
+
+  if (
+    mouseX < width/2+(timelineX)*this.camScaleX
+    && mouseX > width/2+(timelineX+(17)*beatW)*this.camScaleX
+    && mouseY < height/2+(timelineY)*this.camScaleY
+    && mouseY >height/2+(timelineY+(4)*timelineH)*this.camScaleY
+  ){
+    this.hoveredTimeline = -1;
+    this.hoveredElement = -1;
+  }
+push();
+translate(timelineX, 0, 0);
+for(let i=0; i<16; i++){
+  for(let h=0; h<3; h++){
+    fill(255);
+    push();
+
+        if(this.timelines[h][i]!=-1) fill(45, 145, 12);
+
+    if(this.hoveredTimeline===h && this.hoveredElement === i){
+      fill(255, 100, 100);
+    }
+
+    if(this.selectedTimeline===h && this.selectedTimelineElement === i){
+      fill(255, 0, 0);
+    }
+
+
+    translate(i*beatW, h*timelineH, 0);
+    rect(0, 0, beatW, timelineH);
+    pop();
+  }
+}
+pop();
+
+
+
+
     pop();
   }
 
@@ -126,7 +187,7 @@ class UI{
 
       if(
         this.noteEditMode
-        && i === this.timelineNotes [ this.timelineSelector ]
+        && i === this.timelines[this.selectedTimeline][ this.selectedTimelineElement ]
       ){
         fill(12, 35, 145);
       }
@@ -143,8 +204,11 @@ class UI{
           // clicked on note i
           console.log("\n edit mode stop");
           this.noteEditMode = false;
-          this.timelineNotes[ this.timelineSelector ] = i;
-          console.log("\nset timeline element "+this.timelineSelector+" to value "+i);
+          this.timelines[this.selectedTimeline][ this.selectedTimelineElement ] = i;
+          this.selectedTimeline = -1;
+          this.selectedTimelineElement = -1;
+
+          console.log("\nset timeline element "+this.selectedTimelineElement+" to value "+i);
         }
       }
       rect(i*noteWidth, 0, noteWidth, kbH);

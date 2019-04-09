@@ -27,6 +27,10 @@ let synth;
 let synth2;
 let env2;
 let env1;
+
+let envelopes = [3];
+let synths = [3];
+
 let mouseHasBeenPressedOnce = false;
 
 let hipMove;
@@ -39,6 +43,7 @@ let armNotes = [8, 9, 8, 9, 4, 6, 4, 6];
 let armNoteCounter =0;
 
 let uiObject;
+let musicObject;
 
 function setup(){
 
@@ -55,6 +60,7 @@ function setupBody(){
   back = new Back();
   head = new Head();
   uiObject = new UI();
+  musicObject= new Music();
 
 
   for (let i=0; i<2; i++){
@@ -83,7 +89,9 @@ function draw(){
   displayDude();
   pop();
 
+
   uiObject.displayMusicEditor();
+  musicObject.playMusic();
 
 }
 
@@ -137,24 +145,16 @@ function displayDude(){
 
 function setupInstruments(){
 
-  synth = new p5.Oscillator();
-  env1 = new p5.Envelope();
-  env1.setADSR(0.01, 0.05, 0.01, 0.2);
-  env1.setRange(1, 0);
-  synth.setType("square");
-  synth.freq(50);
-  synth.amp(env1);
-  synth.start();
-
-
-  synth2 = new p5.Oscillator();
-  env2 = new p5.Envelope();
-    env2.setADSR(0.01, 0.05, 0.1, 0.3);
-  env2.setRange(0.4, 0);
-  synth2.setType("square");
-  synth2.freq(100);
-  synth2.amp(env2);
-  synth2.start();
+for (let i=0; i<3; i++){
+  synths[i] = new p5.Oscillator();
+  envelopes[i] = new p5.Envelope();
+  envelopes[i].setADSR(0.01, 0.05, 0.01, 0.2);
+  envelopes[i].setRange(1, 0);
+  synths[i].setType("square");
+  synths[i].freq(50);
+  synths[i].amp(envelopes[i]);
+  synths[i].start();
+}
 }
 
 
