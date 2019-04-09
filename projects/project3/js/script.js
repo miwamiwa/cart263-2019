@@ -31,10 +31,18 @@ let mouseHasBeenPressedOnce = false;
 
 let hipMove;
 
+let rootNote = 50;
+let legNotes = [0, 5, 5, 0, 2, 3, 5, 7, 3];
+let legNoteCounter =0;
+
+let armNotes = [8, 9, 8, 9, 4, 6, 4, 6];
+let armNoteCounter =0;
+
 function setup(){
 
+  frameRate(50);
   createCanvas(window.innerWidth, window.innerHeight, WEBGL);
-//  setupInstruments();
+  setupInstruments();
   loadMoves();
   setupBody();
 }
@@ -45,11 +53,12 @@ function setupBody(){
   back = new Back();
   head = new Head();
 
+
   for (let i=0; i<2; i++){
 
-    limbs.push(new Limb(200, 240, i*30, 50, armSpecs, 2,1-  2*i));
+    limbs.push(new Limb(200, 240, 50, armSpecs, 2,1-  2*i));
     limbs[limbs.length-1].changeCurrentMotion(armRunMotion, 10);
-    limbs.push(new Limb(200, 130, 30-i*30, 60, legSpecs, 0,1- 2*i));
+    limbs.push(new Limb(200, 130, 60, legSpecs, 0,1- 2*i));
     limbs[limbs.length-1  ].changeCurrentMotion(legRunMotion, 10);
   }
 }
@@ -66,13 +75,14 @@ function draw(){
   checkGround();
   displayGround();
   displayDude();
+
 }
 
 
 function handleInput(){
 
-  //velocity = map(mouseX, 0, width, 0, 2);
-  velocity = 0.8;
+  velocity = map(mouseX, 0, width, 0, 2);
+
   if(keyIsPressed){
     switch(key){
       case "w": offsetZ -=1; break;
@@ -86,17 +96,15 @@ function handleInput(){
 
 function displayDude(){
 
-  hipMove = sin( radians(frameCount*4))/20;
-translate(hipMove*50, limbs[1].currentHeight, 0)
+  hipMove = sin( radians(frameCount*4))/20 * velocity;
+  translate(hipMove*100, limbs[1].currentHeight, 0)
   rotateZ(PI+hipMove);
 
   rotateX( radians(back.leanForward));
   translate(-shoulderDistance/2,0,0);
 
   push();
-
-
-     rotateZ(-5*hipMove);
+  rotateZ(-3*hipMove);
   limbs[1].update();
 
   translate(shoulderDistance, 0, 0);
@@ -104,7 +112,6 @@ translate(hipMove*50, limbs[1].currentHeight, 0)
   pop();
 
   push();
-
   translate(0, back.length, hipDistance/2- shoulderDistance/2 );
   limbs[0].update();
 
@@ -123,19 +130,21 @@ function setupInstruments(){
 
   synth = new p5.Oscillator();
   env1 = new p5.Envelope();
-  env1.setADSR(0.05, 0.2, 0.8, 0.4);
+  env1.setADSR(0.01, 0.05, 0.01, 0.2);
   env1.setRange(1, 0);
   synth.setType("square");
   synth.freq(50);
   synth.amp(env1);
   synth.start();
 
+
   synth2 = new p5.Oscillator();
   env2 = new p5.Envelope();
-  env2.setADSR(0.05, 0.2, 0.8, 0.4);
-  env2.setRange(1, 0);
+    env2.setADSR(0.01, 0.05, 0.1, 0.3);
+  env2.setRange(0.4, 0);
   synth2.setType("square");
-  synth2.freq(50);
+  synth2.freq(100);
+  synth2.amp(env2);
   synth2.start();
 }
 
@@ -175,35 +184,25 @@ function displayGround(){
 
 function checkGround(){
 
+}
 
 
-/*
-  groundFill = color(0);
-
-  if(
-    -1*abs(limbs[1].thigh.angle) + abs(limbs[1].current.thighDif) >= 0.163*PI
-  ){
-    groundFill = color(0, 255, 0);
-    if(!beatStarted1){
-
-      beatStarted1 = true;
-      beatStarted2 = false;
-      synth.freq( random(3, 6) * 20)
-      env1.play();
-    }
+function nextArmNote(){
+  let rootNote2 = 48;
+  synth2.freq( midiToFreq( rootNote2 + armNotes[armNoteCounter]));
+        env2.play();
+  armNoteCounter++;
+  if(armNoteCounter>=armNotes.length){
+    armNoteCounter=0;
   }
-  else if(
-    abs(limbs[3].thigh.angle) - abs(limbs[3].current.thighDif) >= -0.1*PI
-  ){
-    groundFill = color( 255, 0, 0);
-    if(!beatStarted2){
+}
 
-      beatStarted2 = true;
-      beatStarted1 = false;
-      synth2.freq( random(3, 6) * 20)
-      env2.play();
-    }
+function nextLegNote(){
+  let rootNote1 = 24;
+  synth.freq( midiToFreq( rootNote1 + legNotes[legNoteCounter]));
+        env1.play();
+  legNoteCounter++;
+  if(legNoteCounter>=legNotes.length){
+    legNoteCounter=0;
   }
-
-  */
 }

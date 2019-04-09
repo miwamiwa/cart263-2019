@@ -1,6 +1,6 @@
 class Limb{
 
-  constructor(x, y, phase, length, specs, direction, xflip){
+  constructor(x, y, length, specs, direction, xflip){
 
     this.direction = direction*PI/2;
     this.xflip = xflip;
@@ -8,13 +8,14 @@ class Limb{
     if(direction===0){
       this.flip = -1;
     }
+
     if(direction===2){
       this.flip = 1;
     }
-this.footHitGround = false;
+
+    this.footHitGround = false;
     this.centerX = x;
     this.centerY = y;
-    this.phase = phase;
     this.speed =8;
     this.transition=0;
 
@@ -24,6 +25,7 @@ this.footHitGround = false;
     this.currentHeight=0;
 
     this.waist = {
+
       x: 100,
       y:50,
       minDY:-5,
@@ -33,6 +35,7 @@ this.footHitGround = false;
     };
 
     this.thigh = {
+
       length: length,
       angle: specs.thighAngle,
       origin: specs.thighOrigin,
@@ -43,6 +46,7 @@ this.footHitGround = false;
     }
 
     this.knee = {
+
       x: 0,
       y: 0,
       angle: specs.kneeAngle,
@@ -71,6 +75,7 @@ this.footHitGround = false;
       thighDif2:0,
       thighPos2:0
     }
+
     this.last = this.current;
     this.temp = this.current;
 
@@ -80,51 +85,51 @@ this.footHitGround = false;
 
   update(){
 
+    // get this limb's current motion pattern for this frame.
     let thisFrame;
 
+    // get either the "current" motion
     if(frameCount >= this.tempTimer){
-
       thisFrame = this.currentMotion();
     }
-    else if (frameCount < this.tempTimer){
 
+    // or get the "temporary" motion.
+    else if (frameCount < this.tempTimer){
       thisFrame = this.tempMotion();
+      this.last = thisFrame;
     }
 
-    let frame = frameCount * velocity - this.phase* velocity;
-  //  let speedFact = map(mouseX, 0, width, 0, 1) * thisFrame.speedDif;
-let speedFact = 0.5 * thisFrame.speedDif;
+    let frame = frameCount * velocity;
+
+    // speedfact is actually the force with which movements are executed
+    // (it scales the range of movement)
+
+    // let speedFact = map(mouseX, 0, width, 0, 1) * thisFrame.speedDif;
+    let speedFact = 0.5 * thisFrame.speedDif;
 
     let thighDisplacement = this.thigh.displacement * speedFact * thisFrame.thighPos;
     let thighDisplacement2 = this.thigh.displacement2 * speedFact * thisFrame.thighPos2;
-
     let kneeDisplacement = this.knee.displacement * speedFact * thisFrame.kneePos;
 
     let thighOrigin = this.thigh.origin + thisFrame.thighDif;
     let thighOrigin2 = this.thigh.origin2 + thisFrame.thighDif2;
-
     let kneeOrigin = this.knee.origin + thisFrame.kneeDif;
+
     let leanX = this.leanX*velocity;
     let leanY = this.leanY*velocity;
 
     let currentAngle = radians(frame*this.speed);
 
     let inverseMotion=1;
-    if(this.xflip===-1 ){
-      inverseMotion = -1;
-  //    console.log("HI")
-    }
-    else {
-  //    console.log("HEY")
-    }
+    if(this.xflip===-1 )
+    inverseMotion = -1;
 
-    //this.waist.y = - thisFrame.height + this.centerY + map (sin( currentAngle), -1, 1, this.waist.minDY, this.waist.maxDY)+leanX;
-    //this.waist.x = this.centerX + map (sin( currentAngle), -1, 1, this.waist.minDX, this.waist.maxDX)+leanY;
-    this.thigh.angle = map (sin( radians(frame*this.speed )), inverseMotion*(-1), inverseMotion*1, thighOrigin- thighDisplacement, thighOrigin+thighDisplacement);
 
-    this.thigh.angle2 = map (cos( currentAngle), -1, 1,thighOrigin2 + thighDisplacement2, thighOrigin2- thighDisplacement2);
+    this.thigh.angle = map (sin( currentAngle ), inverseMotion*(-1), inverseMotion*1, thighOrigin- thighDisplacement, thighOrigin+thighDisplacement);
 
-    this.knee.angle = map (sin( currentAngle), -1, 1, kneeOrigin- kneeDisplacement, kneeOrigin+ kneeDisplacement);
+    this.thigh.angle2 = map (cos( currentAngle ), -1, 1,thighOrigin2 + thighDisplacement2, thighOrigin2- thighDisplacement2);
+
+    this.knee.angle = map (sin( currentAngle ), inverseMotion*(-1), inverseMotion*1, kneeOrigin- kneeDisplacement, kneeOrigin+ kneeDisplacement);
 
     this.currentHeight = thisFrame.height;
 
@@ -132,74 +137,85 @@ let speedFact = 0.5 * thisFrame.speedDif;
       this.knee.angle = constrain(this.knee.angle,  this.knee.constraint1, this.knee.constraint2  )
     }
 
-
-
     push();
 
+    // stylize this limb
     strokeWeight(1);
     stroke(45, 255);
     let greenFill = 100+cos(radians(frameCount*2 ))*85;
     let redFill = 100+cos(radians(frameCount/1.1))*65;
     fill(redFill, greenFill, 45, 115);
 
-    rotateZ(this.xflip*radians(this.thigh.angle2))
-
+    // apply thigh rotation
+    rotateZ(this.xflip*radians(this.thigh.angle2));
     rotateX(this.flip*this.thigh.angle - radians(back.leanForward));
-    rotateY(this.direction*PI);
-
-    //rotateZ(this.xflip*this.thigh.angle2)
-
-
+    rotateY(this.direction*PI - 2* this.xflip*hipMove);
     translate(0, -this.thigh.length/2, 0);
 
-
+    // draw thigh
     box(10, this.thigh.length, 10);
 
+    // apply knee rotation
     translate(0, -this.thigh.length/2, 0)
     rotateX(this.knee.angle);
-    rotateZ(-3*hipMove)
+
+
+    if(this.flip===-1)
+    rotateZ(radians(-3*hipMove))
+
     translate(0,  this.thigh.length/2, 0);
 
+    // draw knee
     box(10, this.thigh.length, 10);
     pop();
 
+    // ----------------- DETECT COMBINED THIGH AND KNEE ANGLE!!!!!!! -------------------
 
+    let translate1 = this.thigh.length * ( sin(this.flip*this.thigh.angle - radians(back.leanForward)) + sin(this.knee.angle) );
+    let translate2 = this.thigh.length * ( cos(this.direction*this.thigh.angle - radians(back.leanForward)) + cos(this.knee.angle) );
+    let translate3 = this.thigh.length * ( this.xflip*radians(this.thigh.angle2) );
 
+    // the following events are triggered ONCE, not each frame.
+    if(this.flip===-1){
+      if(translate2<0&& !this.footHitGround){
 
-  // ----------------- DETECT COMBINED THIGH AND KNEE ANGLE!!!!!!! -------------------
-      push();
-let translate1 = this.thigh.length * ( sin(this.flip*this.thigh.angle - radians(back.leanForward)) + sin(this.knee.angle) );
-let translate2 = this.thigh.length * ( cos(this.direction*this.thigh.angle - radians(back.leanForward)) + cos(this.knee.angle) );
-let translate3 = this.thigh.length * ( this.xflip*radians(this.thigh.angle2) );
+        nextLegNote();
 
-if(translate2<0&& !this.footHitGround && this.direction === 0){
-  console.log("boomz")
-  this.footHitGround = true;
-}
-if(translate2>0 && this.footHitGround  && this.direction === 0){
-  this.footHitGround = false;
-}
+        this.footHitGround = true;
 
-pop();
-/*
-    translate(
-translate3, translate2, translate1
-    );
-    fill(0);
-    box(40);
-    --------------------------------------------------------------------------
-    */
+        if(this.xflip ===1)
+        groundFill = color(185, 45, 45);
 
+        if(this.xflip ===-1)
+        groundFill = color(45, 185, 45);
+      }
+      if(translate2>0 && this.footHitGround){
+        this.footHitGround = false;
+      }
+    }
 
+    if(this.flip===1){
+      if(translate2<0&& !this.footHitGround){
+
+        nextArmNote();
+        this.footHitGround = true;
+      }
+      if(translate2>0 && this.footHitGround){
+        this.footHitGround = false;
+      }
+    }
   }
 
   fireTempMotion(motion, length, transition){
 
-    this.transitionLength = transition;
-    this.tempTimer = frameCount + length;
-    this.temp = motion;
+    if(frameCount> this.tempTimer + this.transitionLength){
+      this.transitionLength = transition;
+      this.tempTimer = frameCount + length;
+      this.temp = motion;
 
-    this.last = motion;
+      this.last = motion;
+
+    }
   }
 
   changeCurrentMotion(motion, transition){
@@ -222,6 +238,7 @@ translate3, translate2, translate1
       kneeDif:0,
       speedDif:0
     }
+
     if(this.transition<1){
 
       result.height=lerp(this.current.height, this.temp.height, this.transition);
@@ -236,18 +253,14 @@ translate3, translate2, translate1
       this.transition+=1/this.transitionLength;
     } else {
 
-      result.height = this.temp.height;
-      result.thighPos=this.temp.thighPos;
-      result.kneePos=this.temp.kneePos;
-      result.thighDif =this.temp.thighDif;
-      result.kneeDif =this.temp.kneeDif;
-      result.speedDif =this.temp.speedDif;
-      result.thighPos2 = this.temp.thighPos2;
-      result.thighDif2 = this.temp.thighDif2;
+
+      result = this.temp;
       this.backHeight = this.temp.height;
     }
+
     return result;
   }
+
 
   currentMotion(){
 
@@ -274,14 +287,7 @@ translate3, translate2, translate1
       this.transition-=1/this.transitionLength;
     }
     else {
-      result.height = this.current.height;
-      result.thighPos=this.current.thighPos;
-      result.kneePos=this.current.kneePos;
-      result.thighDif =this.current.thighDif;
-      result.kneeDif =this.current.kneeDif;
-      result.speedDif =this.current.speedDif;
-      result.thighPos2 = this.current.thighPos2;
-      result.thighDif2 = this.current.thighDif2;
+      result = this.current;
       this.backHeight = this.current.height;
     }
     return result;
