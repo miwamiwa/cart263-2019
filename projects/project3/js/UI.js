@@ -5,13 +5,19 @@ class UI{
     this.h = height/2;
 
     //this.camScale = width/height +1;
-    console.log("\nwidth "+width+"\nheight "+height);
+    //console.log("\nwidth "+width+"\nheight "+height);
 
-    this.camScale = (width + height)/ ((this.h + this.h )/2);
+    //this.camScale = (width + height)/ ((this.h + this.h )/2);
     this.camScaleX = -this.camScaling(300);
     this.camScaleY = -this.camScaling(300);
 
-    console.log("\nw "+this.camScaleX+"\nh "+this.camScaleY);
+    this.noteEditMode = false;
+
+    this.timelineNotes = [16];
+    for (let i=0; i<16; i++){
+      this.timelineNotes[i] = -1;
+    }
+    this.timelineSelector = 0;
 
   }
 
@@ -56,7 +62,7 @@ class UI{
     let timelineW = this.w/2;
     let beats = 16;
     let timelineX = -timelineW/2;
-    let timelineY = this.h*0.45;
+    let timelineY = this.h*0.38;
     let timelineH = this.h/16;
     let beatW = timelineW/beats;
 
@@ -66,15 +72,26 @@ class UI{
 
     for(let i=0; i<16; i++){
       fill(255);
+
+      if(this.timelineNotes[i]!=-1) fill(45, 145, 12);
+
+      if(this.noteEditMode && i=== this.timelineSelector) fill(185, 200, 85);
+
       if(
         mouseX > width/2+(timelineX+i*beatW)*this.camScaleX
         && mouseX < width/2+(timelineX+(i+1)*beatW)*this.camScaleX
         && mouseY > height/2+(timelineY)*this.camScaleY
         && mouseY < height/2+(timelineY+timelineH)*this.camScaleY
+        && !this.noteEditMode
       ){
         fill(255, 0, 0);
-        if(mousePressed){
-          // clicked on note i
+
+        if(mouseIsPressed){
+          console.log("\n edit mode start");
+          this.noteEditMode = true;
+          this.timelineSelector = i;
+          // clicked on timeline element i
+
         }
       }
 
@@ -89,7 +106,7 @@ class UI{
 
     let keyboardWidth = 2*this.w/3;
     let kbX = -keyboardWidth/2;
-    let kbY = 0.15*height;
+    let kbY = 0.11*height;
     let kbZ = 0;
     let kbH = this.h/8;
 
@@ -103,18 +120,31 @@ class UI{
     for(let i=0; i<24; i++){
 
       fill(255);
+
       let thiskey = i%12;
       if(thiskey===1||thiskey===3||thiskey===6||thiskey===8||thiskey===10) fill(0);
+
+      if(
+        this.noteEditMode
+        && i === this.timelineNotes [ this.timelineSelector ]
+      ){
+        fill(12, 35, 145);
+      }
 
       if(
         mouseX > width/2+(kbX+i*noteWidth)*this.camScaleX
         && mouseX < width/2+(kbX+(i+1)*noteWidth)*this.camScaleX
         && mouseY > height/2+(kbY)*this.camScaleY
         && mouseY < height/2+(kbY+kbH)*this.camScaleY
+        && this.noteEditMode
       ){
         fill(255, 0, 0);
-        if(mousePressed){
+        if(mouseIsPressed){
           // clicked on note i
+          console.log("\n edit mode stop");
+          this.noteEditMode = false;
+          this.timelineNotes[ this.timelineSelector ] = i;
+          console.log("\nset timeline element "+this.timelineSelector+" to value "+i);
         }
       }
       rect(i*noteWidth, 0, noteWidth, kbH);
