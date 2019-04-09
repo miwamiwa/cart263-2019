@@ -45,6 +45,8 @@ let armNoteCounter =0;
 let uiObject;
 let musicObject;
 
+let sliders = [];
+
 function setup(){
 
   frameRate(50);
@@ -62,6 +64,9 @@ function setupBody(){
   uiObject = new UI();
   musicObject= new Music();
 
+  for (let i=0; i<5; i++){
+    sliders[i] = new Slider();
+  }
 
   for (let i=0; i<2; i++){
 
@@ -94,6 +99,11 @@ function draw(){
 
   uiObject.displayMusicEditor();
   musicObject.playMusic();
+
+push();
+translate(-width/2, -height/2, 0);
+sliders[0].display();
+pop();
 
 }
 
@@ -193,6 +203,16 @@ function mousePressed(){
   limbs[2].fireTempMotion(armJumpMotion, 55, 10);
   limbs[1].fireTempMotion(legsOnTheFloor, 32, 25);
   limbs[3].fireTempMotion(legsOnTheFloor, 32, 25);
+
+  sliders[0].checkMouse("press");
+}
+
+function mouseDragged(){
+    sliders[0].checkMouse("drag");
+}
+function mouseReleased(){
+
+  sliders[0].checkMouse("stop");
 }
 
 

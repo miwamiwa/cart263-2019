@@ -35,41 +35,24 @@ class UI{
     }
   }
 
-  camScalingX(input){/*
-    let camHeight = width+input;
-    let theta = atan(camHeight/200)*2*PI;
-    let segAD = sqrt( sq(camHeight/2)+ sq(200) );
-    let segAC = 200/ cos(theta);
-    let segBC =  segAC * camHeight / segAD;
-    let scaleIt = width/(segBC);
-    */
+  camScalingX(input){
     let scaleIt = abs(this.w/width);
 
     return scaleIt;
   }
 
   camScalingY(input){
-    /*
-    let camHeight = height+input;
-    let theta = atan(camHeight/200)*200;
-    let segAD = sqrt( sq(camHeight/2)+ sq(200) );
-    let segAC = 200/ cos(theta);
-    let segBC =  segAC * camHeight / segAD;
-
-    let scaleIt = height/segBC;
-    */
     let scaleIt = abs(this.h/height);
-    console.log("scale "+scaleIt);
     return scaleIt;
   }
 
   displayBackground(){
 
     push();
-    fill(255);
+    fill(255, 125);
     rotateX(0.078*PI);
     translate(-this.w/2, -7*this.h/16, -200);
-    stroke(0);
+    stroke(185, 125);
     rect(0, 0, this.w, this.h);
     pop();
   }
@@ -92,9 +75,6 @@ class UI{
     let timelineH = this.h/32;
     let beatW = timelineW/beats;
     translate(0, timelineY, 0);
-
-
-
 
     for(let j=0; j<3; j++){
       for(let i=0; i<16; i++){
@@ -172,9 +152,6 @@ class UI{
         if(this.selectedTimeline===h && this.selectedTimelineElement === i){
           fill(255, 0, 0);
         }
-
-
-
 
         translate(i*beatW, (h)*timelineH, 0);
         strokeWeight(1);

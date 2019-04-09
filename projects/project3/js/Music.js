@@ -8,6 +8,7 @@ class Music{
     this.loopStart = frameCount;
     this.subDivisionLength = 5;
     this.subDivCounter =0;
+    this.rootNotes = [60, 24];
 
 
   }
@@ -48,9 +49,12 @@ class Music{
 
       }
       else if(uiObject.timelines[input][this.nextTimelineNote[input]]>=0){
-        console.log("\nplink")
-        let rootNote2 = 48;
-        synths[input].freq( midiToFreq( rootNote2 + uiObject.timelines[input][this.nextTimelineNote[input]]));
+
+        if(input===0||input===1){
+          let rootNote2 = this.rootNotes[input];
+          synths[input].freq( midiToFreq( rootNote2 + uiObject.timelines[input][this.nextTimelineNote[input]]));
+        }
+
         envelopes[input].play();
         this.nextTimelineNote[input] +=1;
 
