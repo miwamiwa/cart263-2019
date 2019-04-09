@@ -79,6 +79,8 @@ function draw(){
 
   background(25, 45, 135);
   camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
+  // camera function that saved my soul
+  ortho();
 
   uiObject.displayBackground();
 

@@ -1,11 +1,13 @@
 class UI{
 
   constructor(){
-    this.w = width/2;
-    this.h = height/2;
+    this.w = width/1.5;
+    this.h = height/1.5;
 
     this.camScaleX = -this.camScalingX(0);
     this.camScaleY = -this.camScalingY(0);
+
+    console.log("\nscaling "+this.camScaleX+", "+this.camScaleY);
 
     this.noteEditMode = false;
 
@@ -33,18 +35,21 @@ class UI{
     }
   }
 
-  camScalingX(input){
+  camScalingX(input){/*
     let camHeight = width+input;
-    let theta = atan(camHeight/200)*200;
+    let theta = atan(camHeight/200)*2*PI;
     let segAD = sqrt( sq(camHeight/2)+ sq(200) );
     let segAC = 200/ cos(theta);
     let segBC =  segAC * camHeight / segAD;
-    let scaleIt = height/segBC;
+    let scaleIt = width/(segBC);
+    */
+    let scaleIt = abs(this.w/width);
 
     return scaleIt;
   }
 
   camScalingY(input){
+    /*
     let camHeight = height+input;
     let theta = atan(camHeight/200)*200;
     let segAD = sqrt( sq(camHeight/2)+ sq(200) );
@@ -52,6 +57,8 @@ class UI{
     let segBC =  segAC * camHeight / segAD;
 
     let scaleIt = height/segBC;
+    */
+    let scaleIt = abs(this.h/height);
     console.log("scale "+scaleIt);
     return scaleIt;
   }
@@ -86,12 +93,7 @@ class UI{
     let beatW = timelineW/beats;
     translate(0, timelineY, 0);
 
-    push();
-    for(let i=0; i<3; i++){
-      translate(0, timelineH, 0);
-      rect(timelineX, 0, timelineW, timelineH);
-    }
-    pop();
+
 
 
     for(let j=0; j<3; j++){
@@ -100,10 +102,10 @@ class UI{
         if(this.noteEditMode && i=== this.selectedTimelineElement) fill(185, 200, 85);
 
         if(
-          mouseX > width/2+(timelineX+i*beatW)*this.camScaleX
-          && mouseX < width/2+(timelineX+(i+1)*beatW)*this.camScaleX
-          && mouseY > height/2+(timelineY+(j)*timelineH)*this.camScaleY
-          && mouseY < height/2+(timelineY+(j+1)*timelineH)*this.camScaleY
+          mouseX > width/2+(timelineX+i*beatW)
+          && mouseX < width/2+(timelineX+(i+1)*beatW)
+          && mouseY > height/2+(timelineY+(j)*timelineH)
+          && mouseY < height/2+(timelineY+(j+1)*timelineH)
 
 
         ){
@@ -123,7 +125,10 @@ class UI{
             this.selectedTimelineElement = i;
             this.selectedTimeline = j;
 
-
+            if(mouseButton===RIGHT){
+              this.noteEditMode = false;
+              this.timelines[j][i] = -1;
+            }
 
             console.log("\n edit mode start. timeline is "+this.selectedTimeline+", element is "+this.selectedTimelineElement);
             // clicked on timeline element i
@@ -171,13 +176,13 @@ class UI{
 
 
 
-        translate(i*beatW, (h+2)*timelineH, 0);
+        translate(i*beatW, (h)*timelineH, 0);
         strokeWeight(1);
         rect(0, 0, beatW, timelineH);
         if(i%4===0){
           strokeWeight(3);
           line(-beatW/8, 0, beatW/8, timelineH);
-
+          if(h===0) line(-beatW/8, -timelineH, beatW/8, timelineH);
         }
 
         pop();
@@ -185,7 +190,7 @@ class UI{
     }
     pop();
     fill(85, 85, 185);
-    this.timeIndicatorY = timelineH;
+    this.timeIndicatorY = -timelineH;
     rect(-timelineW/2 + (this.timeIndicatorX-1)*beatW, this.timeIndicatorY, beatW, timelineH);
     pop();
 
@@ -223,10 +228,10 @@ class UI{
       }
 
       if(
-        mouseX > width/2+(kbX+i*noteWidth)*this.camScaleX
-        && mouseX < width/2+(kbX+(i+1)*noteWidth)*this.camScaleX
-        && mouseY > height/2+(kbY)*this.camScaleY
-        && mouseY < height/2+(kbY+kbH)*this.camScaleY
+        mouseX > width/2+(kbX+i*noteWidth)//*this.camScaleX
+        && mouseX < width/2+(kbX+(i+1)*noteWidth)//*this.camScaleX
+        && mouseY > height/2+(kbY)//*this.camScaleY
+        && mouseY < height/2+(kbY+kbH)//*this.camScaleY
         && this.noteEditMode
       ){
         fill(255, 0, 0);
