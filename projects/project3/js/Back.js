@@ -1,7 +1,7 @@
 class Back{
 
   constructor(){
-    this.length = 70;
+    this.length = 50;
     this.leanForward = velocity*10;
     this.neck = {
       x:0,
@@ -56,7 +56,7 @@ display(){
 let greenFill = cos(radians(frameCount))*25;
   fill(40+greenFill, 145);
   stroke(85, 86);
-  box(10, 80, 10);
+  box(10, this.length, 10);
 
   pop();
 }
