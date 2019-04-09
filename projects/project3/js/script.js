@@ -16,6 +16,8 @@ let armRunMotion2;
 let legSpecs;
 let armSpecs;
 
+let vigor = 0.5;
+
 let offsetX=0;
 let offsetY =-50;
 let offsetZ =-100;
@@ -45,7 +47,6 @@ let armNoteCounter =0;
 let uiObject;
 let musicObject;
 
-let sliders = [];
 
 function setup(){
 
@@ -63,10 +64,6 @@ function setupBody(){
   head = new Head();
   uiObject = new UI();
   musicObject= new Music();
-
-  for (let i=0; i<5; i++){
-    sliders[i] = new Slider();
-  }
 
   for (let i=0; i<2; i++){
 
@@ -102,7 +99,7 @@ function draw(){
 
 push();
 translate(-width/2, -height/2, 0);
-sliders[0].display();
+uiObject.displayKnobs();
 pop();
 
 }
@@ -110,8 +107,8 @@ pop();
 
 function handleInput(){
 
-  velocity = map(mouseX, 0, width, 0, 2);
-
+  //velocity = map(mouseX, 0, width, 0, 2);
+velocity = 1;
   if(keyIsPressed){
     switch(key){
       case "w": offsetZ -=1; break;
@@ -198,21 +195,22 @@ function keyPressed(){
 function mousePressed(){
 
   mouseHasBeenPressedOnce = true;
-
+/*
   limbs[0].fireTempMotion(armJumpMotion, 55, 10);
   limbs[2].fireTempMotion(armJumpMotion, 55, 10);
   limbs[1].fireTempMotion(legsOnTheFloor, 32, 25);
   limbs[3].fireTempMotion(legsOnTheFloor, 32, 25);
-
-  sliders[0].checkMouse("press");
+*/
+  uiObject.checkKnobs("press");
 }
 
 function mouseDragged(){
-    sliders[0].checkMouse("drag");
+uiObject.checkKnobs("drag");
 }
 function mouseReleased(){
 
-  sliders[0].checkMouse("stop");
+uiObject.checkKnobs("stop");
+
 }
 
 
@@ -230,25 +228,4 @@ function displayGround(){
 
 function checkGround(){
 
-}
-
-
-function nextArmNote(){
-  let rootNote2 = 48;
-  synth2.freq( midiToFreq( rootNote2 + armNotes[armNoteCounter]));
-        env2.play();
-  armNoteCounter++;
-  if(armNoteCounter>=armNotes.length){
-    armNoteCounter=0;
-  }
-}
-
-function nextLegNote(){
-  let rootNote1 = 24;
-  synth.freq( midiToFreq( rootNote1 + legNotes[legNoteCounter]));
-        env1.play();
-  legNoteCounter++;
-  if(legNoteCounter>=legNotes.length){
-    legNoteCounter=0;
-  }
 }

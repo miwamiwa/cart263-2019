@@ -1,12 +1,12 @@
 class Slider{
 
-  constructor(){
-
-    this.x =200;
-    this.y =200;
+  constructor(x, y, index){
+    this.index = index;
+    this.x =x;
+    this.y =y;
     this.w = 50;
     this.h = 150;
-    this.value =0;
+    this.position =this.y+this.h;
     this.maxValue=200;
     this.minValue =-200;
     this.lastX =0;
@@ -20,24 +20,16 @@ class Slider{
     strokeWeight(1);
     stroke(0);
     fill(225);
-    ellipse(this.x, this.y, this.w+15, this.w+15)
+    rect(this.x, this.y, this.w, this.h);
     translate(0, 0, 1);
-    let level = map(this.value, this.minValue-1, this.maxValue+1, 0, 2*PI);
+    //let level = map(this.position, this.minValue-1, this.maxValue+1, 0, 2*PI);
     fill(255, 0, 0);
-    arc(this.x, this.y, this.w+10, this.w+10, 0, level);
-    translate(0, 0, 1);
-    stroke(0);
-    fill(225);
-    ellipse(this.x, this.y, this.w, this.w)
-
-    noStroke(0);
-    fill(125);
-  //  rect(this.x, this.y + this.h-level, this.w, level);
+    ellipse(this.x+this.w/2,  this.position, 10);
     pop();
   }
 
   update(value, minval, maxval){
-    this.value = value;
+    this.position = value;
     this.minValue = minval;
     this.maxValue = maxval;
   }
@@ -51,22 +43,27 @@ class Slider{
     ){
 
       if(type==="press"){
-        this.lastX = mouseX;
-        this.lastY = mouseY;
+        this.position = constrain(mouseY, this.y, this.y+this.h);
         this.selected = true;
       }
+    }
 
+    if(type==="drag" && this.selected){
+      this.position = constrain(mouseY, this.y, this.y+this.h);
     }
-    if(type==="drag"){
-      this.value -= (mouseX-this.lastX)/4;
-      this.value = constrain(this.value, -200, 200);
-    }
-    if(type==="stop"){
-      this.value -= (mouseX-this.lastX)/4;
-      this.value = constrain(this.value, -200, 200);
+    if(type==="stop" && this.selected){
+      this.position = constrain(mouseY, this.y, this.y+this.h);
       this.selected = false;
-      console.log("value "+this.value)
     }
+  }
 
+  getValue(){
+    let value = map(this.y+this.h - this.position, 0, 150, 0, 1);
+    switch(this.index){
+      case 6:  break;
+      case 7:  break;
+      case 8:
+      vigor = value; break;
+    }
   }
 }

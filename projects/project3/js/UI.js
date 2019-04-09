@@ -7,6 +7,10 @@ class UI{
     this.camScaleX = -this.camScalingX(0);
     this.camScaleY = -this.camScalingY(0);
 
+    this.sliders = [];
+    this.pads = [];
+    this.knobIndex =0;
+
     console.log("\nscaling "+this.camScaleX+", "+this.camScaleY);
 
     this.noteEditMode = false;
@@ -32,6 +36,47 @@ class UI{
       for(let j=0; j<16; j++){
         this.timelines[i][j] = -1;
       }
+    }
+
+    this.setupKnobs();
+  }
+
+  setupKnobs(){
+
+    for (let i=0;i<3; i++){
+      this.pads.push(new XYPad(10, 10+i*160, this.knobIndex));
+      this.knobIndex++;
+    }
+
+    for (let i=0;i<3; i++){
+      this.pads.push(new XYPad(160, 10+i*160, this.knobIndex));
+      this.knobIndex++;
+    }
+
+    for (let i=0;i<3; i++){
+      this.sliders.push(new Slider(10+i*80, 490, this.knobIndex));
+      this.knobIndex++;
+    }
+  }
+
+  displayKnobs(){
+
+    for(let i=0; i<6; i++){
+      this.pads[i].display();
+    }
+    for(let i=0; i<3; i++){
+      this.sliders[i].display();
+    }
+  }
+
+  checkKnobs(type){
+    for(let i=0; i<6; i++){
+      this.pads[i].checkMouse(type);
+      this.pads[i].getValue();
+    }
+    for(let i=0; i<3; i++){
+      this.sliders[i].checkMouse(type);
+      this.pads[i].getValue();
     }
   }
 

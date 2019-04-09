@@ -104,8 +104,8 @@ class Limb{
     // speedfact is actually the force with which movements are executed
     // (it scales the range of movement)
 
-    // let speedFact = map(mouseX, 0, width, 0, 1) * thisFrame.speedDif;
-    let speedFact = 0.5 * thisFrame.speedDif;
+     let speedFact = map(vigor, 0, 1, 0, 1) * thisFrame.speedDif;
+
 
     let thighDisplacement = this.thigh.displacement * speedFact * thisFrame.thighPos;
     let thighDisplacement2 = this.thigh.displacement2 * speedFact * thisFrame.thighPos2;
