@@ -21,6 +21,7 @@ class UI{
 
     this.timeIndicatorX = 0;
     this.timeIndicatorY = 0;
+    this.editModeCancelled = false;
 
     this.timelines = new Array(3);
 
@@ -104,17 +105,25 @@ class UI{
           && mouseY > height/2+(timelineY+(j)*timelineH)*this.camScaleY
           && mouseY < height/2+(timelineY+(j+1)*timelineH)*this.camScaleY
 
-          && !this.noteEditMode
+
         ){
           //fill(255, 0, 0);
           this.hoveredTimeline = j;
           this.hoveredElement = i;
 
-          if(mouseIsPressed){
+          if(this.editModeCancelled){
+            this.noteEditMode = false;
+            this.editModeCancelled = false;
+          }
+
+          if(mouseIsPressed && !this.noteEditMode){
+
 
             this.noteEditMode = true;
             this.selectedTimelineElement = i;
             this.selectedTimeline = j;
+
+
 
             console.log("\n edit mode start. timeline is "+this.selectedTimeline+", element is "+this.selectedTimelineElement);
             // clicked on timeline element i
@@ -140,15 +149,26 @@ class UI{
         fill(255);
         push();
 
+        if(!this.noteEditMode) {
+          if(this.timelines[h][i]<0){
+            fill(255);
+          }
+          else {
+            fill(255, 100, 100);
+          }
+        }
+
         if(this.timelines[h][i]!=-1) fill(45, 145, 12);
 
-        if(this.hoveredTimeline===h && this.hoveredElement === i){
+        if(this.hoveredTimeline===h && this.hoveredElement === i ){
           fill(255, 100, 100);
         }
 
         if(this.selectedTimeline===h && this.selectedTimelineElement === i){
           fill(255, 0, 0);
         }
+
+
 
 
         translate(i*beatW, (h+2)*timelineH, 0);
@@ -219,6 +239,13 @@ class UI{
           this.selectedTimelineElement = -1;
 
           console.log("\nset timeline element "+this.selectedTimelineElement+" to value "+i);
+        }
+      }
+      else {
+        if (mouseIsPressed && this.noteEditMode){
+        this.timelines[this.selectedTimeline][ this.selectedTimelineElement ] = -1;
+        this.editModeCancelled = true;
+          fill(12, 35, 145);
         }
       }
       rect(i*noteWidth, 0, noteWidth, kbH);
