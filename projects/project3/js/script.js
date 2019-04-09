@@ -17,7 +17,7 @@ let legSpecs;
 let armSpecs;
 
 let offsetX=0;
-let offsetY =0;
+let offsetY =-50;
 let offsetZ =0;
 let groundFill =0;
 
@@ -38,6 +38,8 @@ let legNoteCounter =0;
 let armNotes = [8, 9, 8, 9, 4, 6, 4, 6];
 let armNoteCounter =0;
 
+let uiObject;
+
 function setup(){
 
   frameRate(50);
@@ -52,13 +54,14 @@ function setupBody(){
 
   back = new Back();
   head = new Head();
+  uiObject = new UI();
 
 
   for (let i=0; i<2; i++){
 
-    limbs.push(new Limb(200, 240, 50, armSpecs, 2,1-  2*i));
+    limbs.push(new Limb(200, 240, height/15, armSpecs, 2,1-  2*i));
     limbs[limbs.length-1].changeCurrentMotion(armRunMotion, 10);
-    limbs.push(new Limb(200, 130, 60, legSpecs, 0,1- 2*i));
+    limbs.push(new Limb(200, 130, height/13, legSpecs, 0,1- 2*i));
     limbs[limbs.length-1  ].changeCurrentMotion(legRunMotion, 10);
   }
 }
@@ -69,7 +72,9 @@ function draw(){
   handleInput();
 
   background(25, 45, 135);
-  camera(-200, 0, 400, 0, 0, 0, 0, 1, 0);
+  camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
+
+  uiObject.display();
 
   translate(offsetX, offsetY, offsetZ);
   checkGround();
