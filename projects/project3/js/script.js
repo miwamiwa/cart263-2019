@@ -18,7 +18,7 @@ let armSpecs;
 
 let offsetX=0;
 let offsetY =-50;
-let offsetZ =0;
+let offsetZ =-100;
 let groundFill =0;
 
 let beatStarted1 = false;
@@ -74,12 +74,16 @@ function draw(){
   background(25, 45, 135);
   camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
 
-  uiObject.display();
+  uiObject.displayBackground();
 
+  push();
   translate(offsetX, offsetY, offsetZ);
   checkGround();
   displayGround();
   displayDude();
+  pop();
+
+  uiObject.displayMusicEditor();
 
 }
 
