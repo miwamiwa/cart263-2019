@@ -7,11 +7,17 @@ class Music{
     this.nextTimelineNote[2] = 0;
     this.loopStart = frameCount;
     this.subDivisionLength = 5;
+    this.subDivCounter =0;
 
 
   }
   playMusic(){
 
+    if( frameCount > this.loopStart + this.subDivCounter*this.subDivisionLength){
+
+      this.subDivCounter +=1;
+      uiObject.timeIndicatorX +=1;
+    }
     // if loop ended, reset loop
     if( frameCount > this.loopStart + 16*this.subDivisionLength){
       this.loopStart = frameCount;
@@ -19,6 +25,9 @@ class Music{
       this.nextTimelineNote[0] =0;
       this.nextTimelineNote[1] =0;
       this.nextTimelineNote[2] =0;
+
+      uiObject.timeIndicatorX =0;
+      this.subDivCounter =0;
     }
 
     this.playTimeline(0);
