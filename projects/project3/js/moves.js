@@ -33,116 +33,135 @@ function loadMoves(){
   }
 
   // light dancing feet
-    legRunMotion = {
-      height:0,
-     thighPos:0.2*PI,
-     kneePos:0.5*PI,
-     thighDif:0.2*PI,
-     kneeDif:0.2*PI,
-     speedDif:1,
-     thighPos2:30,
-     thighDif2:-10,
-    }
+  legContinuous1 = {
+    height:0,
+    thighPos:0.2*PI,
+    kneePos:0.5*PI,
+    thighDif:0.2*PI,
+    kneeDif:0.2*PI,
+    speedDif:1,
+    thighPos2:30,
+    thighDif2:-10,
+  }
 
 
-    // light dancing feet
-      legRunMotion2 = {
-        height:0,
-       thighPos:0.6*PI,
-       kneePos:0.5*PI,
-       thighDif:0.2*PI,
-       kneeDif:0.2*PI,
-       speedDif:1,
-       thighPos2:10,
-       thighDif2:-20,
-      }
+  // light dancing feet
+  legContinuous2 = {
+    height:0,
+    thighPos:0.6*PI,
+    kneePos:0.5*PI,
+    thighDif:0.2*PI,
+    kneeDif:0.2*PI,
+    speedDif:1,
+    thighPos2:10,
+    thighDif2:-20,
+  }
 
-// whip legs around
-  legJumpMotion = {
+  // do it on the floor
+  legContinuous3 = {
+    height:100,
+    thighPos:(0.2)*PI,
+    thighDif:+0.8*PI,
+    thighPos2:-1.2*PI,
+    thighDif2:-0.5*PI,
+    kneePos:-0.5*PI,
+    kneeDif:+0.2*PI,
+    speedDif:0.3,
+  }
+
+  // whip legs around
+  legTemp1 = {
     height:-100,
-  thighPos:0,
-  kneePos:1*PI,
-  thighDif:.5*PI,
-  kneeDif:-1,
-  speedDif:1,
-  thighPos2:30,
-  thighDif2:40,
+    thighPos:0,
+    kneePos:1*PI,
+    thighDif:.5*PI,
+    kneeDif:-1,
+    speedDif:1,
+    thighPos2:30,
+    thighDif2:40,
   }
 
   // swing left leg, stand/jump on right
-    legJumpMotion2 = {
-      height:0,
-      thighPos:(-1.1)*PI,
-      kneePos:0.6*PI,
-      thighDif:+0.2*PI,
-      kneeDif:+0.15*PI,
-      speedDif:0.3,
-      thighPos2:-1*PI,
-      thighDif2:-1*PI,
-    }
+  legTemp2 = {
+    height:0,
+    thighPos:(-1.1)*PI,
+    kneePos:0.6*PI,
+    thighDif:+0.2*PI,
+    kneeDif:+0.15*PI,
+    speedDif:0.3,
+    thighPos2:-1*PI,
+    thighDif2:-1*PI,
+  }
 
-    // do it on the floor
-      legsOnTheFloor = {
-        height:100,
+  // kick left leg
+  legTemp3 = {
+    height:0,
+    thighPos:-(1.1)*PI,
+    kneePos:4,
+    thighDif:+0.2*PI,
+    kneeDif:+0.5*PI,
+    speedDif:0.8,
+    thighPos2:15,
+    thighDif2:-30,
+  }
 
-        thighPos:(0.2)*PI,
-        thighDif:+0.8*PI,
+  // macarena arms (touching shoulders)
+  armContinuous1 = {
+    thighPos:0.2*PI,
+    kneePos:-0.6*PI,
+    thighDif:-0.25*PI,
+    kneeDif:0.75*PI,
+    speedDif:0.7,
+    thighPos2:16,
+    thighDif2:-30,
+  }
 
-        thighPos2:-1.2*PI,
-        thighDif2:-0.5*PI,
-
-        kneePos:-0.5*PI,
-        kneeDif:+0.2*PI,
-
-        speedDif:0.3,
-      }
-
-      // macarena arms (touching shoulders)
-       armJumpMotion = {
-        thighPos:0.2*PI,
-        kneePos:-0.6*PI,
-        thighDif:-0.25*PI,
-        kneeDif:0.75*PI,
-        speedDif:0.7,
-        thighPos2:16,
-        thighDif2:-30,
-      }
-
-    // macarena arms (touching shoulders)
-     armRunMotion2 = {
-      thighPos:0.2*PI,
-      kneePos:-0.6*PI,
-      thighDif:-0.25*PI,
-      kneeDif:0.75*PI,
-      speedDif:0.7,
-      thighPos2:16,
-      thighDif2:-30,
-    }
-
-// back and forth elbows
-  armRunMotionY = {
-  thighPos:0.6*PI,
-  kneePos:0.3*PI,
-  thighDif:0,
-  kneeDif:0.5*PI,
-  speedDif:1,
-  thighPos2:-0.01*PI,
-  thighDif2:-30,
+  // back and forth elbows
+  armContinuous2 = {
+    thighPos:0.6*PI,
+    kneePos:0.3*PI,
+    thighDif:0,
+    kneeDif:0.5*PI,
+    speedDif:1,
+    thighPos2:-0.01*PI,
+    thighDif2:-30,
   }
 
   // party hands
-  armRunMotionZ = {
-  thighPos:.5*PI,
-  kneePos:0.3*PI,
-  thighDif:-0.1*PI,
-  kneeDif:0.6*PI,
-  speedDif:1,
-  thighPos2:-4,
-  thighDif2:-80,
+  armContinuous3 = {
+    thighPos:.5*PI,
+    kneePos:0.3*PI,
+    thighDif:-0.1*PI,
+    kneeDif:0.6*PI,
+    speedDif:1,
+    thighPos2:-4,
+    thighDif2:-80,
   }
 
-// arms extended in front
-  armRunMotion2 = {
+  // hands in the air2
+  armTemp1 = {
+    thighPos:-.8*PI,
+    thighDif:-0.6*PI,
+    thighPos2:-30,
+    thighDif2:20,
+    kneePos:1*PI,
+    kneeDif:0.5*PI,
+    speedDif:0.1,
+  }
+
+  // hands in the air
+  armTemp2 = {
+    thighPos:.4*PI,
+    kneePos:-1,
+    thighDif:-0.75*PI,
+    kneeDif:0.25*PI,
+    speedDif:0.7,
+    thighPos2:-8,
+    thighDif2:20,
+  }
+
+  // arms extended in front
+  armTemp3 = {
     thighPos:0.1,
     kneePos:0.4,
     thighDif:- 0.2*PI,
@@ -152,43 +171,6 @@ function loadMoves(){
     thighDif2:0,
   }
 
-  // kick left leg
-    legClickMotion = {
-      height:0,
-      thighPos:-(1.1)*PI,
-      kneePos:4,
-      thighDif:+0.2*PI,
-      kneeDif:+0.5*PI,
-      speedDif:0.8,
-      thighPos2:15,
-      thighDif2:-30,
-    }
-
-    // hands in the air2
-     armRunMotion = {
-      thighPos:-.8*PI,
-      thighDif:-0.6*PI,
-
-      thighPos2:-30,
-      thighDif2:20,
-
-      kneePos:1*PI,
-      kneeDif:0.5*PI,
-      speedDif:0.1,
-
-    }
-
-
-    // hands in the air
-     armClickMotion = {
-      thighPos:.4*PI,
-      kneePos:-1,
-      thighDif:-0.75*PI,
-      kneeDif:0.25*PI,
-      speedDif:0.7,
-      thighPos2:-8,
-      thighDif2:20,
-    }
 }
 
 
@@ -199,16 +181,13 @@ function tempMotion1(){
   limbs[3].fireTempMotion(legJumpMotion, 50, 20);
 }
 
-function danceMotion1(){
-  limbs[0].changeCurrentMotion(armRunMotionY, 100);
-  limbs[2].changeCurrentMotion(armRunMotionY, 100);
-  limbs[1].changeCurrentMotion(legRunMotion2, 100);
-  limbs[3].changeCurrentMotion(legRunMotion2, 100);
-}
+function danceMotion(input){
 
-function danceMotion0(){
-  limbs[0].changeCurrentMotion(armRunMotion, 10);
-  limbs[2].changeCurrentMotion(armRunMotion, 10);
-  limbs[1].changeCurrentMotion(legRunMotion, 10);
-  limbs[3].changeCurrentMotion(legRunMotion, 10);
+
+    limbs[0].changeCurrentMotion(armContinuous1, 100);
+    limbs[2].changeCurrentMotion(armContinuous1, 100);
+    limbs[1].changeCurrentMotion(legContinuous1, 100);
+    limbs[3].changeCurrentMotion(legContinuous1, 100);
+
+
 }

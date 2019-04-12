@@ -8,11 +8,21 @@ let jumpTimer = 0;
 let hipDistance = 25;
 let shoulderDistance = 20;
 
-let legRunMotion;
-let legJumpMotion;
-let armRunMotion;
-let armJumpMotion;
-let armRunMotion2;
+let armContinuous1;
+let armContinuous2;
+let armContinuous3;
+let armTemp1;
+let armTemp2;
+let armTemp3;
+
+let legContinuous1;
+let legContinuous2;
+let legContinuous3;
+let legContinuous4;
+let legTemp1;
+let legTemp2;
+let legTemp3;
+
 let legSpecs;
 let armSpecs;
 
@@ -46,15 +56,25 @@ let armNoteCounter =0;
 
 let uiObject;
 let musicObject;
+let canvas;
 
 
 function setup(){
 
-  frameRate(50);
-  createCanvas(window.innerWidth, window.innerHeight, WEBGL);
-  setupInstruments();
   loadMoves();
+  loadSavedGame();
+
+  uiObject = new UI();
+  musicObject= new Music();
+  frameRate(50);
+  canvas = createCanvas(window.innerWidth, window.innerHeight, WEBGL);
+  canvas.parent('theDiv');
+  setupInstruments();
+
   setupBody();
+  danceMotion(0);
+
+
 }
 
 
@@ -62,16 +82,15 @@ function setupBody(){
 
   back = new Back();
   head = new Head();
-  uiObject = new UI();
-  musicObject= new Music();
+
 
   for (let i=0; i<2; i++){
 
-    limbs.push(new Limb(200, 240, height/15, armSpecs, 2,1-  2*i));
-    limbs[limbs.length-1].changeCurrentMotion(armRunMotion, 10);
-    limbs.push(new Limb(200, 130, height/13, legSpecs, 0,1- 2*i));
-    limbs[limbs.length-1  ].changeCurrentMotion(legRunMotion, 10);
+    limbs.push(new Limb(200, 240, height/14, armSpecs, 2,1-  2*i));
+    limbs.push(new Limb(200, 130, height/12, legSpecs, 0,1- 2*i));
   }
+
+
 }
 
 
@@ -88,7 +107,6 @@ function draw(){
 
   push();
   translate(offsetX, offsetY, offsetZ);
-  checkGround();
   displayGround();
   displayDude();
   pop();
@@ -121,7 +139,7 @@ velocity = 1;
 
 
 function displayDude(){
-
+scale(2);
   hipMove = sin( radians(frameCount*4))/20 * velocity;
   translate(hipMove*100, limbs[1].currentHeight, 0)
   rotateZ(PI+hipMove);
@@ -202,6 +220,8 @@ function mousePressed(){
   limbs[3].fireTempMotion(legsOnTheFloor, 32, 25);
 */
   uiObject.checkKnobs("press");
+
+  if(mouseButton===RIGHT)  saveInfo();
 }
 
 function mouseDragged(){
@@ -218,7 +238,7 @@ function displayGround(){
 
   push();
   fill(groundFill);
-  translate(-100, 100, -100)
+  translate(-100, 200, -100)
   rotateX(PI/2.1)
   noStroke();
   rect(0, 0, 200, 200);
@@ -226,6 +246,55 @@ function displayGround(){
 }
 
 
-function checkGround(){
+function loadSavedGame() {
 
+  console.log("Loading words...");
+  let storedData = localStorage.getItem('storage');
+  if (storedData === null) {
+    return false;
+    console.log("load failed!");
+  }
+  console.log("... load successful.");
+  let gameData = JSON.parse(storedData);
+  console.log(gameData);
+
+  legContinuous1 = gameData.legCont1;
+  legContinuous2 = gameData.legCont2;
+  legContinuous3 = gameData.legCont3;
+  armContinuous1 = gameData.armCont1;
+  armContinuous2 = gameData.armCont2;
+  armContinuous3 = gameData.armCont3;
+  legTemp1 = gameData.legTemp1;
+  legTemp2 = gameData.legTemp2;
+  legTemp3 = gameData.legTemp3;
+  armTemp1 = gameData.armTemp1;
+  armTemp2 = gameData.armTemp2;
+  armTemp3 = gameData.armTemp3;
+  vigor = gameData.vigor;
+
+  return true;
+}
+
+
+function saveInfo(){
+
+  let sendData = {
+    legCont1: legContinuous1,
+    legCont2: legContinuous2,
+    legCont3: legContinuous3,
+    legTemp1: legTemp1,
+    legTemp2: legTemp2,
+    legTemp3: legTemp3,
+    armCont1: armContinuous1,
+    armCont2: armContinuous2,
+    armCont3: armContinuous3,
+    armTemp1: armTemp1,
+    armTemp2: armTemp2,
+    armTemp3: armTemp3,
+    vigor: vigor,
+  }
+
+  let setDataAsJSON = JSON.stringify(sendData);
+  // Save the JSON string to storage as 'words'
+  localStorage.setItem('storage',setDataAsJSON);
 }

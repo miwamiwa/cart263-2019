@@ -16,7 +16,7 @@ class Limb{
     this.footHitGround = false;
     this.centerX = x;
     this.centerY = y;
-    this.speed =8;
+    this.speed =9;
     this.transition=0;
 
     this.leanX = specs.leanX;
@@ -104,7 +104,7 @@ class Limb{
     // speedfact is actually the force with which movements are executed
     // (it scales the range of movement)
 
-     let speedFact = map(vigor, 0, 1, 0, 1) * thisFrame.speedDif;
+     let speedFact = vigor * thisFrame.speedDif;
 
 
     let thighDisplacement = this.thigh.displacement * speedFact * thisFrame.thighPos;

@@ -56,24 +56,33 @@ class XYPad{
   }
 
   getValue(){
+
     let valueY = map(this.y+this.h - this.valueY, 0, 150, -2*PI, 2*PI);
     let valueX = map(this.x+this.w - this.valueX, 0, 150, -2*PI, 2*PI);
 
     switch(this.index){
       case 0:
-      armRunMotion.thighPos = valueY;
-      armRunMotion.thighDif = valueX; break;
+      armContinuous1.thighPos = valueY;
+      armContinuous1.thighDif = valueX; break;
       case 1:
       valueY = 10*valueY;
       valueX = 10*valueX;
-      armRunMotion.thighPos2 = valueY;
-      armRunMotion.thighDif2 = valueX; break;
+      armContinuous1.thighPos2 = valueY;
+      armContinuous1.thighDif2 = valueX; break;
       case 2:
-      armRunMotion.kneePos = valueY;
-      armRunMotion.kneeDif = valueX; break;
-      case 3: break;
-      case 4: break;
-      case 5: break;
+      armContinuous1.kneePos = valueY;
+      armContinuous1.kneeDif = valueX; break;
+      case 3:
+      legContinuous1.thighPos = valueY;
+      legContinuous1.thighDif = valueX; break;
+      case 4:
+      valueY = 10*valueY;
+      valueX = 10*valueX;
+      legContinuous1.thighPos2 = valueY;
+      legContinuous1.thighDif2 = valueX; break;
+      case 5:
+      legContinuous1.kneePos = valueY;
+      legContinuous1.kneeDif = valueX; break;
     }
   }
 
