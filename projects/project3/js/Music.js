@@ -6,7 +6,7 @@ class Music{
     this.nextTimelineNote[1] = 0;
     this.nextTimelineNote[2] = 0;
     this.loopStart = frameCount;
-    this.subDivisionLength = 5;
+    this.subDivisionLength = 10;
     this.subDivCounter =0;
     this.rootNotes = [60, 24];
 

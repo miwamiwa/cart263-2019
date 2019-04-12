@@ -62,9 +62,11 @@ let canvas;
 function setup(){
 
   loadMoves();
+  uiObject = new UI();
+
   loadSavedGame();
 
-  uiObject = new UI();
+
   musicObject= new Music();
   frameRate(50);
   canvas = createCanvas(window.innerWidth, window.innerHeight, WEBGL);
@@ -271,6 +273,7 @@ function loadSavedGame() {
   armTemp2 = gameData.armTemp2;
   armTemp3 = gameData.armTemp3;
   vigor = gameData.vigor;
+  uiObject.timelines = gameData.timelines;
 
   return true;
 }
@@ -292,6 +295,7 @@ function saveInfo(){
     armTemp2: armTemp2,
     armTemp3: armTemp3,
     vigor: vigor,
+    timelines: uiObject.timelines,
   }
 
   let setDataAsJSON = JSON.stringify(sendData);
