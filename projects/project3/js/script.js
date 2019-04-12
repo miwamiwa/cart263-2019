@@ -258,21 +258,21 @@ function loadSavedGame() {
   }
   console.log("... load successful.");
   let gameData = JSON.parse(storedData);
-  console.log(gameData);
 
-  legContinuous1 = gameData.legCont1;
-  legContinuous2 = gameData.legCont2;
-  legContinuous3 = gameData.legCont3;
-  armContinuous1 = gameData.armCont1;
-  armContinuous2 = gameData.armCont2;
-  armContinuous3 = gameData.armCont3;
-  legTemp1 = gameData.legTemp1;
-  legTemp2 = gameData.legTemp2;
-  legTemp3 = gameData.legTemp3;
-  armTemp1 = gameData.armTemp1;
-  armTemp2 = gameData.armTemp2;
-  armTemp3 = gameData.armTemp3;
-  vigor = gameData.vigor;
+// assign saved pad positions, and update motion accordingly
+  for(let i=0; i<uiObject.pads.length; i++){
+    uiObject.pads[i].valueX = gameData.padsX[i];
+    uiObject.pads[i].valueY = gameData.padsY[i];
+    uiObject.pads[i].getValue();
+  }
+
+// assign saved slider positions
+  for(let i=0; i<uiObject.sliders.length; i++){
+    uiObject.sliders[i].position = gameData.sliders[i];
+    uiObject.sliders[i].getValue();
+  }
+
+// assign saved music timelines
   uiObject.timelines = gameData.timelines;
 
   return true;
@@ -282,20 +282,20 @@ function loadSavedGame() {
 function saveInfo(){
 
   let sendData = {
-    legCont1: legContinuous1,
-    legCont2: legContinuous2,
-    legCont3: legContinuous3,
-    legTemp1: legTemp1,
-    legTemp2: legTemp2,
-    legTemp3: legTemp3,
-    armCont1: armContinuous1,
-    armCont2: armContinuous2,
-    armCont3: armContinuous3,
-    armTemp1: armTemp1,
-    armTemp2: armTemp2,
-    armTemp3: armTemp3,
+    padsX: [],
+    padsY: [],
+    sliders: [],
     vigor: vigor,
     timelines: uiObject.timelines,
+  }
+
+  for (let i=0; i< uiObject.pads.length; i++){
+    sendData.padsX.push( uiObject.pads[i].valueX );
+    sendData.padsY.push( uiObject.pads[i].valueY );
+  }
+
+  for (let i=0; i<uiObject.sliders.length; i++){
+    sendData.sliders.push( uiObject.sliders[i].position );
   }
 
   let setDataAsJSON = JSON.stringify(sendData);

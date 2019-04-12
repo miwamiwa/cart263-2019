@@ -1,36 +1,33 @@
 class UI{
 
   constructor(){
+    // panel size
     this.w = width*6;
     this.h = height*6;
 
-    this.camScaleX = -this.camScalingX(0);
-    this.camScaleY = -this.camScalingY(0);
-
+    // knobs and such
     this.sliders = [];
     this.pads = [];
     this.knobIndex =0;
 
-    console.log("\nscaling "+this.camScaleX+", "+this.camScaleY);
-
+    // music timeline:
     this.noteEditMode = false;
-
-    this.timelineNotes = [16];
-
-    for (let i=0; i<16; i++){
-      this.timelineNotes[i] = -1;
-    }
-    this.selectedTimelineElement = 0;
+    this.editModeCancelled = false;
+    this.selectedTimelineElement = -1;
     this.selectedTimeline =-1;
     this.hoveredTimeline =-1;
     this.hoveredElement = -1;
-
     this.timeIndicatorX = 0;
     this.timeIndicatorY = 0;
-    this.editModeCancelled = false;
+    this.beats = 16;
+    this.timelineW = this.w/2;
+    this.timelineX = -this.timelineW/2;
+    this.timelineY = this.h*0.42;
+    this.timelineH = this.h/32;
+    this.beatW = this.timelineW/this.beats;
 
+    // create music note arrays
     this.timelines = new Array(3);
-
     for (let i = 0; i < 3; i++) {
       this.timelines[i] = new Array(16);
       for(let j=0; j<16; j++){
@@ -38,75 +35,38 @@ class UI{
       }
     }
 
+    // create sliders and XY-pads
     this.setupKnobs();
   }
 
+  // setupknobs()
+  //
+  // create sliders and xy-pad objects.
+
   setupKnobs(){
 
+    // create first column of xy pads
     for (let i=0;i<3; i++){
       this.pads.push(new XYPad(10, 10+i*160, this.knobIndex));
       this.knobIndex++;
     }
 
+    // create second column of xy pads
     for (let i=0;i<3; i++){
       this.pads.push(new XYPad(160, 10+i*160, this.knobIndex));
       this.knobIndex++;
     }
 
+    // create sliders
     for (let i=0;i<3; i++){
       this.sliders.push(new Slider(10+i*80, 490, this.knobIndex));
       this.knobIndex++;
     }
-
-    // set slider values on load
-
-    this.pads[0].valueY = this.pads[0].y+this.pads[0].h - map(armContinuous1.thighPos, -2*PI, 2*PI, 0, 150);
-    this.pads[0].valueX = this.pads[0].x+this.pads[0].w - map(armContinuous1.thighDif, -2*PI, 2*PI, 0, 150);
-    this.pads[1].valueY = this.pads[1].y+this.pads[1].h - map(armContinuous1.thighPos2, -20*PI, 20*PI, 0, 150);
-    this.pads[1].valueX = this.pads[1].x+this.pads[1].w - map(armContinuous1.thighDif2, -20*PI, 20*PI, 0, 150);
-    this.pads[2].valueY = this.pads[2].y+this.pads[2].h - map(armContinuous1.kneePos, -2*PI, 2*PI, 0, 150);
-    this.pads[2].valueX = this.pads[2].x+this.pads[2].w - map(armContinuous1.kneePos, -2*PI, 2*PI, 0, 150);
-
-    this.pads[3].valueY = this.pads[3].y+this.pads[3].h - map(legContinuous1.thighPos, -2*PI, 2*PI, 0, 150);
-    this.pads[3].valueX = this.pads[3].x+this.pads[3].w - map(legContinuous1.thighDif, -2*PI, 2*PI, 0, 150);
-    this.pads[4].valueY = this.pads[4].y+this.pads[4].h - map(legContinuous1.thighPos2, -20*PI, 20*PI, 0, 150);
-    this.pads[4].valueX = this.pads[4].x+this.pads[4].w - map(legContinuous1.thighDif2, -20*PI, 20*PI, 0, 150);
-    this.pads[5].valueY = this.pads[5].y+this.pads[5].h - map(legContinuous1.kneePos, -2*PI, 2*PI, 0, 150);
-    this.pads[5].valueX = this.pads[5].x+this.pads[5].w - map(legContinuous1.kneePos, -2*PI, 2*PI, 0, 150);
-
-    this.sliders[2].position = this.sliders[2].y + this.sliders[2].h - map(vigor, 0, 1, 0, 150);
-
-    /*
-
-    let valueY = map(this.y+this.h - this.valueY, 0, 150, -2*PI, 2*PI);
-    let valueX = map(this.x+this.w - this.valueX, 0, 150, -2*PI, 2*PI);
-
-    switch(this.index){
-      case 0:
-      armContinuous1.thighPos = valueY;
-      armContinuous1.thighDif = valueX; break;
-      case 1:
-      valueY = 10*valueY;
-      valueX = 10*valueX;
-      armContinuous1.thighPos2 = valueY;
-      armContinuous1.thighDif2 = valueX; break;
-      case 2:
-      armContinuous1.kneePos = valueY;
-      armContinuous1.kneeDif = valueX; break;
-      case 3:
-      legContinuous1.thighPos = valueY;
-      legContinuous1.thighDif = valueX; break;
-      case 4:
-      valueY = 10*valueY;
-      valueX = 10*valueX;
-      legContinuous1.thighPos2 = valueY;
-      legContinuous1.thighDif2 = valueX; break;
-      case 5:
-      legContinuous1.kneePos = valueY;
-      legContinuous1.kneeDif = valueX; break;
-
-    */
   }
+
+  // displayknobs()
+  //
+  // a function to display all knobs, used in draw()
 
   displayKnobs(){
 
@@ -117,6 +77,11 @@ class UI{
       this.sliders[i].display();
     }
   }
+
+  // checkknobs()
+  //
+  // check knobs for mouse interaction,
+  // update game parameters tied to knobs.
 
   checkKnobs(type){
     for(let i=0; i<6; i++){
@@ -129,16 +94,9 @@ class UI{
     }
   }
 
-  camScalingX(input){
-    let scaleIt = abs(this.w/width);
-
-    return scaleIt;
-  }
-
-  camScalingY(input){
-    let scaleIt = abs(this.h/height);
-    return scaleIt;
-  }
+  // displaybackground()
+  //
+  // display panel behind the dancer and knobs
 
   displayBackground(){
 
@@ -151,39 +109,38 @@ class UI{
     pop();
   }
 
+  // displaymusiceditor()
+  //
+  // a function to display both keyboard and timeline, called in draw().
+
   displayMusicEditor(){
 
     push();
     rotateX(0.078*PI);
     this.displayKeyboard();
+    this.updateTimeline();
     this.displayTimeline();
     pop();
   }
 
-  displayTimeline(){
-    push();
-    let timelineW = this.w/2;
-    let beats = 16;
-    let timelineX = -timelineW/2;
-    let timelineY = this.h*0.42;
-    let timelineH = this.h/32;
-    let beatW = timelineW/beats;
-    translate(0, timelineY, 0);
+  // updatetimeline()
+  //
+  // check for mouse interaction with the timeline
+
+  updateTimeline(){
 
     for(let j=0; j<3; j++){
-      for(let i=0; i<16; i++){
+      for(let i=0; i<this.beats; i++){
 
         if(this.noteEditMode && i=== this.selectedTimelineElement) fill(185, 200, 85);
 
         if(
-          mouseX > width/2+(timelineX+i*beatW)
-          && mouseX < width/2+(timelineX+(i+1)*beatW)
-          && mouseY > height/2+(timelineY+(j)*timelineH)
-          && mouseY < height/2+(timelineY+(j+1)*timelineH)
-
-
+          mouseX > width/2+(this.timelineX+i*this.beatW)
+          && mouseX < width/2+(this.timelineX+(i+1)*this.beatW)
+          && mouseY > height/2+(this.timelineY+(j)*this.timelineH)
+          && mouseY < height/2+(this.timelineY+(j+1)*this.timelineH)
         ){
-          //fill(255, 0, 0);
+
           this.hoveredTimeline = j;
           this.hoveredElement = i;
 
@@ -194,35 +151,46 @@ class UI{
 
           if(mouseIsPressed && !this.noteEditMode){
 
-
             this.noteEditMode = true;
             this.selectedTimelineElement = i;
             this.selectedTimeline = j;
 
             if(mouseButton===RIGHT){
+
               this.noteEditMode = false;
               this.timelines[j][i] = -1;
               this.selectedTimelineElement = -1;
               this.selectedTImeline = -1;
             }
-
           }
         }
       }
     }
 
     if (
-      mouseX < width/2+(timelineX)*this.camScaleX
-      && mouseX > width/2+(timelineX+(17)*beatW)*this.camScaleX
-      && mouseY < height/2+(timelineY)*this.camScaleY
-      && mouseY >height/2+(timelineY+(4)*timelineH)*this.camScaleY
+      mouseX < width/2+(this.timelineX)
+      && mouseX > width/2+(this.timelineX+(this.beats+1)*this.beatW)
+      && mouseY < height/2+(this.timelineY)
+      && mouseY >height/2+(this.timelineY+(4)*this.timelineH)
     ){
       this.hoveredTimeline = -1;
       this.hoveredElement = -1;
     }
+  }
+
+  // displaytimeline()
+  //
+  // pick appropriate colours for timeline elements,
+  // then display the timeline
+
+  displayTimeline(){
+
     push();
-    translate(timelineX, 0, 0);
-    for(let i=0; i<16; i++){
+    translate(0, this.timelineY, 0);
+    push();
+    translate(this.timelineX, 0, 0);
+
+    for(let i=0; i<this.beats; i++){
       for(let h=0; h<3; h++){
         fill(255);
         push();
@@ -242,17 +210,21 @@ class UI{
           fill(255, 100, 100);
         }
 
-        if(this.selectedTimeline===h && this.selectedTimelineElement === i){
+        if(
+          this.selectedTimeline===h
+          && this.selectedTimelineElement === i
+          && this.noteEditMode
+        ){
           fill(255, 0, 0);
         }
 
-        translate(i*beatW, (h)*timelineH, 0);
+        translate(i*this.beatW, (h)*this.timelineH, 0);
         strokeWeight(1);
-        rect(0, 0, beatW, timelineH);
+        rect(0, 0, this.beatW, this.timelineH);
         if(i%4===0){
           strokeWeight(3);
-          line(-beatW/8, 0, beatW/8, timelineH);
-          if(h===0) line(-beatW/8, -timelineH, beatW/8, timelineH);
+          line(-this.beatW/8, 0, this.beatW/8, this.timelineH);
+          if(h===0) line(-this.beatW/8, -this.timelineH, this.beatW/8, this.timelineH);
         }
 
         pop();
@@ -260,8 +232,8 @@ class UI{
     }
     pop();
     fill(85, 85, 185);
-    this.timeIndicatorY = -timelineH;
-    rect(-timelineW/2 + (this.timeIndicatorX-1)*beatW, this.timeIndicatorY, beatW, timelineH);
+    this.timeIndicatorY = -this.timelineH;
+    rect(-this.timelineW/2 + (this.timeIndicatorX-1)*this.beatW, this.timeIndicatorY, this.beatW, this.timelineH);
     pop();
 
   }
@@ -298,28 +270,21 @@ class UI{
       }
 
       if(
-        mouseX > width/2+(kbX+i*noteWidth)//*this.camScaleX
-        && mouseX < width/2+(kbX+(i+1)*noteWidth)//*this.camScaleX
-        && mouseY > height/2+(kbY)//*this.camScaleY
-        && mouseY < height/2+(kbY+kbH)//*this.camScaleY
+        mouseX > width/2+(kbX+i*noteWidth)
+        && mouseX < width/2+(kbX+(i+1)*noteWidth)
+        && mouseY > height/2+(kbY)
+        && mouseY < height/2+(kbY+kbH)
         && this.noteEditMode
       ){
         fill(255, 0, 0);
         if(mouseIsPressed){
           // clicked on note i
-          console.log("\n edit mode stop");
-          //this.noteEditMode = false;
           this.timelines[this.selectedTimeline][ this.selectedTimelineElement ] = i;
-          //this.selectedTimeline = -1;
-          //this.selectedTimelineElement = -1;
-
-          console.log("\nset timeline element "+this.selectedTimelineElement+" to value "+i);
         }
       }
       else {
         if (mouseIsPressed && this.noteEditMode){
-        //this.timelines[this.selectedTimeline][ this.selectedTimelineElement ] = -1;
-        this.editModeCancelled = true;
+          this.editModeCancelled = true;
           fill(12, 35, 145);
         }
       }
