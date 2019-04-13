@@ -33,7 +33,7 @@ function loadMoves(){
   }
 
   // light dancing feet
-  legContinuous1 = {
+  legMoves[0] = {
     height:0,
     thighPos:0.2*PI,
     kneePos:0.5*PI,
@@ -46,7 +46,7 @@ function loadMoves(){
 
 
   // light dancing feet
-  legContinuous2 = {
+  legMoves[1] = {
     height:0,
     thighPos:0.6*PI,
     kneePos:0.5*PI,
@@ -58,8 +58,8 @@ function loadMoves(){
   }
 
   // do it on the floor
-  legContinuous3 = {
-    height:100,
+  legMoves[2] = {
+    height:50,
     thighPos:(0.2)*PI,
     thighDif:+0.8*PI,
     thighPos2:-1.2*PI,
@@ -70,8 +70,8 @@ function loadMoves(){
   }
 
   // whip legs around
-  legTemp1 = {
-    height:-100,
+  legMoves[3] = {
+    height:-50,
     thighPos:0,
     kneePos:1*PI,
     thighDif:.5*PI,
@@ -82,7 +82,7 @@ function loadMoves(){
   }
 
   // swing left leg, stand/jump on right
-  legTemp2 = {
+  legMoves[4] = {
     height:0,
     thighPos:(-1.1)*PI,
     kneePos:0.6*PI,
@@ -94,7 +94,7 @@ function loadMoves(){
   }
 
   // kick left leg
-  legTemp3 = {
+  legMoves[5] = {
     height:0,
     thighPos:-(1.1)*PI,
     kneePos:4,
@@ -106,7 +106,7 @@ function loadMoves(){
   }
 
   // macarena arms (touching shoulders)
-  armContinuous1 = {
+  armMoves[0]= {
     thighPos:0.2*PI,
     kneePos:-0.6*PI,
     thighDif:-0.25*PI,
@@ -117,7 +117,7 @@ function loadMoves(){
   }
 
   // back and forth elbows
-  armContinuous2 = {
+  armMoves[1] = {
     thighPos:0.6*PI,
     kneePos:0.3*PI,
     thighDif:0,
@@ -128,7 +128,7 @@ function loadMoves(){
   }
 
   // party hands
-  armContinuous3 = {
+  armMoves[2] = {
     thighPos:.5*PI,
     kneePos:0.3*PI,
     thighDif:-0.1*PI,
@@ -139,7 +139,7 @@ function loadMoves(){
   }
 
   // hands in the air2
-  armTemp1 = {
+  armMoves[3] = {
     thighPos:-.8*PI,
     thighDif:-0.6*PI,
     thighPos2:-30,
@@ -150,7 +150,7 @@ function loadMoves(){
   }
 
   // hands in the air
-  armTemp2 = {
+  armMoves[4] = {
     thighPos:.4*PI,
     kneePos:-1,
     thighDif:-0.75*PI,
@@ -161,7 +161,7 @@ function loadMoves(){
   }
 
   // arms extended in front
-  armTemp3 = {
+  armMoves[5] = {
     thighPos:0.1,
     kneePos:0.4,
     thighDif:- 0.2*PI,
@@ -174,20 +174,20 @@ function loadMoves(){
 }
 
 
-function tempMotion1(){
-  limbs[0].fireTempMotion(armJumpMotion, 50, 20);
-  limbs[2].fireTempMotion(armJumpMotion, 50, 20);
-  limbs[1].fireTempMotion(legJumpMotion, 50, 20);
-  limbs[3].fireTempMotion(legJumpMotion, 50, 20);
+function tempMotion(input){
+  limbs[0].fireTempMotion(armMoves[input], 50, 20);
+  limbs[2].fireTempMotion(armMoves[input], 50, 20);
+  limbs[1].fireTempMotion(legMoves[input], 50, 20);
+  limbs[3].fireTempMotion(legMoves[input], 50, 20);
 }
 
-function danceMotion(input){
+function newDanceMotion(){
 
 
-    limbs[0].changeCurrentMotion(armContinuous1, 100);
-    limbs[2].changeCurrentMotion(armContinuous1, 100);
-    limbs[1].changeCurrentMotion(legContinuous1, 100);
-    limbs[3].changeCurrentMotion(legContinuous1, 100);
+    limbs[0].changeCurrentMotion(armMoves[currentMoves], 100);
+    limbs[2].changeCurrentMotion(armMoves[currentMoves], 100);
+    limbs[1].changeCurrentMotion(legMoves[currentMoves], 100);
+    limbs[3].changeCurrentMotion(legMoves[currentMoves], 100);
 
 
 }

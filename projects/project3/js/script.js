@@ -8,20 +8,12 @@ let jumpTimer = 0;
 let hipDistance = 25;
 let shoulderDistance = 20;
 
-let armContinuous1;
-let armContinuous2;
-let armContinuous3;
-let armTemp1;
-let armTemp2;
-let armTemp3;
+let currentMoves = 0;
 
-let legContinuous1;
-let legContinuous2;
-let legContinuous3;
-let legContinuous4;
-let legTemp1;
-let legTemp2;
-let legTemp3;
+let armMoves = [6];
+let legMoves = [6];
+
+
 
 let legSpecs;
 let armSpecs;
@@ -29,7 +21,7 @@ let armSpecs;
 let vigor = 0.5;
 
 let offsetX=0;
-let offsetY =-50;
+let offsetY =0;
 let offsetZ =-100;
 let groundFill =0;
 
@@ -61,6 +53,9 @@ let canvas;
 
 function setup(){
 
+//  localStorage.clear(); // Clears everything in local storage
+
+
   loadMoves();
   uiObject = new UI();
 
@@ -74,7 +69,7 @@ function setup(){
   setupInstruments();
 
   setupBody();
-  danceMotion(0);
+  newDanceMotion();
 
 
 }
@@ -88,8 +83,8 @@ function setupBody(){
 
   for (let i=0; i<2; i++){
 
-    limbs.push(new Limb(200, 240, height/14, armSpecs, 2,1-  2*i));
-    limbs.push(new Limb(200, 130, height/12, legSpecs, 0,1- 2*i));
+    limbs.push(new Limb(200, 240, height/16, armSpecs, 2,1-  2*i));
+    limbs.push(new Limb(200, 130, height/14, legSpecs, 0,1- 2*i));
   }
 
 
@@ -205,9 +200,30 @@ for (let i=0; i<3; i++){
 function keyPressed(){
 
   switch(key){
-    case "z": tempMotion1(); break;
-    case "x": danceMotion1(); break;
-    case "c": danceMotion0(); break;
+    case "1":
+    currentMoves =0;
+    newDanceMotion();
+    setKnobs();
+    break;
+    case "2":
+    currentMoves =1;
+    newDanceMotion();
+    setKnobs();
+    break;
+    case "3":
+    currentMoves =2;
+    newDanceMotion();
+    setKnobs();
+    break;
+    case "4":
+    tempMotion(3);
+    break;
+    case "5":
+    tempMotion(4);
+    break;
+    case "6":
+    tempMotion(5);
+    break;
   }
 }
 
@@ -215,15 +231,14 @@ function keyPressed(){
 function mousePressed(){
 
   mouseHasBeenPressedOnce = true;
-/*
-  limbs[0].fireTempMotion(armJumpMotion, 55, 10);
-  limbs[2].fireTempMotion(armJumpMotion, 55, 10);
-  limbs[1].fireTempMotion(legsOnTheFloor, 32, 25);
-  limbs[3].fireTempMotion(legsOnTheFloor, 32, 25);
-*/
+
   uiObject.checkKnobs("press");
 
-  if(mouseButton===RIGHT)  saveInfo();
+  if(mouseButton===RIGHT){
+    saveInfo();
+    console.log(armMoves);
+    console.log(legMoves);
+  }
 }
 
 function mouseDragged(){
@@ -240,7 +255,7 @@ function displayGround(){
 
   push();
   fill(groundFill);
-  translate(-100, 200, -100)
+  translate(-100,170, -100)
   rotateX(PI/2.1)
   noStroke();
   rect(0, 0, 200, 200);
@@ -260,11 +275,17 @@ function loadSavedGame() {
   let gameData = JSON.parse(storedData);
 
 // assign saved pad positions, and update motion accordingly
+/*
   for(let i=0; i<uiObject.pads.length; i++){
     uiObject.pads[i].valueX = gameData.padsX[i];
     uiObject.pads[i].valueY = gameData.padsY[i];
     uiObject.pads[i].getValue();
   }
+*/
+  legMoves = gameData.legMoves;
+  armMoves = gameData.armMoves;
+
+  setKnobs();
 
 // assign saved slider positions
   for(let i=0; i<uiObject.sliders.length; i++){
@@ -278,21 +299,40 @@ function loadSavedGame() {
   return true;
 }
 
+function setKnobs(legMove, armMove){
+  let whichMove = armMoves[currentMoves];
+  let whichMove2 = legMoves[currentMoves];
+
+
+    uiObject.pads[0].setValue(whichMove.thighDif, whichMove.thighPos, 0);
+    uiObject.pads[1].setValue(whichMove.thighDif2, whichMove.thighPos2, 1);
+    uiObject.pads[2].setValue(whichMove.kneeDif, whichMove.kneePos, 0);
+    uiObject.pads[3].setValue(whichMove2.thighDif, whichMove2.thighPos, 0);
+    uiObject.pads[4].setValue(whichMove2.thighDif2, whichMove2.thighPos2, 1);
+    uiObject.pads[5].setValue(whichMove2.kneeDif, whichMove2.kneePos, 0);
+}
+
 
 function saveInfo(){
 
   let sendData = {
     padsX: [],
     padsY: [],
+
+    armMoves: armMoves,
+    legMoves: legMoves,
+
     sliders: [],
     vigor: vigor,
     timelines: uiObject.timelines,
   }
 
+/*
   for (let i=0; i< uiObject.pads.length; i++){
     sendData.padsX.push( uiObject.pads[i].valueX );
     sendData.padsY.push( uiObject.pads[i].valueY );
   }
+*/
 
   for (let i=0; i<uiObject.sliders.length; i++){
     sendData.sliders.push( uiObject.sliders[i].position );

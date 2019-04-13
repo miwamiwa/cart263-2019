@@ -55,6 +55,27 @@ class XYPad{
     }
   }
 
+  setValue(inputX, inputY, mode){
+let val1;
+let val3;
+
+if(mode===0){
+  val1 = map(inputY, -2*PI, 2*PI, 0, 150);
+  val3 = map(inputX, -2*PI, 2*PI, 0, 150);
+}
+else if(mode===1){
+  val1 = map(inputY, -20*PI, 20*PI, 0, 150);
+  val3 = map(inputX, -20*PI, 20*PI, 0, 150);
+}
+
+    let val2 = this.y + this.h - val1;
+    this.valueY = val2;
+
+
+    let val4 = this.x + this.w - val3;
+    this.valueX = val4;
+  }
+
   getValue(){
 
     let valueY = map(this.y+this.h - this.valueY, 0, 150, -2*PI, 2*PI);
@@ -62,27 +83,27 @@ class XYPad{
 
     switch(this.index){
       case 0:
-      armContinuous1.thighPos = valueY;
-      armContinuous1.thighDif = valueX; break;
+      armMoves[currentMoves].thighPos = valueY;
+      armMoves[currentMoves].thighDif = valueX; break;
       case 1:
       valueY = 10*valueY;
       valueX = 10*valueX;
-      armContinuous1.thighPos2 = valueY;
-      armContinuous1.thighDif2 = valueX; break;
+      armMoves[currentMoves].thighPos2 = valueY;
+      armMoves[currentMoves].thighDif2 = valueX; break;
       case 2:
-      armContinuous1.kneePos = valueY;
-      armContinuous1.kneeDif = valueX; break;
+      armMoves[currentMoves].kneePos = valueY;
+      armMoves[currentMoves].kneeDif = valueX; break;
       case 3:
-      legContinuous1.thighPos = valueY;
-      legContinuous1.thighDif = valueX; break;
+      legMoves[currentMoves].thighPos = valueY;
+      legMoves[currentMoves].thighDif = valueX; break;
       case 4:
       valueY = 10*valueY;
       valueX = 10*valueX;
-      legContinuous1.thighPos2 = valueY;
-      legContinuous1.thighDif2 = valueX; break;
+      legMoves[currentMoves].thighPos2 = valueY;
+      legMoves[currentMoves].thighDif2 = valueX; break;
       case 5:
-      legContinuous1.kneePos = valueY;
-      legContinuous1.kneeDif = valueX; break;
+      legMoves[currentMoves].kneePos = valueY;
+      legMoves[currentMoves].kneeDif = valueX; break;
     }
   }
 
