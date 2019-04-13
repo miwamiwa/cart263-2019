@@ -22,10 +22,15 @@ let groundFill =0;
 
 let envelopes = [3];
 let synths = [3];
+let filters = [3];
+let delays = [3];
 
 let uiObject;
 let musicObject;
 let canvas;
+
+let delayDividor = [0.5, 0.5];
+
 
 
 function setup(){
@@ -40,8 +45,9 @@ function setup(){
   musicObject= new Music();
   musicObject.setupInstruments();
 
-  frameRate(40);
+  frameRate(30);
   canvas = createCanvas(window.innerWidth, window.innerHeight, WEBGL);
+  uiObject.placeUI();
   canvas.parent('theDiv');
   setupBody();
   newDanceMotion();
@@ -244,8 +250,8 @@ function setKnobs(legMove, armMove){
   uiObject.pads[3].setValue(whichMove2.thighDif, whichMove2.thighPos, 0);
   uiObject.pads[4].setValue(whichMove2.thighDif2, whichMove2.thighPos2, 1);
   uiObject.pads[5].setValue(whichMove2.kneeDif, whichMove2.kneePos, 0);
-  uiObject.sliders[1].setValue(whichMove2.height, 1);
-  uiObject.sliders[2].setValue(vigor[currentMoves], 2);
+  uiObject.sliders[0].setValue(whichMove2.height, 1);
+  uiObject.sliders[1].setValue(vigor[currentMoves], 2);
 }
 
 

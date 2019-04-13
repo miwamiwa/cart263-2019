@@ -59,20 +59,46 @@ class UI{
 
     // create first column of xy pads
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(10, 10+i*160, this.knobIndex));
+      this.pads.push(new XYPad(10, 10+i*120, this.knobIndex));
       this.knobIndex++;
     }
 
     // create second column of xy pads
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(160, 10+i*160, this.knobIndex));
+      this.pads.push(new XYPad(120, 10+i*120, this.knobIndex));
       this.knobIndex++;
     }
 
     // create sliders
-    for (let i=0;i<3; i++){
-      this.sliders.push(new Slider(10+i*80, 490, this.knobIndex));
+    for (let i=0;i<2; i++){
+      this.sliders.push(new Slider(10+i*40, 360, this.knobIndex));
       this.knobIndex++;
+    }
+
+    // create sliders
+    for (let i=0;i<2; i++){
+      this.sliders.push(new Slider(10+i*40, 360, this.knobIndex));
+      this.knobIndex++;
+    }
+
+    for (let i=0;i<3; i++){
+      this.pads.push(new XYPad(120, 10+i*120, this.knobIndex));
+      this.knobIndex++;
+    }
+    for (let i=0;i<3; i++){
+      this.pads.push(new XYPad(10, 10+i*120, this.knobIndex));
+      this.knobIndex++;
+    }
+  }
+
+  placeUI(){
+
+    for(let i=0; i<2; i++){
+      this.sliders[i+2].x = width - (60+i*40);
+    }
+
+    for(let i=0; i<6; i++){
+      this.pads[i+6].x = width - 250 +ceil(i%2)*120;
     }
   }
 
@@ -82,10 +108,10 @@ class UI{
 
   displayKnobs(){
 
-    for(let i=0; i<6; i++){
+    for(let i=0; i<this.pads.length; i++){
       this.pads[i].display();
     }
-    for(let i=0; i<3; i++){
+    for(let i=0; i<this.sliders.length; i++){
       this.sliders[i].display();
     }
   }
@@ -97,11 +123,11 @@ class UI{
   // types of interaction: mouse pressed, dragged, or released.
 
   checkKnobs(type){
-    for(let i=0; i<6; i++){
+    for(let i=0; i<this.pads.length; i++){
       this.pads[i].checkMouse(type);
       this.pads[i].getValue();
     }
-    for(let i=0; i<3; i++){
+    for(let i=0; i<this.sliders.length; i++){
       this.sliders[i].checkMouse(type);
       this.sliders[i].getValue();
     }
@@ -195,12 +221,11 @@ class UI{
 
     // if mouse is not hovering over the timeline,
     // remove the hovered-element marker.
-    // don't think this works 100%
     if (
       mouseX < width/2+(this.timelineX)
-      && mouseX > width/2+(this.timelineX+(this.beats+1)*this.beatW)
-      && mouseY < height/2+(this.timelineY)
-      && mouseY >height/2+(this.timelineY+(4)*this.timelineH)
+      || mouseX > width/2+(this.timelineX+(this.beats+1)*this.beatW)
+      || mouseY < height/2+(this.timelineY)
+      || mouseY >height/2+(this.timelineY+(4)*this.timelineH)
     ){
       this.hoveredTimeline = -1;
       this.hoveredElement = -1;
@@ -342,7 +367,7 @@ class UI{
       (  mouseX < width/2+this.kb.x
         || mouseX > width/2+this.kb.x+24*this.noteWidth
         || mouseY < height/2+this.kb.y
-        || mouseY > height/2+this.kb.y+this.kb.h )  
+        || mouseY > height/2+this.kb.y+this.kb.h )
         && mouseIsPressed
         && this.noteEditMode
       ){

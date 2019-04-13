@@ -16,7 +16,7 @@ class Limb{
     this.footHitGround = false;
     this.centerX = x;
     this.centerY = y;
-    this.speed =9;
+    this.speed =13.5;
     this.transition=0;
 
     this.leanX = specs.leanX;

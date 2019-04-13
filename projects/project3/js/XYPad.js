@@ -4,8 +4,8 @@ class XYPad{
     this.index = index;
     this.x =x;
     this.y =y;
-    this.w = 150;
-    this.h = 150;
+    this.w = 100;
+    this.h = 100;
     this.valueX =this.x+this.w/2;
     this.valueY =this.y+this.h/2;
     this.maxValue=200;
@@ -60,12 +60,12 @@ let val1;
 let val3;
 
 if(mode===0){
-  val1 = map(inputY, -2*PI, 2*PI, 0, 150);
-  val3 = map(inputX, -2*PI, 2*PI, 0, 150);
+  val1 = map(inputY, -2*PI, 2*PI, 0, this.h);
+  val3 = map(inputX, -2*PI, 2*PI, 0, this.w);
 }
 else if(mode===1){
-  val1 = map(inputY, -20*PI, 20*PI, 0, 150);
-  val3 = map(inputX, -20*PI, 20*PI, 0, 150);
+  val1 = map(inputY, -20*PI, 20*PI, 0, this.h);
+  val3 = map(inputX, -20*PI, 20*PI, 0, this.w);
 }
 
     let val2 = this.y + this.h - val1;
@@ -78,8 +78,8 @@ else if(mode===1){
 
   getValue(){
 
-    let valueY = map(this.y+this.h - this.valueY, 0, 150, -2*PI, 2*PI);
-    let valueX = map(this.x+this.w - this.valueX, 0, 150, -2*PI, 2*PI);
+    let valueY = map(this.y+this.h - this.valueY, 0, this.h, -2*PI, 2*PI);
+    let valueX = map(this.x+this.w - this.valueX, 0, this.w, -2*PI, 2*PI);
 
     switch(this.index){
       case 0:
@@ -104,6 +104,9 @@ else if(mode===1){
       case 5:
       legMoves[currentMoves].kneePos = valueY;
       legMoves[currentMoves].kneeDif = valueX; break;
+      case 6:
+      break;
+      
     }
   }
 

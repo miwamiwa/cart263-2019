@@ -4,8 +4,8 @@ class Slider{
     this.index = index;
     this.x =x;
     this.y =y;
-    this.w = 50;
-    this.h = 150;
+    this.w = 30;
+    this.h = 120;
     this.position =this.y+this.h;
     this.maxValue=200;
     this.minValue =-200;
@@ -58,34 +58,37 @@ class Slider{
   }
 
   getValue(){
-    let value = map(this.y+this.h - this.position, 0, 150, 0, 1);
+    let value = map(this.y+this.h - this.position, 0, this.h, 0, 1);
 
 
     switch(this.index){
       case 6:
-      break;
-      case 7:
-      value = map(this.y+this.h-this.position, 0, 150, -50, 50);
+      value = map(this.y+this.h-this.position, 0, this.h, -50, 50);
       legMoves[currentMoves].height = value;
       break;
+      case 7:
+      vigor[currentMoves] = value;
+      break;
       case 8:
-      vigor[currentMoves] = value; break;
+      delayDividor[0]= value;
+      break;
+      case 9:
+      delayDividor[1] = value;
+      break;
     }
   }
 
   setValue(input, mode){
     let val;
-    console.log(mode)
 
     switch(mode){
       case 1:
-      console.log("ih")
-      val = map(input, -50, 50, 0, 150);
+      val = map(input, -50, 50, 0, this.h);
       this.position = this.y + this.h - val;
       break;
 
       case 2:
-      val = map(input, 0, 1, 0, 150);
+      val = map(input, 0, 1, 0,  this.h);
       this.position = this.y + this.h - val;
       break;
 
