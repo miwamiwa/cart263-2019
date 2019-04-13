@@ -59,11 +59,36 @@ class Slider{
 
   getValue(){
     let value = map(this.y+this.h - this.position, 0, 150, 0, 1);
+
+
     switch(this.index){
-      case 6:  break;
-      case 7:  break;
+      case 6:
+      break;
+      case 7:
+      value = map(this.y+this.h-this.position, 0, 150, -50, 50);
+      legMoves[currentMoves].height = value;
+      break;
       case 8:
-      vigor = value; break;
+      vigor[currentMoves] = value; break;
+    }
+  }
+
+  setValue(input, mode){
+    let val;
+    console.log(mode)
+
+    switch(mode){
+      case 1:
+      console.log("ih")
+      val = map(input, -50, 50, 0, 150);
+      this.position = this.y + this.h - val;
+      break;
+
+      case 2:
+      val = map(input, 0, 1, 0, 150);
+      this.position = this.y + this.h - val;
+      break;
+
     }
   }
 }

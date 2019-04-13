@@ -12,6 +12,35 @@ class Music{
 
 
   }
+  setupInstruments(){
+
+    for (let i=0; i<3; i++){
+      switch(i){
+        case 0:
+        synths[i] = new p5.Oscillator();
+        synths[i].setType("sine");
+        synths[i].freq(50);
+        break;
+
+        case 1: synths[i] = new p5.Oscillator();
+        synths[i].setType("square");
+        synths[i].freq(50);
+        break;
+
+        case 2: synths[i] = new p5.Noise();
+
+        break;
+      }
+
+      envelopes[i] = new p5.Envelope();
+      envelopes[i].setADSR(0.01, 0.05, 0.01, 0.2);
+      envelopes[i].setRange(1, 0);
+
+      synths[i].amp(envelopes[i]);
+      synths[i].start();
+    }
+  }
+  
   playMusic(){
 
     if( frameCount > this.loopStart + this.subDivCounter*this.subDivisionLength){

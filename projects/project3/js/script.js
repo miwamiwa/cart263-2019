@@ -3,48 +3,25 @@
 let limbs = [];
 let back;
 let head;
+
 let velocity = 1;
-let jumpTimer = 0;
 let hipDistance = 25;
 let shoulderDistance = 20;
-
+let hipMove;
 let currentMoves = 0;
-
 let armMoves = [6];
 let legMoves = [6];
-
-
-
 let legSpecs;
 let armSpecs;
-
-let vigor = 0.5;
+let vigor = [0.5, 0.5, 0.5];
 
 let offsetX=0;
 let offsetY =0;
 let offsetZ =-100;
 let groundFill =0;
 
-let beatStarted1 = false;
-let beatStarted2 = false;
-let synth;
-let synth2;
-let env2;
-let env1;
-
 let envelopes = [3];
 let synths = [3];
-
-let mouseHasBeenPressedOnce = false;
-
-let hipMove;
-
-let rootNote = 50;
-let legNotes = [0, 5, 5, 0, 2, 3, 5, 7, 3];
-let legNoteCounter =0;
-
-let armNotes = [8, 9, 8, 9, 4, 6, 4, 6];
-let armNoteCounter =0;
 
 let uiObject;
 let musicObject;
@@ -53,41 +30,39 @@ let canvas;
 
 function setup(){
 
-//  localStorage.clear(); // Clears everything in local storage
+  // localStorage.clear(); // Clears everything in local storage
 
 
   loadMoves();
   uiObject = new UI();
-
   loadSavedGame();
 
-
   musicObject= new Music();
-  frameRate(50);
+  musicObject.setupInstruments();
+
+  frameRate(40);
   canvas = createCanvas(window.innerWidth, window.innerHeight, WEBGL);
   canvas.parent('theDiv');
-  setupInstruments();
-
   setupBody();
   newDanceMotion();
 
-
 }
 
+// setupbody()
+//
+// create back, head, arms and legs objects
 
 function setupBody(){
 
+  // create back and head
   back = new Back();
   head = new Head();
-
-
   for (let i=0; i<2; i++){
-
+    // create arm
     limbs.push(new Limb(200, 240, height/16, armSpecs, 2,1-  2*i));
+    // create leg
     limbs.push(new Limb(200, 130, height/14, legSpecs, 0,1- 2*i));
   }
-
-
 }
 
 
@@ -97,8 +72,7 @@ function draw(){
 
   background(25, 45, 135);
   camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
-  // camera function that saved my soul
-  ortho();
+  ortho();  // camera function that saved my soul
 
   uiObject.displayBackground();
 
@@ -112,18 +86,16 @@ function draw(){
   uiObject.displayMusicEditor();
   musicObject.playMusic();
 
-push();
-translate(-width/2, -height/2, 0);
-uiObject.displayKnobs();
-pop();
+  push();
+  translate(-width/2, -height/2, 0);
+  uiObject.displayKnobs();
+  pop();
 
 }
 
 
 function handleInput(){
 
-  //velocity = map(mouseX, 0, width, 0, 2);
-velocity = 1;
   if(keyIsPressed){
     switch(key){
       case "w": offsetZ -=1; break;
@@ -136,66 +108,46 @@ velocity = 1;
 
 
 function displayDude(){
-scale(2);
+  // scale the entire dude
+  scale(2);
+
+  // calculate hip motion
   hipMove = sin( radians(frameCount*4))/20 * velocity;
+
+
   translate(hipMove*100, limbs[1].currentHeight, 0)
   rotateZ(PI+hipMove);
-
   rotateX( radians(back.leanForward));
   translate(-shoulderDistance/2,0,0);
 
+  // update & display leg 1
   push();
   rotateZ(-3*hipMove);
   limbs[1].update();
-
+  // update & display leg 2
   translate(shoulderDistance, 0, 0);
   limbs[3].update();
   pop();
-
+  // move to shoulder position
   push();
-  translate(0, back.length, hipDistance/2- shoulderDistance/2 );
+  translate(0, back.length, -shoulderDistance/2-hipDistance/2 );
+  // update & display arm 1
   limbs[0].update();
-
+  // update & display arm 2
   translate(hipDistance, 0, 0);
   limbs[2].update();
   pop();
 
+  // update back and head position and display
   back.update();
   back.display();
   head.update();
   head.display();
 }
 
-
-function setupInstruments(){
-
-for (let i=0; i<3; i++){
-  switch(i){
-    case 0:
-    synths[i] = new p5.Oscillator();
-    synths[i].setType("sine");
-    synths[i].freq(50);
-    break;
-
-    case 1: synths[i] = new p5.Oscillator();
-    synths[i].setType("square");
-    synths[i].freq(50);
-    break;
-
-    case 2: synths[i] = new p5.Noise();
-
-    break;
-  }
-
-  envelopes[i] = new p5.Envelope();
-  envelopes[i].setADSR(0.01, 0.05, 0.01, 0.2);
-  envelopes[i].setRange(1, 0);
-
-  synths[i].amp(envelopes[i]);
-  synths[i].start();
-}
-}
-
+// keypressed()
+//
+// fire different moves on key press.
 
 function keyPressed(){
 
@@ -230,8 +182,6 @@ function keyPressed(){
 
 function mousePressed(){
 
-  mouseHasBeenPressedOnce = true;
-
   uiObject.checkKnobs("press");
 
   if(mouseButton===RIGHT){
@@ -242,12 +192,11 @@ function mousePressed(){
 }
 
 function mouseDragged(){
-uiObject.checkKnobs("drag");
+  uiObject.checkKnobs("drag");
 }
+
 function mouseReleased(){
-
-uiObject.checkKnobs("stop");
-
+  uiObject.checkKnobs("stop");
 }
 
 
@@ -265,80 +214,50 @@ function displayGround(){
 
 function loadSavedGame() {
 
-  console.log("Loading words...");
   let storedData = localStorage.getItem('storage');
+
   if (storedData === null) {
+    setKnobs();
     return false;
-    console.log("load failed!");
   }
-  console.log("... load successful.");
+
   let gameData = JSON.parse(storedData);
 
-// assign saved pad positions, and update motion accordingly
-/*
-  for(let i=0; i<uiObject.pads.length; i++){
-    uiObject.pads[i].valueX = gameData.padsX[i];
-    uiObject.pads[i].valueY = gameData.padsY[i];
-    uiObject.pads[i].getValue();
-  }
-*/
   legMoves = gameData.legMoves;
   armMoves = gameData.armMoves;
+  vigor = gameData.vigor;
+  uiObject.timelines = gameData.timelines;
 
   setKnobs();
-
-// assign saved slider positions
-  for(let i=0; i<uiObject.sliders.length; i++){
-    uiObject.sliders[i].position = gameData.sliders[i];
-    uiObject.sliders[i].getValue();
-  }
-
-// assign saved music timelines
-  uiObject.timelines = gameData.timelines;
 
   return true;
 }
 
 function setKnobs(legMove, armMove){
+
   let whichMove = armMoves[currentMoves];
   let whichMove2 = legMoves[currentMoves];
 
-
-    uiObject.pads[0].setValue(whichMove.thighDif, whichMove.thighPos, 0);
-    uiObject.pads[1].setValue(whichMove.thighDif2, whichMove.thighPos2, 1);
-    uiObject.pads[2].setValue(whichMove.kneeDif, whichMove.kneePos, 0);
-    uiObject.pads[3].setValue(whichMove2.thighDif, whichMove2.thighPos, 0);
-    uiObject.pads[4].setValue(whichMove2.thighDif2, whichMove2.thighPos2, 1);
-    uiObject.pads[5].setValue(whichMove2.kneeDif, whichMove2.kneePos, 0);
+  uiObject.pads[0].setValue(whichMove.thighDif, whichMove.thighPos, 0);
+  uiObject.pads[1].setValue(whichMove.thighDif2, whichMove.thighPos2, 1);
+  uiObject.pads[2].setValue(whichMove.kneeDif, whichMove.kneePos, 0);
+  uiObject.pads[3].setValue(whichMove2.thighDif, whichMove2.thighPos, 0);
+  uiObject.pads[4].setValue(whichMove2.thighDif2, whichMove2.thighPos2, 1);
+  uiObject.pads[5].setValue(whichMove2.kneeDif, whichMove2.kneePos, 0);
+  uiObject.sliders[1].setValue(whichMove2.height, 1);
+  uiObject.sliders[2].setValue(vigor[currentMoves], 2);
 }
 
 
 function saveInfo(){
 
   let sendData = {
-    padsX: [],
-    padsY: [],
-
     armMoves: armMoves,
     legMoves: legMoves,
-
-    sliders: [],
     vigor: vigor,
     timelines: uiObject.timelines,
   }
 
-/*
-  for (let i=0; i< uiObject.pads.length; i++){
-    sendData.padsX.push( uiObject.pads[i].valueX );
-    sendData.padsY.push( uiObject.pads[i].valueY );
-  }
-*/
-
-  for (let i=0; i<uiObject.sliders.length; i++){
-    sendData.sliders.push( uiObject.sliders[i].position );
-  }
-
   let setDataAsJSON = JSON.stringify(sendData);
-  // Save the JSON string to storage as 'words'
-  localStorage.setItem('storage',setDataAsJSON);
+  localStorage.setItem('storage', setDataAsJSON);
 }

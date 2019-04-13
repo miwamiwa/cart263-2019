@@ -184,10 +184,10 @@ function tempMotion(input){
 function newDanceMotion(){
 
 
-    limbs[0].changeCurrentMotion(armMoves[currentMoves], 100);
-    limbs[2].changeCurrentMotion(armMoves[currentMoves], 100);
-    limbs[1].changeCurrentMotion(legMoves[currentMoves], 100);
-    limbs[3].changeCurrentMotion(legMoves[currentMoves], 100);
+    limbs[0].changeCurrentMotion(armMoves[currentMoves], 30);
+    limbs[2].changeCurrentMotion(armMoves[currentMoves], 30);
+    limbs[1].changeCurrentMotion(legMoves[currentMoves], 30);
+    limbs[3].changeCurrentMotion(legMoves[currentMoves], 30);
 
 
 }
