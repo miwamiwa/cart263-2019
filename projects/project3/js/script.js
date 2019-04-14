@@ -29,9 +29,12 @@ let uiObject;
 let musicObject;
 let canvas;
 
+let pictureTaken = false;
+
 let delayDividor = [0.5, 0.5];
 
-
+let camOffsetX =0;
+let camOffsetY =0;
 
 function setup(){
 
@@ -182,7 +185,10 @@ function keyPressed(){
     case "6":
     tempMotion(5);
     break;
+    case " ": pictureTaken = true;
+    break;
   }
+
 }
 
 

@@ -104,9 +104,29 @@ else if(mode===1){
       case 5:
       legMoves[currentMoves].kneePos = valueY;
       legMoves[currentMoves].kneeDif = valueX; break;
-      case 6:
+      case 10:
+      valueY = map(this.y+this.h - this.valueY, 0, this.h, 200, 1200);
+      valueX = map(this.x+this.w - this.valueX, 0, this.w, 0.1, 50);
+      filters[0].freq( valueY);
+      filters[0].res( valueX);
       break;
-      
+      case 11:
+      valueY = map(this.y+this.h - this.valueY, 0, this.h, 10, 8000);
+      valueX = map(this.x+this.w - this.valueX, 0, this.w, 0.1, 50);
+      filters[1].freq( valueY);
+      filters[1].res( valueX);
+      break;
+      case 12:
+      valueY = map(this.y+this.h - this.valueY, 0, this.h, 0.0001,1);
+      valueX = map(this.x+this.w - this.valueX, 0, this.w, 0.0001, 0.5);
+      envelopes[0].setADSR(valueX, 0.1, 0.3, valueY);
+      break;
+      case 13:
+      valueY = map(this.y+this.h - this.valueY, 0, this.h, 0.0001,1);
+      valueX = map(this.x+this.w - this.valueX, 0, this.w, 0.0001, 0.5);
+      envelopes[1].setADSR(valueX, 0.1, 0.3, valueY);
+      break;
+
     }
   }
 

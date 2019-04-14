@@ -49,14 +49,19 @@ synths[2].connect(filters[2]);
 
 
   for (let i=0; i<2; i++){
+    delays[i] = new p5.Delay();
     envelopes[i] = new p5.Envelope();
     envelopes[i].setADSR(0.01, 0.25, 0.01, 0.2);
     envelopes[i].setRange(0.5, 0);
+    filters[i] = new p5.LowPass();
 
-    delays[i] = new p5.Delay();
+
+
+    synths[i].disconnect();
+    synths[i].connect(filters[i]);
     delays[i].process(synths[i], 0.2, 0.4);
-
     synths[i].amp(envelopes[i]);
+
     synths[i].start();
   }
 }

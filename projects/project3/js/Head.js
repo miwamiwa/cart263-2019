@@ -2,6 +2,10 @@ class Head{
 
   constructor(){
     this.headBob;
+    this.capture = createCapture(VIDEO);
+    this.capture.hide();
+    this.faceImage;
+    this.camActive = true;
   }
 
   update(){
@@ -10,11 +14,26 @@ class Head{
 
   display(){
     push();
-fill(0, 105);
-stroke(235, 85);
+    fill(0, 105);
+    stroke(235, 85);
+    if (this.capture.loadedmetadata && this.camActive) {
+    var c = this.capture.get(0, 0, 640, 480);
+  //  image(c, 0, 0);
+  texture(c);
+  if(pictureTaken){
+    this.faceImage = c;
+    this.camActive = false;
+    this.capture.stop();
+  }
+  }
+
+  if(!this.camActive) texture(this.faceImage);
+
     translate(shoulderDistance/2, back.length+20, 0);
+    rotateY(PI/2);
+    rotateX(PI);
     sphere(20);
     pop();
-        //ellipse(limbs[1].waist.x+limbs[1].thigh.length/2, limbs[1].waist.y+this.headBob-limbs[1].thigh.length, 60, 60)
+
   }
 }
