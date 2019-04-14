@@ -70,10 +70,10 @@ class Slider{
       vigor[currentMoves] = value;
       break;
       case 8:
-      delayDividor[0]= value;
+  //    delayDividor[0]= value;
       break;
       case 9:
-      delayDividor[1] = value;
+  //    delayDividor[1] = value;
       break;
     }
   }

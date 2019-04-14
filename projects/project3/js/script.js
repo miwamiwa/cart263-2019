@@ -24,6 +24,10 @@ let envelopes = [3];
 let synths = [3];
 let filters = [3];
 let delays = [3];
+let attack = [0.1, 0.1];
+let release = [0.1, 0.1];
+let filterFreq = [100, 100];
+let filterRes = [10, 10];
 
 let uiObject;
 let musicObject;
@@ -32,14 +36,14 @@ let canvas;
 let pictureTaken = false;
 
 let delayDividor = [0.5, 0.5];
+let delayFeedback = [0.5, 0.5];
 
 let camOffsetX =0;
 let camOffsetY =0;
 
 function setup(){
 
-  // localStorage.clear(); // Clears everything in local storage
-
+ // localStorage.clear(); // Clears everything in local storage
 
   loadMoves();
   uiObject = new UI();
@@ -51,6 +55,7 @@ function setup(){
   frameRate(30);
   canvas = createCanvas(window.innerWidth, window.innerHeight, WEBGL);
   uiObject.placeUI();
+  setKnobs();
   canvas.parent('theDiv');
   setupBody();
   newDanceMotion();
@@ -229,7 +234,6 @@ function loadSavedGame() {
   let storedData = localStorage.getItem('storage');
 
   if (storedData === null) {
-    setKnobs();
     return false;
   }
 
@@ -239,8 +243,12 @@ function loadSavedGame() {
   armMoves = gameData.armMoves;
   vigor = gameData.vigor;
   uiObject.timelines = gameData.timelines;
-
-  setKnobs();
+  attack = gameData.attack;
+  release = gameData.release;
+  filterRes = gameData.filterRes;
+  filterFreq = gameData.filterFreq;
+  delayFeedback = gameData.delayFb;
+  delayDividor = gameData.delayDiv;
 
   return true;
 }
@@ -256,6 +264,14 @@ function setKnobs(legMove, armMove){
   uiObject.pads[3].setValue(whichMove2.thighDif, whichMove2.thighPos, 0);
   uiObject.pads[4].setValue(whichMove2.thighDif2, whichMove2.thighPos2, 1);
   uiObject.pads[5].setValue(whichMove2.kneeDif, whichMove2.kneePos, 0);
+
+  uiObject.pads[6].setValue(release[0], attack[0], 2);
+  uiObject.pads[7].setValue(filterRes[0], filterFreq[0], 3);
+  uiObject.pads[8].setValue(delayFeedback[0], delayDividor[0], 4);
+  uiObject.pads[9].setValue(release[1], attack[1], 2);
+  uiObject.pads[10].setValue(filterRes[1], filterFreq[1], 3);
+  uiObject.pads[11].setValue(delayFeedback[1], delayDividor[1], 4);
+
   uiObject.sliders[0].setValue(whichMove2.height, 1);
   uiObject.sliders[1].setValue(vigor[currentMoves], 2);
 }
@@ -268,6 +284,12 @@ function saveInfo(){
     legMoves: legMoves,
     vigor: vigor,
     timelines: uiObject.timelines,
+    attack: attack,
+    release: release,
+    filterRes: filterRes,
+    filterFreq: filterFreq,
+    delayFb: delayFeedback,
+    delayDiv: delayDividor,
   }
 
   let setDataAsJSON = JSON.stringify(sendData);

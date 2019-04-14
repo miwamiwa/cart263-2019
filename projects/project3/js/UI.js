@@ -76,29 +76,29 @@ class UI{
     }
 
     // create sliders
-    for (let i=0;i<2; i++){
+    for (let i=0;i<3; i++){
       this.sliders.push(new Slider(10+i*40, 360, this.knobIndex));
       this.knobIndex++;
     }
 
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(120, 10+i*120, this.knobIndex));
+      this.pads.push(new XYPad(-120, 10+i*120, this.knobIndex));
       this.knobIndex++;
     }
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(10, 10+i*120, this.knobIndex));
+      this.pads.push(new XYPad(-240, 10+i*120, this.knobIndex));
       this.knobIndex++;
     }
   }
 
   placeUI(){
 
-    for(let i=0; i<2; i++){
+    for(let i=0; i<3; i++){
       this.sliders[i+2].x = width - (60+i*40);
     }
 
     for(let i=0; i<6; i++){
-      this.pads[i+6].x = width - 250 +ceil(i%2)*120;
+      this.pads[i+6].x += width;
     }
   }
 
@@ -144,7 +144,7 @@ class UI{
     rotateX(0.078*PI);
     translate(-this.w/2, -7*this.h/16, -200);
     stroke(185, 125);
-    rect(0, 0, this.w, this.h);
+    rect(0, 0, this.w, this.h/3);
     pop();
   }
 

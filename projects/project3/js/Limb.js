@@ -144,7 +144,7 @@ class Limb{
     stroke(45, 255);
     let greenFill = 100+cos(radians(frameCount*2 ))*85;
     let redFill = 100+cos(radians(frameCount/1.1))*65;
-    fill(redFill, greenFill, 45, 115);
+    fill(redFill, greenFill, 45);
 
     // apply thigh rotation
     rotateZ(this.xflip*radians(this.thigh.angle2));
