@@ -29,7 +29,7 @@ class Head{
 
   if(!this.camActive) texture(this.faceImage);
 
-    translate(shoulderDistance/2, back.length+20, 0);
+    translate(dude.shoulderDistance/2, dude.back.length+20, 0);
     rotateY(PI/2);
     rotateX(PI);
     sphere(20);

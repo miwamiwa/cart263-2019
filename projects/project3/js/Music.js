@@ -23,7 +23,7 @@ class Music{
 
     // create sine wave synth
     synths[0] = new p5.Oscillator();
-    synths[0].setType("sine");
+    synths[0].setType("triangle");
     synths[0].freq(50);
 
     // create square wave synth

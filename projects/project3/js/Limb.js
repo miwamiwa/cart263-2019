@@ -148,8 +148,8 @@ class Limb{
 
     // apply thigh rotation
     rotateZ(this.xflip*radians(this.thigh.angle2));
-    rotateX(this.flip*this.thigh.angle - radians(back.leanForward));
-    rotateY(this.direction*PI - 2* this.xflip*hipMove);
+    rotateX(this.flip*this.thigh.angle - radians(dude.back.leanForward));
+    rotateY(this.direction*PI - 2* this.xflip*dude.hipMove);
     translate(0, -this.thigh.length/2, 0);
 
     // draw thigh
@@ -161,7 +161,7 @@ class Limb{
 
 
     if(this.flip===-1)
-    rotateZ(radians(-3*hipMove))
+    rotateZ(radians(-3*dude.hipMove))
 
     translate(0,  this.thigh.length/2, 0);
 
@@ -171,8 +171,8 @@ class Limb{
 
     // ----------------- DETECT COMBINED THIGH AND KNEE ANGLE!!!!!!! -------------------
 
-    let translate1 = this.thigh.length * ( sin(this.flip*this.thigh.angle - radians(back.leanForward)) + sin(this.knee.angle) );
-    let translate2 = this.thigh.length * ( cos(this.direction*this.thigh.angle - radians(back.leanForward)) + cos(this.knee.angle) );
+    let translate1 = this.thigh.length * ( sin(this.flip*this.thigh.angle - radians(dude.back.leanForward)) + sin(this.knee.angle) );
+    let translate2 = this.thigh.length * ( cos(this.direction*this.thigh.angle - radians(dude.back.leanForward)) + cos(this.knee.angle) );
     let translate3 = this.thigh.length * ( this.xflip*radians(this.thigh.angle2) );
 
     // the following events are triggered ONCE, not each frame.

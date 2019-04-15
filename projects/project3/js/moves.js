@@ -175,19 +175,19 @@ function loadMoves(){
 
 
 function tempMotion(input){
-  limbs[0].fireTempMotion(armMoves[input], 50, 20);
-  limbs[2].fireTempMotion(armMoves[input], 50, 20);
-  limbs[1].fireTempMotion(legMoves[input], 50, 20);
-  limbs[3].fireTempMotion(legMoves[input], 50, 20);
+  dude.limbs[0].fireTempMotion(armMoves[input], 50, 20);
+  dude.limbs[2].fireTempMotion(armMoves[input], 50, 20);
+  dude.limbs[1].fireTempMotion(legMoves[input], 50, 20);
+  dude.limbs[3].fireTempMotion(legMoves[input], 50, 20);
 }
 
 function newDanceMotion(){
 
 
-    limbs[0].changeCurrentMotion(armMoves[currentMoves], 30);
-    limbs[2].changeCurrentMotion(armMoves[currentMoves], 30);
-    limbs[1].changeCurrentMotion(legMoves[currentMoves], 30);
-    limbs[3].changeCurrentMotion(legMoves[currentMoves], 30);
+    dude.limbs[0].changeCurrentMotion(armMoves[currentMoves], 30);
+    dude.limbs[2].changeCurrentMotion(armMoves[currentMoves], 30);
+    dude.limbs[1].changeCurrentMotion(legMoves[currentMoves], 30);
+    dude.limbs[3].changeCurrentMotion(legMoves[currentMoves], 30);
 
 
 }

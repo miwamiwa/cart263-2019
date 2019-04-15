@@ -1,13 +1,9 @@
 "use strict";
 
-let limbs = [];
-let back;
-let head;
 
 let velocity = 1;
-let hipDistance = 25;
-let shoulderDistance = 20;
-let hipMove;
+let ellipses;
+
 let currentMoves = 0;
 let armMoves = [6];
 let legMoves = [6];
@@ -32,6 +28,7 @@ let filterRes = [10, 10];
 let uiObject;
 let musicObject;
 let canvas;
+let dude;
 
 let pictureTaken = false;
 
@@ -43,17 +40,12 @@ let fft;
 let camOffsetX =0;
 let camOffsetY =0;
 
-let animator = [5];
 
-let animationTimer = [0, 0, 0, 0, 0];
-let ellipseSpacing = 30;
 
 function setup(){
 
  // localStorage.clear(); // Clears everything in local storage
- for(let i=0; i<5; i++){
-   animator[i] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19];
- }
+   ellipses = new Ellipses();
 
   loadMoves();
   uiObject = new UI();
@@ -68,26 +60,9 @@ function setup(){
   uiObject.placeUI();
   setKnobs();
   canvas.parent('theDiv');
-  setupBody();
+  dude = new Dude();
   newDanceMotion();
 
-}
-
-// setupbody()
-//
-// create back, head, arms and legs objects
-
-function setupBody(){
-
-  // create back and head
-  back = new Back();
-  head = new Head();
-  for (let i=0; i<2; i++){
-    // create arm
-    limbs.push(new Limb(200, 240, height/16, armSpecs, 2,1-  2*i));
-    // create leg
-    limbs.push(new Limb(200, 130, height/14, legSpecs, 0,1- 2*i));
-  }
 }
 
 
@@ -100,10 +75,11 @@ function draw(){
   ortho();  // camera function that saved my soul
 
   uiObject.displayBackground();
+
   push();
   translate(offsetX, offsetY, offsetZ);
   displayGround();
-  displayDude();
+  dude.displayDude();
   pop();
 
 
@@ -127,57 +103,21 @@ function analyzeSound(){
   let mid = fft.getEnergy(350, 1000);
   let mid2 = fft.getEnergy(1000, 2000);
   let mid3 = fft.getEnergy(2000, 3000);
-  let lo = fft.getEnergy(20, 250);
+  let lo = fft.getEnergy(20, 300);
 
 let lightRow = height/2-130;
 let lightSpace = width/2-130;
-displayEllipses(mid, 0.70, -lightSpace, lightRow, 5, 0, 250);
-displayEllipses(mid2, 0.40, 0, lightRow, 5, 2, 250);
-displayEllipses(mid3, 0.40, lightSpace, lightRow, 5, 3, 250);
-displayEllipses(lo, 0.70, 0, 0, 20, 1, 400);
+ellipses.displayEllipses(mid, 0.70, -lightSpace, lightRow, 5, 0, 250);
+ellipses.displayEllipses(mid2, 0.40, 0, lightRow, 5, 2, 250);
+ellipses.displayEllipses(mid3, 0.40, lightSpace, lightRow, 5, 3, 250);
+ellipses.displayEllipses(lo, 0.84, 0, 0, 20, 1, 400);
 //console.log(hi)
     //let amb = round(map(hi, 0, 255, 0, 2));
 //ambientLight(amb*120, 255-amb*120, 125);
 
 }
 
-function displayEllipses(input, thresh, x, y, numberOfEllipses, timer, bigness){
 
-  if(input>(thresh)*255){
-//    console.log("oi");
-    animationTimer[timer] = frameCount +3;
-  }
-
-push();
-translate(x, y, -200);
-  // for each ellipse
-  for(let i=0; i<numberOfEllipses; i++){
-
-    // set position
-    let ellipseX = 0;
-    let ellipseY = 0;
-    let ellipseR;
-
-    // increment animation
-    if(frameCount<animationTimer[timer]){
-      // animationTimer is active, speed up animation
-      animator[timer][i] +=i*2;
-    }
-    else {
-      // else play at normal speed
-      animator[timer][i] +=i*0.1;
-    }
-
-    // calculate radius
-    ellipseR = ellipseSpacing*i + sin( radians( 100*animator[timer][i]/100 ) )*bigness;
-
-    // display ellipse
-    noStroke();
-    fill((animationTimer[timer]-frameCount)*120, 10000/bigness, 65, 75);
-    ellipse(ellipseX, ellipseY, ellipseR, ellipseR);
-  }
-  pop();
-}
 
 function handleInput(){
 
@@ -192,43 +132,7 @@ function handleInput(){
 }
 
 
-function displayDude(){
-  // scale the entire dude
-  scale(2);
 
-  // calculate hip motion
-  hipMove = sin( radians(frameCount*4))/20 * velocity;
-
-
-  translate(hipMove*100, limbs[1].currentHeight, 0)
-  rotateZ(PI+hipMove);
-  rotateX( radians(back.leanForward));
-  translate(-shoulderDistance/2,0,0);
-
-  // update & display leg 1
-  push();
-  rotateZ(-3*hipMove);
-  limbs[1].update();
-  // update & display leg 2
-  translate(shoulderDistance, 0, 0);
-  limbs[3].update();
-  pop();
-  // move to shoulder position
-  push();
-  translate(0, back.length, -shoulderDistance/2-hipDistance/2 );
-  // update & display arm 1
-  limbs[0].update();
-  // update & display arm 2
-  translate(hipDistance, 0, 0);
-  limbs[2].update();
-  pop();
-
-  // update back and head position and display
-  back.update();
-  back.display();
-  head.update();
-  head.display();
-}
 
 // keypressed()
 //
