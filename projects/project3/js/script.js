@@ -38,12 +38,22 @@ let pictureTaken = false;
 let delayDividor = [0.5, 0.5];
 let delayFeedback = [0.5, 0.5];
 
+let fft;
+
 let camOffsetX =0;
 let camOffsetY =0;
+
+let animator = [5];
+
+let animationTimer = [0, 0, 0, 0, 0];
+let ellipseSpacing = 30;
 
 function setup(){
 
  // localStorage.clear(); // Clears everything in local storage
+ for(let i=0; i<5; i++){
+   animator[i] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19];
+ }
 
   loadMoves();
   uiObject = new UI();
@@ -51,6 +61,7 @@ function setup(){
 
   musicObject= new Music();
   musicObject.setupInstruments();
+  fft = new p5.FFT();
 
   frameRate(30);
   canvas = createCanvas(window.innerWidth, window.innerHeight, WEBGL);
@@ -84,12 +95,11 @@ function draw(){
 
   handleInput();
 
-  background(25, 45, 135);
+  background(25, 15, 55);
   camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
   ortho();  // camera function that saved my soul
 
   uiObject.displayBackground();
-
   push();
   translate(offsetX, offsetY, offsetZ);
   displayGround();
@@ -99,6 +109,8 @@ function draw(){
 
   uiObject.displayMusicEditor();
   musicObject.playMusic();
+  analyzeSound();
+
 
   push();
   translate(-width/2, -height/2, 0);
@@ -107,6 +119,65 @@ function draw(){
 
 }
 
+function analyzeSound(){
+  let analysis = fft.analyze();
+
+  // energy is constrained between 0 and 255
+  let hi = fft.getEnergy(5000, 20000);
+  let mid = fft.getEnergy(350, 1000);
+  let mid2 = fft.getEnergy(1000, 2000);
+  let mid3 = fft.getEnergy(2000, 3000);
+  let lo = fft.getEnergy(20, 250);
+
+let lightRow = height/2-130;
+let lightSpace = width/2-130;
+displayEllipses(mid, 0.70, -lightSpace, lightRow, 5, 0, 250);
+displayEllipses(mid2, 0.40, 0, lightRow, 5, 2, 250);
+displayEllipses(mid3, 0.40, lightSpace, lightRow, 5, 3, 250);
+displayEllipses(lo, 0.70, 0, 0, 20, 1, 400);
+//console.log(hi)
+    //let amb = round(map(hi, 0, 255, 0, 2));
+//ambientLight(amb*120, 255-amb*120, 125);
+
+}
+
+function displayEllipses(input, thresh, x, y, numberOfEllipses, timer, bigness){
+
+  if(input>(thresh)*255){
+//    console.log("oi");
+    animationTimer[timer] = frameCount +3;
+  }
+
+push();
+translate(x, y, -200);
+  // for each ellipse
+  for(let i=0; i<numberOfEllipses; i++){
+
+    // set position
+    let ellipseX = 0;
+    let ellipseY = 0;
+    let ellipseR;
+
+    // increment animation
+    if(frameCount<animationTimer[timer]){
+      // animationTimer is active, speed up animation
+      animator[timer][i] +=i*2;
+    }
+    else {
+      // else play at normal speed
+      animator[timer][i] +=i*0.1;
+    }
+
+    // calculate radius
+    ellipseR = ellipseSpacing*i + sin( radians( 100*animator[timer][i]/100 ) )*bigness;
+
+    // display ellipse
+    noStroke();
+    fill((animationTimer[timer]-frameCount)*120, 10000/bigness, 65, 75);
+    ellipse(ellipseX, ellipseY, ellipseR, ellipseR);
+  }
+  pop();
+}
 
 function handleInput(){
 

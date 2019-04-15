@@ -140,11 +140,31 @@ class UI{
   displayBackground(){
 
     push();
-    fill(255, 125);
+    specularMaterial(250, 125);
     rotateX(0.078*PI);
-    translate(-this.w/2, -7*this.h/16, -200);
-    stroke(185, 125);
-    rect(0, 0, this.w, this.h/3);
+    push();
+    translate(-this.w/2, -1*this.h/16, -400);
+    stroke(185);
+    rotateX( radians(frameCount));
+    rotateZ(radians(frameCount));
+    box(800);
+      pop();
+
+      push();
+      translate(+this.w/2, 1*this.h/16, -400);
+      stroke(185);
+      rotateX( radians(frameCount*0.6));
+      rotateZ(radians(frameCount*0.4));
+      box(800);
+        pop();
+
+        push();
+        translate(9, -1*this.h/16, -400);
+        stroke(185);
+        rotateX( radians(frameCount*0.3));
+        rotateZ(radians(frameCount*0.4));
+        box(800);
+          pop();
     pop();
   }
 

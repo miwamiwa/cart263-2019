@@ -54,8 +54,8 @@ display(){
   translate(shoulderDistance/2, this.length/2, 0);
 //  rotateX( radians( this.leanForward))
 let greenFill = cos(radians(frameCount))*25;
-  fill(40+greenFill, 145);
-  stroke(85, 86);
+  fill(255);
+  stroke(0);
   box(10, this.length, 10);
 
   pop();

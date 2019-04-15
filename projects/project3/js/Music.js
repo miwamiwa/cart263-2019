@@ -59,7 +59,7 @@ class Music{
 
       synths[i].disconnect();
       synths[i].connect(filters[i]);
-      delays[i].process(synths[i], 0.2, 0.4);
+      delays[i].process(filters[i], 0.2, 0.4);
       synths[i].amp(envelopes[i]);
 
       synths[i].start();
