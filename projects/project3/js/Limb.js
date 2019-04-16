@@ -144,7 +144,9 @@ class Limb{
     stroke(45, 255);
     let greenFill = 100+cos(radians(frameCount*2 ))*85;
     let redFill = 100+cos(radians(frameCount/1.1))*65;
-    fill(redFill, greenFill, 45);
+
+    if(this.flip===1) fill(redFill, greenFill, 45);
+    if(this.flip===-1) fill(greenFill, 45, redFill)
 
     // apply thigh rotation
     rotateZ(this.xflip*radians(this.thigh.angle2));
@@ -169,11 +171,8 @@ class Limb{
     box(10, this.thigh.length, 10);
     pop();
 
-    // ----------------- DETECT COMBINED THIGH AND KNEE ANGLE!!!!!!! -------------------
 
-    let translate1 = this.thigh.length * ( sin(this.flip*this.thigh.angle - radians(dude.back.leanForward)) + sin(this.knee.angle) );
     let translate2 = this.thigh.length * ( cos(this.direction*this.thigh.angle - radians(dude.back.leanForward)) + cos(this.knee.angle) );
-    let translate3 = this.thigh.length * ( this.xflip*radians(this.thigh.angle2) );
 
     // the following events are triggered ONCE, not each frame.
     if(this.flip===-1){
@@ -206,17 +205,6 @@ class Limb{
     }
   }
 
-  fireTempMotion(motion, length, transition){
-
-    if(frameCount> this.tempTimer + this.transitionLength){
-      this.transitionLength = transition;
-      this.tempTimer = frameCount + length;
-      this.temp = motion;
-
-      this.last = motion;
-
-    }
-  }
 
   changeCurrentMotion(motion, transition){
 
@@ -224,41 +212,6 @@ class Limb{
     this.last = this.current;
     this.current = motion;
     this.transition = 1;
-  }
-
-  tempMotion(){
-
-    let result = {
-      height:0,
-      thighPos:0,
-      thighPos2:0,
-      kneePos:0,
-      thighDif:0,
-      thighDif2:0,
-      kneeDif:0,
-      speedDif:0
-    }
-
-    if(this.transition<1){
-
-      result.height=lerp(this.current.height, this.temp.height, this.transition);
-      result.thighPos=lerp(this.current.thighPos, this.temp.thighPos, this.transition);
-      result.kneePos=lerp(this.current.kneePos, this.temp.kneePos, this.transition);
-      result.thighDif=lerp(this.current.thighDif, this.temp.thighDif, this.transition);
-      result.kneeDif=lerp(this.current.kneeDif, this.temp.kneeDif, this.transition);
-      result.speedDif=lerp(this.current.speedDif, this.temp.speedDif, this.transition);
-      result.thighDif2=lerp(this.current.thighDif2, this.temp.thighDif2, this.transition);
-      result.thighPos2=lerp(this.current.thighPos2, this.temp.thighPos2, this.transition);
-      this.backHeight = result.height;
-      this.transition+=1/this.transitionLength;
-    } else {
-
-
-      result = this.temp;
-      this.backHeight = this.temp.height;
-    }
-
-    return result;
   }
 
 

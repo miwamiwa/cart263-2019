@@ -1,6 +1,18 @@
 class Music{
 
   constructor(){
+
+    this.envelopes = [3];
+    this.synths = [3];
+    this.filters = [3];
+    this.delays = [3];
+    this.attack = [0.1, 0.1];
+    this.release = [0.1, 0.1];
+    this.filterFreq = [100, 100];
+    this.filterRes = [10, 10];
+    this.delayDividor = [0.5, 0.5];
+    this.delayFeedback = [0.5, 0.5];
+
     this.nextTimelineNote = [3];
     this.nextTimelineNote[0] = 0;
     this.nextTimelineNote[1] = 0;
@@ -9,6 +21,7 @@ class Music{
     this.subDivisionLength = 3;
     this.subDivCounter =0;
     this.rootNotes = [60, 24, 0];
+    this.drumDS = [0.15, 0.3];
 
 
   }
@@ -22,47 +35,47 @@ class Music{
   setupInstruments(){
 
     // create sine wave synth
-    synths[0] = new p5.Oscillator();
-    synths[0].setType("triangle");
-    synths[0].freq(50);
+    this.synths[0] = new p5.Oscillator();
+    this.synths[0].setType("triangle");
+    this.synths[0].freq(50);
 
     // create square wave synth
-    synths[1] = new p5.Oscillator();
-    synths[1].setType("square");
-    synths[1].freq(50);
+    this.synths[1] = new p5.Oscillator();
+    this.synths[1].setType("square");
+    this.synths[1].freq(50);
 
     // create noise synth
-    filters[2] = new p5.HighPass();
-    synths[2] = new p5.Noise();
+    this.filters[2] = new p5.HighPass();
+    this.synths[2] = new p5.Noise();
 
-    envelopes[2] = new p5.Envelope();
-    envelopes[2].setADSR(0.01, 0.15, 0.01, 0.2);
-    envelopes[2].setRange(0.25, 0);
-    synths[2].amp(envelopes[2]);
-    synths[2].disconnect();
-    synths[2].connect(filters[2]);
-    synths[2].start();
-    delays[2] = new p5.Delay();
-    delays[2].amp(1);
-    delays[2].process(synths[2], 0.1, 0.35);
+    this.envelopes[2] = new p5.Envelope();
+    this.envelopes[2].setADSR(0.01, 0.05, 0.3, 0.4);
+    this.envelopes[2].setRange(0.25, 0);
+    this.synths[2].amp(this.envelopes[2]);
+    this.synths[2].disconnect();
+    this.synths[2].connect(this.filters[2]);
+    this.synths[2].start();
+    this.delays[2] = new p5.Delay();
+    this.delays[2].amp(1);
+    this.delays[2].process(this.synths[2], 0.1, 0.35);
 
 
 
     for (let i=0; i<2; i++){
-      delays[i] = new p5.Delay();
-      envelopes[i] = new p5.Envelope();
-      envelopes[i].setADSR(attack[i], 0.25, 0.01, release[i]);
-      envelopes[i].setRange(0.5, 0);
-      filters[i] = new p5.LowPass();
-      filters[i].freq( filterFreq[i] );
-      filters[i].res( filterRes[i] );
+      this.delays[i] = new p5.Delay();
+      this.envelopes[i] = new p5.Envelope();
+      this.envelopes[i].setADSR(this.attack[i], 0.15, 0.01, this.release[i]);
+      this.envelopes[i].setRange(0.5, 0);
+      this.filters[i] = new p5.LowPass();
+      this.filters[i].freq( this.filterFreq[i] );
+      this.filters[i].res( this.filterRes[i] );
 
-      synths[i].disconnect();
-      synths[i].connect(filters[i]);
-      delays[i].process(filters[i], 0.2, 0.4);
-      synths[i].amp(envelopes[i]);
+      this.synths[i].disconnect();
+      this.synths[i].connect(this.filters[i]);
+      this.delays[i].process(this.filters[i], 0.2, 0.4);
+      this.synths[i].amp(this.envelopes[i]);
 
-      synths[i].start();
+      this.synths[i].start();
     }
   }
 
@@ -139,21 +152,21 @@ class Music{
         // if this isn't the noise synth, set frequency
         if(input!=2){
           let freq = midiToFreq( this.rootNotes[input] + noteValue);
-          synths[input].freq( freq );
-          //let delay = map(noteValue/24, 0, 1.1, 24, 0.3)/1000;
-          console.log(delayFeedback[input]);
-          delays[input].delayTime(delayDividor[input]);
-          delays[input].feedback(delayFeedback[input]);
+          this.synths[input].freq( freq );
+      
+          this.delays[input].delayTime(this.delayDividor[input]);
+          this.delays[input].feedback(this.delayFeedback[input]);
           // start playing envelope
-          envelopes[input].play();
+          this.envelopes[input].play();
         }
         else {
           if(noteValue===0) noteValue=1;
-          let freq = noteValue*700;
-          filters[2].freq(freq);
+          let freq = (noteValue)*noteValue*20;
+          this.filters[2].freq(freq);
+          this.filters[2].res(30);
           let delay = map((noteValue)/24, 0, 1.1, 56, 0.01)/5000;
-          delays[2].delayTime(delay);
-          envelopes[2].play();
+          this.delays[2].delayTime(delay);
+          this.envelopes[2].play();
         }
 
         // increment next point to check by 1

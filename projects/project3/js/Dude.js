@@ -9,12 +9,45 @@ class Dude{
     this.hipDistance = 25;
     this.shoulderDistance = 20;
 
+    this.armSpecs = {
+      thighAngle: 20,
+      thighOrigin: -PI/8,
+      thighDisplacement: 0.2*PI,
+      thighAngle2: 20,
+      thighOrigin2: 10,
+      thighDisplacement2: 10,
+      kneeAngle: 100,
+      kneeOrigin: 0.8*PI,
+      kneeDisplacement: 0.8*PI,
+      kneeConstraint1:1* PI,
+      kneeConstraint2:1.9* PI,
+      leanX: 4,
+      leanY: 10
+    }
+
+    this.legSpecs = {
+      thighAngle: 20,
+      thighOrigin: -PI/8,
+      thighDisplacement: 3*PI/16,
+      thighAngle2: 0,
+      thighOrigin2: 0,
+      thighDisplacement2: 3*PI/16,
+      kneeAngle: 100,
+      kneeOrigin: 20*PI/19,
+      kneeDisplacement: 5*PI/7,
+      kneeConstraint1: PI,
+      kneeConstraint2:1.9* PI,
+      leanX:0,
+      leanY:-4,
+    }
+
     for (let i=0; i<2; i++){
       // create arm
-      this.limbs.push(new Limb(200, 240, height/16, armSpecs, 2,1-  2*i));
+      this.limbs.push(new Limb(200, 240, height/16, this.armSpecs, 2,1-  2*i));
       // create leg
-      this.limbs.push(new Limb(200, 130, height/14, legSpecs, 0,1- 2*i));
+      this.limbs.push(new Limb(200, 130, height/14, this.legSpecs, 0,1- 2*i));
     }
+
   }
 
   displayDude(){

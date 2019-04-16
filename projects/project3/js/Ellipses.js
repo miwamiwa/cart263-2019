@@ -1,4 +1,5 @@
 class Ellipses {
+
   constructor(){
 
     this.animator = [5];
@@ -52,7 +53,4 @@ class Ellipses {
       }
       pop();
     }
-
-
-
 }

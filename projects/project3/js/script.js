@@ -1,42 +1,22 @@
 "use strict";
 
-
 let velocity = 1;
 let ellipses;
 
 let currentMoves = 0;
 let armMoves = [6];
 let legMoves = [6];
-let legSpecs;
-let armSpecs;
-let vigor = [0.5, 0.5, 0.5];
-
+let vigor = [0.5, 0.5, 0.5, 0.5];
 let offsetX=0;
 let offsetY =0;
 let offsetZ =-100;
 let groundFill =0;
-
-let envelopes = [3];
-let synths = [3];
-let filters = [3];
-let delays = [3];
-let attack = [0.1, 0.1];
-let release = [0.1, 0.1];
-let filterFreq = [100, 100];
-let filterRes = [10, 10];
-
 let uiObject;
 let musicObject;
 let canvas;
 let dude;
-
 let pictureTaken = false;
-
-let delayDividor = [0.5, 0.5];
-let delayFeedback = [0.5, 0.5];
-
 let fft;
-
 let camOffsetX =0;
 let camOffsetY =0;
 
@@ -44,16 +24,16 @@ let camOffsetY =0;
 
 function setup(){
 
- // localStorage.clear(); // Clears everything in local storage
-   ellipses = new Ellipses();
+  musicObject= new Music();
+  musicObject.setupInstruments();
+  fft = new p5.FFT();
+
+//  localStorage.clear(); // Clears everything in local storage
+  ellipses = new Ellipses();
 
   loadMoves();
   uiObject = new UI();
   loadSavedGame();
-
-  musicObject= new Music();
-  musicObject.setupInstruments();
-  fft = new p5.FFT();
 
   frameRate(30);
   canvas = createCanvas(window.innerWidth, window.innerHeight, WEBGL);
@@ -63,17 +43,19 @@ function setup(){
   dude = new Dude();
   newDanceMotion();
 
+  positionText(width/2, height*0.05, "#title");
+
+  camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
+  ortho();
+
+  uiObject.getValues();
+
 }
 
 
 function draw(){
 
-  handleInput();
-
   background(25, 15, 55);
-  camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
-  ortho();  // camera function that saved my soul
-
   uiObject.displayBackground();
 
   push();
@@ -82,18 +64,18 @@ function draw(){
   dude.displayDude();
   pop();
 
-
   uiObject.displayMusicEditor();
   musicObject.playMusic();
   analyzeSound();
-
 
   push();
   translate(-width/2, -height/2, 0);
   uiObject.displayKnobs();
   pop();
 
+
 }
+
 
 function analyzeSound(){
   let analysis = fft.analyze();
@@ -105,33 +87,14 @@ function analyzeSound(){
   let mid3 = fft.getEnergy(2000, 3000);
   let lo = fft.getEnergy(20, 300);
 
-let lightRow = height/2-130;
-let lightSpace = width/2-130;
-ellipses.displayEllipses(mid, 0.70, -lightSpace, lightRow, 5, 0, 250);
-ellipses.displayEllipses(mid2, 0.40, 0, lightRow, 5, 2, 250);
-ellipses.displayEllipses(mid3, 0.40, lightSpace, lightRow, 5, 3, 250);
-ellipses.displayEllipses(lo, 0.84, 0, 0, 20, 1, 400);
-//console.log(hi)
-    //let amb = round(map(hi, 0, 255, 0, 2));
-//ambientLight(amb*120, 255-amb*120, 125);
+  let lightRow = height/2-130;
+  let lightSpace = width/2-130;
+  ellipses.displayEllipses(mid, 0.70, -lightSpace, lightRow, 5, 0, 250);
+  ellipses.displayEllipses(mid2, 0.40, 0, lightRow, 5, 2, 250);
+  ellipses.displayEllipses(mid3, 0.40, lightSpace, lightRow, 5, 3, 250);
+  ellipses.displayEllipses(lo, 0.75, 0, 0, 20, 1, 400);
 
 }
-
-
-
-function handleInput(){
-
-  if(keyIsPressed){
-    switch(key){
-      case "w": offsetZ -=1; break;
-      case "s": offsetZ +=1; break;
-      case "a": offsetX -= 1; break;
-      case "d": offsetX += 1; break;
-    }
-  }
-}
-
-
 
 
 // keypressed()
@@ -141,34 +104,19 @@ function handleInput(){
 function keyPressed(){
 
   switch(key){
-    case "1":
-    currentMoves =0;
-    newDanceMotion();
-    setKnobs();
-    break;
-    case "2":
-    currentMoves =1;
-    newDanceMotion();
-    setKnobs();
-    break;
-    case "3":
-    currentMoves =2;
-    newDanceMotion();
-    setKnobs();
-    break;
-    case "4":
-    tempMotion(3);
-    break;
-    case "5":
-    tempMotion(4);
-    break;
-    case "6":
-    tempMotion(5);
-    break;
-    case " ": pictureTaken = true;
-    break;
+    case "1": startMoves(0); break;
+    case "2": startMoves(1); break;
+    case "3": startMoves(2); break;
+    case "4": startMoves(3); break;
+    case " ": pictureTaken = true; break;
   }
+}
 
+function startMoves(input){
+
+  currentMoves =input;
+  newDanceMotion();
+  setKnobs();
 }
 
 
@@ -178,16 +126,16 @@ function mousePressed(){
 
   if(mouseButton===RIGHT){
     saveInfo();
-    console.log(armMoves);
-    console.log(legMoves);
   }
 }
 
 function mouseDragged(){
+
   uiObject.checkKnobs("drag");
 }
 
 function mouseReleased(){
+
   uiObject.checkKnobs("stop");
 }
 
@@ -218,17 +166,17 @@ function loadSavedGame() {
   armMoves = gameData.armMoves;
   vigor = gameData.vigor;
   uiObject.timelines = gameData.timelines;
-  attack = gameData.attack;
-  release = gameData.release;
-  filterRes = gameData.filterRes;
-  filterFreq = gameData.filterFreq;
-  delayFeedback = gameData.delayFb;
-  delayDividor = gameData.delayDiv;
+  musicObject.attack = gameData.attack;
+  musicObject.release = gameData.release;
+  musicObject.filterRes = gameData.filterRes;
+  musicObject.delayFeedback = gameData.delayFb;
+  musicObject.filterFreq = gameData.filterFreq;
+  musicObject.delayDividor = gameData.delayDiv;
 
   return true;
 }
 
-function setKnobs(legMove, armMove){
+function setKnobs(){
 
   let whichMove = armMoves[currentMoves];
   let whichMove2 = legMoves[currentMoves];
@@ -239,13 +187,12 @@ function setKnobs(legMove, armMove){
   uiObject.pads[3].setValue(whichMove2.thighDif, whichMove2.thighPos, 0);
   uiObject.pads[4].setValue(whichMove2.thighDif2, whichMove2.thighPos2, 1);
   uiObject.pads[5].setValue(whichMove2.kneeDif, whichMove2.kneePos, 0);
-
-  uiObject.pads[6].setValue(release[0], attack[0], 2);
-  uiObject.pads[7].setValue(filterRes[0], filterFreq[0], 3);
-  uiObject.pads[8].setValue(delayFeedback[0], delayDividor[0], 4);
-  uiObject.pads[9].setValue(release[1], attack[1], 2);
-  uiObject.pads[10].setValue(filterRes[1], filterFreq[1], 3);
-  uiObject.pads[11].setValue(delayFeedback[1], delayDividor[1], 4);
+  uiObject.pads[6].setValue(musicObject.release[0], musicObject.attack[0], 2);
+  uiObject.pads[7].setValue(musicObject.filterRes[0], musicObject.filterFreq[0], 3);
+  uiObject.pads[8].setValue(musicObject.delayFeedback[0], musicObject.delayDividor[0], 4);
+  uiObject.pads[9].setValue(musicObject.release[1], musicObject.attack[1], 2);
+  uiObject.pads[10].setValue(musicObject.filterRes[1], musicObject.filterFreq[1], 3);
+  uiObject.pads[11].setValue(musicObject.delayFeedback[1], musicObject.delayDividor[1], 4);
 
   uiObject.sliders[0].setValue(whichMove2.height, 1);
   uiObject.sliders[1].setValue(vigor[currentMoves], 2);
@@ -259,14 +206,29 @@ function saveInfo(){
     legMoves: legMoves,
     vigor: vigor,
     timelines: uiObject.timelines,
-    attack: attack,
-    release: release,
-    filterRes: filterRes,
-    filterFreq: filterFreq,
-    delayFb: delayFeedback,
-    delayDiv: delayDividor,
+    attack: musicObject.attack,
+    release: musicObject.release,
+    filterRes: musicObject.filterRes,
+    filterFreq: musicObject.filterFreq,
+    delayFb: musicObject.delayFeedback,
+    delayDiv: musicObject.delayDividor,
   }
 
   let setDataAsJSON = JSON.stringify(sendData);
   localStorage.setItem('storage', setDataAsJSON);
+}
+
+function positionText(x, y, selector){
+  let wid =0;
+  let hei =0;
+if(selector==="#title") {
+  wid = - $(selector).width()/2;
+}
+else {
+  wid = - $(selector).width()/4 -10;
+  hei = + $(selector).height()*1.5 + 40;
+}
+
+  $(selector).css("left", x+wid+"px");
+  $(selector).css("top", y+hei+"px");
 }

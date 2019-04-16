@@ -1,48 +1,51 @@
 class XYPad{
 
-  constructor(x, y, index){
+  constructor(x, y, index, selector){
+
     this.index = index;
-    this.x =x;
-    this.y =y;
-    this.w = 100;
-    this.h = 100;
+    this.x =x+100;
+
+    this.w = 90;
+    this.h = 90;
+      this.y =40+1.5*y*this.h;
+    this.margin = 0.1*this.h;
+
+    positionText(this.x, this.y, "#pad"+selector);
+
     this.valueX =this.x+this.w/2;
     this.valueY =this.y+this.h/2;
-    this.maxValue=200;
-    this.minValue =-200;
-    this.lastX =0;
-    this.lastY =0;
     this.selected = false;
+    this.colour = color(255, 80);
+
   }
+
+// display()
+//
+//
 
   display(){
 
     push();
-    strokeWeight(1);
-    stroke(0);
-    fill(225);
-    switch(this.index){
-      case 0: fill(0, 0, 100); break;
-      case 1: fill(0, 0, 140); break;
-      case 2: fill(0, 0, 180); break;
-      case 3: fill(0, 100, 0); break;
-      case 4: fill(0, 140, 0); break;
-      case 5: fill(0, 180, 0); break;
-      case 11: fill(0, 0, 100); break;
-      case 12: fill(0, 0, 140); break;
-      case 13: fill(0, 0, 180); break;
-      case 14: fill(0, 100, 0); break;
-      case 15: fill(0, 140, 0); break;
-      case 16: fill(0, 180, 0); break;
-    }
-    rect(this.x, this.y, this.w, this.h);
+    // display pad
+    strokeWeight(8);
+    stroke(255, 185);
+    fill(this.colour);
+
+
+    rect(this.x, this.y-this.margin, this.w, this.h+2*this.margin);
+    rect(this.x-this.margin, this.y, this.w+2*this.margin, this.h);
+
+
+    // display knob
+    translate(0, 0, 10);
+    noFill();
+    strokeWeight(5);
+
+    stroke(255);
+    ellipse(this.valueX, this.valueY ,10, 10);
     translate(0, 0, 1);
-    let posX = this.valueX;
-    let posY = this.valueY;
-    fill(255, 0, 0);
-
-    ellipse(posX, posY ,10, 10);
-
+    stroke(255, 0, 0);
+    ellipse(this.valueX, this.valueY ,8, 8);
     pop();
   }
 
@@ -72,30 +75,29 @@ class XYPad{
 
   setValue(inputX, inputY, mode){
 
-let val1;
-let val3;
+    let val1;
+    let val3;
 
-switch(mode){
-  case 0:
-  val1 = map(inputY, -2*PI, 2*PI, 0, this.h);
-  val3 = map(inputX, -2*PI, 2*PI, 0, this.w);break;
-  case 1:
-  val1 = map(inputY, -20*PI, 20*PI, 0, this.h);
-  val3 = map(inputX, -20*PI, 20*PI, 0, this.w);break;
-  case 2:
-  val1 = map(inputY, 0.0001, 1, 0, this.h);
-  val3 = map(inputX,  0.0001, 0.5, 0, this.w);break;
-  case 3:
-  val1 = map(inputY, 10, 8000, 0, this.h);
-  val3 = map(inputX, 0.1, 50, 0, this.w);break;
-  case 4:
-  val1 = map(inputY, 0, 1, 0, this.h);
-  val3 = map(inputX, 0, 1, 0, this.w);break;
-}
+    switch(mode){
+      case 0:
+      val1 = map(inputY, -2*PI, 2*PI, 0, this.h);
+      val3 = map(inputX, -2*PI, 2*PI, 0, this.w);break;
+      case 1:
+      val1 = map(inputY, -20*PI, 20*PI, 0, this.h);
+      val3 = map(inputX, -20*PI, 20*PI, 0, this.w);break;
+      case 2:
+      val1 = map(inputY, 0.0001, 1, 0, this.h);
+      val3 = map(inputX,  0.0001, 0.5, 0, this.w);break;
+      case 3:
+      val1 = map(inputY, 10, 8000, 0, this.h);
+      val3 = map(inputX, 0.1, 50, 0, this.w);break;
+      case 4:
+      val1 = map(inputY, 0, 1, 0, this.h);
+      val3 = map(inputX, 0, 1, 0, this.w);break;
+    }
 
     let val2 = this.y + this.h - val1;
     this.valueY = val2;
-
     let val4 = this.x + this.w - val3;
     this.valueX = val4;
   }
@@ -138,39 +140,39 @@ switch(mode){
       break;
 
       case 11:
-      attack[0] = map(markerY, 0, this.h, 0.0001, 1);
-      release[0] = map(markerX, 0, this.w, 0.0001, 0.5);
-      envelopes[0].setADSR(attack[0], 0.1, 0.3, release[0]);
+      musicObject.attack[0] = map(markerY, 0, this.h, 0.0001, 1);
+      musicObject.release[0] = map(markerX, 0, this.w, 0.0001, 0.5);
+      musicObject.envelopes[0].setADSR(musicObject.attack[0], 0.1, 0.3, musicObject.release[0]);
       break;
 
       case 12:
-      filterFreq[0] = map(markerY, 0, this.h, 10, 8000);
-      filterRes[0] = map(markerX, 0, this.w, 0.1, 50);
-      filters[0].freq( filterFreq[0] );
-      filters[0].res( filterRes[0] );
+      musicObject.filterFreq[0] = map(markerY, 0, this.h, 10, 8000);
+      musicObject.filterRes[0] = map(markerX, 0, this.w, 0.1, 50);
+      musicObject.filters[0].freq( musicObject.filterFreq[0] );
+      musicObject.filters[0].res( musicObject.filterRes[0] );
       break;
 
       case 13:
-      delayDividor[0] = map(markerY, 0, this.h, 0, 1);
-      delayFeedback[0] = constrain(map(markerX, 0, this.w, 0, 1), 0, 0.9);
+      musicObject.delayDividor[0] = map(markerY, 0, this.h, 0, 1);
+      musicObject.delayFeedback[0] = constrain(map(markerX, 0, this.w, 0, 1), 0, 0.9);
       break;
 
       case 14:
-      attack[1] = map(markerY, 0, this.h, 0.0001, 1);
-      release[1] = map(markerX, 0, this.w, 0.0001, 0.5);
-      envelopes[1].setADSR(attack[1], 0.1, 0.3, release[1]);
+      musicObject.attack[1] = map(markerY, 0, this.h, 0.0001, 1);
+      musicObject.release[1] = map(markerX, 0, this.w, 0.0001, 0.5);
+      musicObject.envelopes[1].setADSR(musicObject.attack[1], 0.1, 0.3, musicObject.release[1]);
       break;
 
       case 15:
-      filterFreq[1] = map(markerY, 0, this.h, 10, 8000);
-      filterRes[1] = map(markerX, 0, this.w, 0.1, 50);
-      filters[1].freq( filterFreq[1] );
-      filters[1].res( filterRes[1] );
+      musicObject.filterFreq[1] = map(markerY, 0, this.h, 10, 8000);
+      musicObject.filterRes[1] = map(markerX, 0, this.w, 0.1, 50);
+      musicObject.filters[1].freq( musicObject.filterFreq[1] );
+      musicObject.filters[1].res( musicObject.filterRes[1] );
       break;
 
       case 16:
-      delayDividor[1] = map(markerY, 0, this.h, 0, 1);
-      delayFeedback[1] = constrain(map(markerX, 0, this.w, 0, 1),0, 0.9);
+      musicObject.delayDividor[1] = map(markerY, 0, this.h, 0, 1);
+      musicObject.delayFeedback[1] = constrain(map(markerX, 0, this.w, 0, 1),0, 0.9);
       break;
     }
   }

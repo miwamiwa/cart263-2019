@@ -5,9 +5,37 @@ In this case it's just padding and margin to 0
 so the canvas is flush with the top left corner.
 
 **********************************************/
+@import url('https://fonts.googleapis.com/css?family=VT323');
 
 body {
+  font-family: 'VT323', monospace;
   padding: 0px;
   margin: 0;
-  font-size:30px;
+  user-select: none;
+}
+
+#theDiv{
+
+  position: fixed;
+  top:0;
+  left:0;
+}
+
+#title{
+
+  position:fixed;
+  align-content: center;
+  top:0;
+  left:0;
+  font-size:50px;
+}
+
+.pad{
+
+  color:black;
+  width:200px;
+  position:fixed;
+  z-index:50;
+  font-size:15px;
+  text-align:center;
 }

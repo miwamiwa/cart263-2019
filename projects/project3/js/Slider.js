@@ -7,6 +7,7 @@ class Slider{
     this.w = 30;
     this.h = 120;
     this.position =this.y+this.h;
+    this.margin = 0.1*this.h;
     this.maxValue=200;
     this.minValue =-200;
     this.lastX =0;
@@ -17,10 +18,13 @@ class Slider{
   display(){
 
     push();
-    strokeWeight(1);
-    stroke(0);
-    fill(225);
-    rect(this.x, this.y, this.w, this.h);
+    strokeWeight(8);
+    stroke(255, 185);
+    fill(255, 100);
+
+
+    rect(this.x, this.y-this.margin, this.w, this.h+2*this.margin);
+    rect(this.x-this.margin, this.y, this.w+2*this.margin, this.h);
     translate(0, 0, 1);
     //let level = map(this.position, this.minValue-1, this.maxValue+1, 0, 2*PI);
     fill(255, 0, 0);

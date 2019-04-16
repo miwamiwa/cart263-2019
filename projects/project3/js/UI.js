@@ -5,6 +5,8 @@ class UI{
     this.w = width*6;
     this.h = height*6;
 
+    this.padTitles = [ "thigh1", "thigh2", "knee","thigh1", "thigh2", "knee","attack/release", "filter freq/res", "delay feedback/time","attack/release", "filter freq/res", "delay feedback/time" ];
+
     // knobs and such
     this.sliders = [];
     this.pads = [];
@@ -59,34 +61,34 @@ class UI{
 
     // create first column of xy pads
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(10, 10+i*120, this.knobIndex));
+      this.pads.push(new XYPad(10, i, this.knobIndex, i ));
       this.knobIndex++;
     }
 
     // create second column of xy pads
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(120, 10+i*120, this.knobIndex));
+      this.pads.push(new XYPad(120, i, this.knobIndex, i+3 ));
       this.knobIndex++;
     }
 
     // create sliders
     for (let i=0;i<2; i++){
-      this.sliders.push(new Slider(10+i*40, 360, this.knobIndex));
+      this.sliders.push(new Slider(100+i*80, 460, this.knobIndex));
       this.knobIndex++;
     }
 
     // create sliders
     for (let i=0;i<3; i++){
-      this.sliders.push(new Slider(10+i*40, 360, this.knobIndex));
+      this.sliders.push(new Slider(80+i*40, 460, this.knobIndex));
       this.knobIndex++;
     }
 
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(-120, 10+i*120, this.knobIndex));
+      this.pads.push(new XYPad(-120, i, this.knobIndex, i+6 ));
       this.knobIndex++;
     }
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(-240, 10+i*120, this.knobIndex));
+      this.pads.push(new XYPad(-240, i, this.knobIndex, i+9 ));
       this.knobIndex++;
     }
   }
@@ -94,11 +96,18 @@ class UI{
   placeUI(){
 
     for(let i=0; i<3; i++){
-      this.sliders[i+2].x = width - (60+i*40);
+      this.sliders[i+2].x = width - (100+i*80);
+      this.sliders[i+2].valueX =this.sliders[i+2].x+this.sliders[i+2].w/2;
     }
 
     for(let i=0; i<6; i++){
-      this.pads[i+6].x += width;
+      let margin = this.pads[i+6].x;
+      console.log(margin);
+      this.pads[i+6].x += width -160;
+
+      let selector = i+6;
+      let idName = "#pad"+selector;
+      positionText(this.pads[i+6].x, this.pads[i+6].y, idName);
     }
   }
 
@@ -129,6 +138,16 @@ class UI{
     }
     for(let i=0; i<this.sliders.length; i++){
       this.sliders[i].checkMouse(type);
+      this.sliders[i].getValue();
+    }
+  }
+
+
+  getValues(){
+    for(let i=0; i<this.pads.length; i++){
+      this.pads[i].getValue();
+    }
+    for(let i=0; i<this.sliders.length; i++){
       this.sliders[i].getValue();
     }
   }
