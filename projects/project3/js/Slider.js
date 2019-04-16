@@ -84,7 +84,7 @@ class Slider{
       case 10:
       musicObject.maxAmplitude[2] = value;
       musicObject.envelopes[2].setRange( musicObject.maxAmplitude[2], 0);
-
+      musicObject.envelopes[2].setADSR(0.01, 0.05, 0.3*musicObject.maxAmplitude[2], 0.4);
       break;
     }
   }
@@ -105,8 +105,10 @@ class Slider{
       val = map(input, 0, 1, 0, this.h);
       break;
 
-      this.position = this.y + this.h - val;
+
 
     }
+
+    this.position = this.y + this.h - val;
   }
 }

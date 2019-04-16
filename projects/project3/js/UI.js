@@ -33,7 +33,7 @@ class UI{
       w: 2*this.w/3,
       x: 0,
       y: 0,
-      z: 0,
+      z: 100,
       h: this.h/8
     }
     this.kb.x= -this.kb.w/2;
@@ -163,27 +163,32 @@ class UI{
     rotateX(0.078*PI);
     push();
     translate(-this.w/2, -1*this.h/16, -400);
-    stroke(185);
+    stroke(185, 50);
     rotateX( radians(frameCount));
     rotateZ(radians(frameCount));
     box(800);
-      pop();
+    pop();
 
-      push();
-      translate(+this.w/2, 1*this.h/16, -400);
-      stroke(185);
-      rotateX( radians(frameCount*0.6));
-      rotateZ(radians(frameCount*0.4));
-      box(800);
-        pop();
+    push();
+    translate(+this.w/2, 1*this.h/16, -400);
+    stroke(185);
+    rotateX( radians(frameCount*0.6));
+    rotateZ(radians(frameCount*0.4));
+    box(800);
+    pop();
 
-        push();
-        translate(9, -1*this.h/16, -400);
-        stroke(185);
-        rotateX( radians(frameCount*0.3));
-        rotateZ(radians(frameCount*0.4));
-        box(800);
-          pop();
+    push();
+    translate(9, -1*this.h/16, -400);
+    stroke(185);
+    rotateX( radians(frameCount*0.3));
+    rotateZ(radians(frameCount*0.4));
+    box(800);
+    pop();
+
+    translate(0, 0, -300);
+    fill(0, 205);
+    rect(-width/2, -height/2, width, height);
+    if(!soundStarted) positionText(250, height*0.65, "#instructions");
     pop();
   }
 
@@ -294,8 +299,10 @@ class UI{
         fill(255);
         push();
 
-        // if this square's note value isn't null, colour it green
-        if(this.timelines[h][i]!=-1) fill(45, 145, 12);
+        // if this square's note value isn't null, give it this row's colour
+        if(this.timelines[h][i]!=-1 && h===0) fill(45, 145, 12);
+        if(this.timelines[h][i]!=-1 && h===1) fill(145, 45, 12);
+        if(this.timelines[h][i]!=-1 && h===2) fill(12, 45, 145);
 
         // if this is the hovered element, use a light red
         if(this.hoveredTimeline===h && this.hoveredElement === i ){
@@ -349,8 +356,8 @@ class UI{
 
     push();
     translate(this.kb.x, this.kb.y, this.kb.z);
-    stroke(125);
-    strokeWeight(1);
+    stroke(125, 125);
+    strokeWeight(4);
 
     // for each note on the keyboard
     for(let i=0; i<24; i++){
@@ -381,7 +388,7 @@ class UI{
 
         // find black keys and set fill to black
         let thisKey = i%12;
-        if(thisKey===1||thisKey===3||thisKey===6||thisKey===8||thisKey===10) fill(0);
+        if(thisKey===1||thisKey===3||thisKey===6||thisKey===8||thisKey===10) fill(12, 12, 45);
 
         // if edit mode is active and this timeline element already has a note
         // value, and if the said value matches this key's value,

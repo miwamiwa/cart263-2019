@@ -24,6 +24,9 @@ class Music{
     this.rootNotes = [60, 24, 0];
     this.drumDS = [0.15, 0.3];
 
+    this.drumSynth;
+    this.drumSynthFilter;
+
 
   }
 
@@ -48,9 +51,8 @@ class Music{
     // create noise synth
     this.filters[2] = new p5.HighPass();
     this.synths[2] = new p5.Noise();
-
     this.envelopes[2] = new p5.Envelope();
-    this.envelopes[2].setADSR(0.01, 0.05, 0.3, 0.4);
+    this.envelopes[2].setADSR(0.01, 0.05, 0.3*this.maxAmplitude[2], 0.4);
     this.envelopes[2].setRange(this.maxAmplitude[2], 0);
     this.synths[2].amp(this.envelopes[2]);
     this.synths[2].disconnect();
@@ -58,7 +60,19 @@ class Music{
     this.synths[2].start();
     this.delays[2] = new p5.Delay();
     this.delays[2].amp(1);
-    this.delays[2].process(this.synths[2], 0.1, 0.35);
+    this.delays[2].process(this.synths[2], 0.3, 0.55);
+
+    this.drumSynth = new p5.Oscillator();
+    this.drumSynth.setType("square");
+    this.drumSynth.freq(100);
+
+    this.drumSynthFilter = new p5.LowPass();
+    this.drumSynthFilter.freq(100);
+    this.drumSynthFilter.res(10);
+    this.drumSynth.amp(this.envelopes[2]);
+    this.drumSynth.disconnect();
+    this.drumSynth.connect(this.drumSynthFilter);
+    this.drumSynth.start();
 
 
 
@@ -150,7 +164,7 @@ class Music{
       else if(uiObject.timelines[input][this.nextTimelineNote[input]]>=0){
 
         let noteValue = uiObject.timelines[input][this.nextTimelineNote[input]];
-      
+
         // if this isn't the noise synth, set frequency
         if(input!=2){
           let freq = midiToFreq( this.rootNotes[input] + noteValue);
@@ -163,9 +177,10 @@ class Music{
         }
         else {
           if(noteValue===0) noteValue=1;
-          let freq = (noteValue)*noteValue*20;
+          let freq = (2+noteValue)*noteValue*20;
           this.filters[2].freq(freq);
-          this.filters[2].res(30);
+          this.filters[2].res(25);
+          this.drumSynth.freq(map(noteValue, 0, 25, 20, 500));
           let delay = map((noteValue)/24, 0, 1.1, 56, 0.01)/5000;
           this.delays[2].delayTime(delay);
           this.envelopes[2].play();

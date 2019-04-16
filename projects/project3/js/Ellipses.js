@@ -24,7 +24,7 @@ class Ellipses {
       }
 
     push();
-    translate(x, y, -200);
+    translate(x, y, -400);
       // for each ellipse
       for(let i=0; i<numberOfEllipses; i++){
 
@@ -48,7 +48,13 @@ class Ellipses {
 
         // display ellipse
         noStroke();
-        fill((this.animationTimer[timer]-frameCount)*120, 10000/bigness, 65, 75);
+        if(bigness<350){
+          fill(10000/bigness, (this.animationTimer[timer]-frameCount)*120, 65, 75);
+        }
+        else {
+          fill((this.animationTimer[timer]-frameCount)*120, 10000/bigness, 65, 75);
+        }
+
         ellipse(ellipseX, ellipseY, ellipseR, ellipseR);
       }
       pop();

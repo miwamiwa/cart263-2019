@@ -30,7 +30,7 @@ function setup(){
 
   fft = new p5.FFT();
 
-//  localStorage.clear(); // Clears everything in local storage
+//localStorage.clear(); // Clears everything in local storage
   ellipses = new Ellipses();
 
   loadMoves();
@@ -58,6 +58,7 @@ function startSound(){
 soundStarted = true;
 musicObject.setupInstruments();
 uiObject.getValues();
+$("#instructions"). remove();
 }
 
 
@@ -84,7 +85,6 @@ function draw(){
   translate(-width/2, -height/2, 0);
   uiObject.displayKnobs();
   pop();
-
 
 }
 
@@ -154,10 +154,10 @@ function displayGround(){
 
   push();
   fill(groundFill);
-  translate(-100,170, -100)
+  translate(-200,200, 99)
   rotateX(PI/2.1)
   noStroke();
-  rect(0, 0, 200, 200);
+  rect(0, 0, 400, 400);
   pop();
 }
 
@@ -182,6 +182,7 @@ function loadSavedGame() {
   musicObject.delayFeedback = gameData.delayFb;
   musicObject.filterFreq = gameData.filterFreq;
   musicObject.delayDividor = gameData.delayDiv;
+  musicObject.maxAmplitude = gameData.ampLevels;
 
   return true;
 }
@@ -227,6 +228,7 @@ function saveInfo(){
     filterFreq: musicObject.filterFreq,
     delayFb: musicObject.delayFeedback,
     delayDiv: musicObject.delayDividor,
+    ampLevels: musicObject.maxAmplitude,
   }
 
   let setDataAsJSON = JSON.stringify(sendData);
@@ -234,6 +236,7 @@ function saveInfo(){
 }
 
 function positionText(x, y, selector){
+
   let wid =0;
   let hei =0;
 if(selector==="#title") {

@@ -183,10 +183,10 @@ class Limb{
         this.footHitGround = true;
 
         if(this.xflip ===1)
-        groundFill = color(185, 45, 45);
+        groundFill = color(185, 45, 45, 205);
 
         if(this.xflip ===-1)
-        groundFill = color(45, 185, 45);
+        groundFill = color(45, 185, 45, 205);
       }
       if(translate2>0 && this.footHitGround){
         this.footHitGround = false;
