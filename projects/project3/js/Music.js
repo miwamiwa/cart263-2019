@@ -12,6 +12,7 @@ class Music{
     this.filterRes = [10, 10];
     this.delayDividor = [0.5, 0.5];
     this.delayFeedback = [0.5, 0.5];
+    this.maxAmplitude = [0.5, 0.5, 0.5]
 
     this.nextTimelineNote = [3];
     this.nextTimelineNote[0] = 0;
@@ -50,7 +51,7 @@ class Music{
 
     this.envelopes[2] = new p5.Envelope();
     this.envelopes[2].setADSR(0.01, 0.05, 0.3, 0.4);
-    this.envelopes[2].setRange(0.25, 0);
+    this.envelopes[2].setRange(this.maxAmplitude[2], 0);
     this.synths[2].amp(this.envelopes[2]);
     this.synths[2].disconnect();
     this.synths[2].connect(this.filters[2]);
@@ -65,7 +66,7 @@ class Music{
       this.delays[i] = new p5.Delay();
       this.envelopes[i] = new p5.Envelope();
       this.envelopes[i].setADSR(this.attack[i], 0.15, 0.01, this.release[i]);
-      this.envelopes[i].setRange(0.5, 0);
+      this.envelopes[i].setRange(this.maxAmplitude[i], 0);
       this.filters[i] = new p5.LowPass();
       this.filters[i].freq( this.filterFreq[i] );
       this.filters[i].res( this.filterRes[i] );
@@ -149,11 +150,12 @@ class Music{
       else if(uiObject.timelines[input][this.nextTimelineNote[input]]>=0){
 
         let noteValue = uiObject.timelines[input][this.nextTimelineNote[input]];
+      
         // if this isn't the noise synth, set frequency
         if(input!=2){
           let freq = midiToFreq( this.rootNotes[input] + noteValue);
           this.synths[input].freq( freq );
-      
+
           this.delays[input].delayTime(this.delayDividor[input]);
           this.delays[input].feedback(this.delayFeedback[input]);
           // start playing envelope

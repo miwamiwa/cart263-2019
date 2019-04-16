@@ -62,7 +62,7 @@ class Slider{
   }
 
   getValue(){
-    let value = map(this.y+this.h - this.position, 0, this.h, 0, 1);
+    let value = map(this.y+this.h - this.position, 0, this.h, 0.01, 1);
 
 
     switch(this.index){
@@ -74,10 +74,17 @@ class Slider{
       vigor[currentMoves] = value;
       break;
       case 8:
-  //    delayDividor[0]= value;
+      musicObject.maxAmplitude[0] = value;
+      musicObject.envelopes[0].setRange( musicObject.maxAmplitude[0], 0);
       break;
       case 9:
-  //    delayDividor[1] = value;
+      musicObject.maxAmplitude[1] = value;
+      musicObject.envelopes[1].setRange( musicObject.maxAmplitude[1], 0);
+      break;
+      case 10:
+      musicObject.maxAmplitude[2] = value;
+      musicObject.envelopes[2].setRange( musicObject.maxAmplitude[2], 0);
+
       break;
     }
   }
@@ -88,13 +95,17 @@ class Slider{
     switch(mode){
       case 1:
       val = map(input, -50, 50, 0, this.h);
-      this.position = this.y + this.h - val;
       break;
 
       case 2:
       val = map(input, 0, 1, 0,  this.h);
-      this.position = this.y + this.h - val;
       break;
+
+      case 3:
+      val = map(input, 0, 1, 0, this.h);
+      break;
+
+      this.position = this.y + this.h - val;
 
     }
   }

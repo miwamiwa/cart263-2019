@@ -20,12 +20,14 @@ let fft;
 let camOffsetX =0;
 let camOffsetY =0;
 
+let soundStarted = false;
+
 
 
 function setup(){
 
   musicObject= new Music();
-  musicObject.setupInstruments();
+
   fft = new p5.FFT();
 
 //  localStorage.clear(); // Clears everything in local storage
@@ -48,8 +50,14 @@ function setup(){
   camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
   ortho();
 
-  uiObject.getValues();
 
+
+}
+
+function startSound(){
+soundStarted = true;
+musicObject.setupInstruments();
+uiObject.getValues();
 }
 
 
@@ -65,7 +73,11 @@ function draw(){
   pop();
 
   uiObject.displayMusicEditor();
-  musicObject.playMusic();
+
+  if(soundStarted){
+    musicObject.playMusic();
+  }
+
   analyzeSound();
 
   push();
@@ -122,21 +134,19 @@ function startMoves(input){
 
 function mousePressed(){
 
-  uiObject.checkKnobs("press");
-
-  if(mouseButton===RIGHT){
-    saveInfo();
-  }
+  if(soundStarted) uiObject.checkKnobs("press");
+  if(mouseButton===RIGHT) saveInfo();
+  if(!soundStarted) startSound();
 }
 
 function mouseDragged(){
 
-  uiObject.checkKnobs("drag");
+  if(soundStarted) uiObject.checkKnobs("drag");
 }
 
 function mouseReleased(){
 
-  uiObject.checkKnobs("stop");
+  if(soundStarted) uiObject.checkKnobs("stop");
 }
 
 
@@ -194,8 +204,13 @@ function setKnobs(){
   uiObject.pads[10].setValue(musicObject.filterRes[1], musicObject.filterFreq[1], 3);
   uiObject.pads[11].setValue(musicObject.delayFeedback[1], musicObject.delayDividor[1], 4);
 
+  //   this.envelopes[input].setRange(this.maxAmplitude[input], 0);
   uiObject.sliders[0].setValue(whichMove2.height, 1);
   uiObject.sliders[1].setValue(vigor[currentMoves], 2);
+
+  uiObject.sliders[2].setValue(musicObject.maxAmplitude[0], 3);
+  uiObject.sliders[3].setValue(musicObject.maxAmplitude[1], 3);
+  uiObject.sliders[4].setValue(musicObject.maxAmplitude[2], 3);
 }
 
 
