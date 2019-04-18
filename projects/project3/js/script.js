@@ -1,64 +1,53 @@
 "use strict";
 
 let velocity = 1;
-let ellipses;
-
-let currentMoves = 0;
-let armMoves = [6];
-let legMoves = [6];
-let vigor = [0.5, 0.5, 0.5, 0.5];
 let offsetX=0;
 let offsetY =0;
 let offsetZ =-100;
 let groundFill =0;
+let camOffsetX =0;
+let camOffsetY =0;
+
+let ellipses;
 let uiObject;
 let musicObject;
 let canvas;
 let dude;
-let pictureTaken = false;
 let fft;
-let camOffsetX =0;
-let camOffsetY =0;
 
+let pictureTaken = false;
 let soundStarted = false;
 
 
 
 function setup(){
 
+  //localStorage.clear(); // Clears everything in local storage
   musicObject= new Music();
-
   fft = new p5.FFT();
-
-//localStorage.clear(); // Clears everything in local storage
   ellipses = new Ellipses();
-
+  dude = new Dude();
   loadMoves();
   uiObject = new UI();
   loadSavedGame();
+  uiObject.setKnobs();
 
   frameRate(30);
   canvas = createCanvas(window.innerWidth, window.innerHeight, WEBGL);
-  uiObject.placeUI();
-  setKnobs();
   canvas.parent('theDiv');
-  dude = new Dude();
+
   newDanceMotion();
-
   positionText(width/2, height*0.05, "#title");
-
   camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
   ortho();
-
-
-
 }
 
 function startSound(){
-soundStarted = true;
-musicObject.setupInstruments();
-uiObject.getValues();
-$("#instructions"). remove();
+
+  soundStarted = true;
+  musicObject.setupInstruments();
+  uiObject.getValues();
+  $("#instructions"). remove();
 }
 
 
@@ -126,9 +115,9 @@ function keyPressed(){
 
 function startMoves(input){
 
-  currentMoves =input;
+  dude.currentMoves =input;
   newDanceMotion();
-  setKnobs();
+  uiObject.setKnobs();
 }
 
 
@@ -172,9 +161,9 @@ function loadSavedGame() {
 
   let gameData = JSON.parse(storedData);
 
-  legMoves = gameData.legMoves;
-  armMoves = gameData.armMoves;
-  vigor = gameData.vigor;
+  dude.legMoves = gameData.legMoves;
+  dude.armMoves = gameData.armMoves;
+  dude.vigor = gameData.vigor;
   uiObject.timelines = gameData.timelines;
   musicObject.attack = gameData.attack;
   musicObject.release = gameData.release;
@@ -187,40 +176,14 @@ function loadSavedGame() {
   return true;
 }
 
-function setKnobs(){
-
-  let whichMove = armMoves[currentMoves];
-  let whichMove2 = legMoves[currentMoves];
-
-  uiObject.pads[0].setValue(whichMove.thighDif, whichMove.thighPos, 0);
-  uiObject.pads[1].setValue(whichMove.thighDif2, whichMove.thighPos2, 1);
-  uiObject.pads[2].setValue(whichMove.kneeDif, whichMove.kneePos, 0);
-  uiObject.pads[3].setValue(whichMove2.thighDif, whichMove2.thighPos, 0);
-  uiObject.pads[4].setValue(whichMove2.thighDif2, whichMove2.thighPos2, 1);
-  uiObject.pads[5].setValue(whichMove2.kneeDif, whichMove2.kneePos, 0);
-  uiObject.pads[6].setValue(musicObject.release[0], musicObject.attack[0], 2);
-  uiObject.pads[7].setValue(musicObject.filterRes[0], musicObject.filterFreq[0], 3);
-  uiObject.pads[8].setValue(musicObject.delayFeedback[0], musicObject.delayDividor[0], 4);
-  uiObject.pads[9].setValue(musicObject.release[1], musicObject.attack[1], 2);
-  uiObject.pads[10].setValue(musicObject.filterRes[1], musicObject.filterFreq[1], 3);
-  uiObject.pads[11].setValue(musicObject.delayFeedback[1], musicObject.delayDividor[1], 4);
-
-  //   this.envelopes[input].setRange(this.maxAmplitude[input], 0);
-  uiObject.sliders[0].setValue(whichMove2.height, 1);
-  uiObject.sliders[1].setValue(vigor[currentMoves], 2);
-
-  uiObject.sliders[2].setValue(musicObject.maxAmplitude[0], 3);
-  uiObject.sliders[3].setValue(musicObject.maxAmplitude[1], 3);
-  uiObject.sliders[4].setValue(musicObject.maxAmplitude[2], 3);
-}
 
 
 function saveInfo(){
 
   let sendData = {
-    armMoves: armMoves,
-    legMoves: legMoves,
-    vigor: vigor,
+    armMoves: dude.armMoves,
+    legMoves: dude.legMoves,
+    vigor: dude.vigor,
     timelines: uiObject.timelines,
     attack: musicObject.attack,
     release: musicObject.release,
@@ -239,13 +202,13 @@ function positionText(x, y, selector){
 
   let wid =0;
   let hei =0;
-if(selector==="#title") {
-  wid = - $(selector).width()/2;
-}
-else {
-  wid = - $(selector).width()/4 -10;
-  hei = + $(selector).height()*1.5 + 40;
-}
+  if(selector==="#title") {
+    wid = - $(selector).width()/2;
+  }
+  else {
+    wid = - $(selector).width()/4 -10;
+    hei = + $(selector).height()*1.5 + 40;
+  }
 
   $(selector).css("left", x+wid+"px");
   $(selector).css("top", y+hei+"px");

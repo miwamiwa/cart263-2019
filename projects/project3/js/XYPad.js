@@ -1,13 +1,13 @@
 class XYPad{
 
-  constructor(x, y, index, selector){
+  constructor(x, y, index, selector, size){
 
     this.index = index;
-    this.x =x+100;
+    this.x =x;
 
-    this.w = 90;
-    this.h = 90;
-      this.y =40+1.5*y*this.h;
+    this.w = size;
+    this.h = size;
+      this.y =y;
     this.margin = 0.1*this.h;
 
     positionText(this.x, this.y, "#pad"+selector);
@@ -110,33 +110,33 @@ class XYPad{
     switch(this.index){
 
       case 0:
-      armMoves[currentMoves].thighPos = map(markerY, 0, this.h, -2*PI, 2*PI);
-      armMoves[currentMoves].thighDif = map(markerX, 0, this.w, -2*PI, 2*PI);
+      dude.armMoves[dude.currentMoves].thighPos = map(markerY, 0, this.h, -2*PI, 2*PI);
+      dude.armMoves[dude.currentMoves].thighDif = map(markerX, 0, this.w, -2*PI, 2*PI);
       break;
 
       case 1:
-      armMoves[currentMoves].thighPos2 = map(markerY, 0, this.h, -20*PI, 20*PI);
-      armMoves[currentMoves].thighDif2 = map(markerX, 0, this.w, -20*PI, 20*PI);
+      dude.armMoves[dude.currentMoves].thighPos2 = map(markerY, 0, this.h, -20*PI, 20*PI);
+      dude.armMoves[dude.currentMoves].thighDif2 = map(markerX, 0, this.w, -20*PI, 20*PI);
       break;
 
       case 2:
-      armMoves[currentMoves].kneePos = map(markerY, 0, this.h, -2*PI, 2*PI);
-      armMoves[currentMoves].kneeDif = map(markerX, 0, this.w, -2*PI, 2*PI);
+      dude.armMoves[dude.currentMoves].kneePos = map(markerY, 0, this.h, -2*PI, 2*PI);
+      dude.armMoves[dude.currentMoves].kneeDif = map(markerX, 0, this.w, -2*PI, 2*PI);
       break;
 
       case 3:
-      legMoves[currentMoves].thighPos = map(markerY, 0, this.h, -2*PI, 2*PI);
-      legMoves[currentMoves].thighDif = map(markerX, 0, this.w, -2*PI, 2*PI);
+      dude.legMoves[dude.currentMoves].thighPos = map(markerY, 0, this.h, -2*PI, 2*PI);
+      dude.legMoves[dude.currentMoves].thighDif = map(markerX, 0, this.w, -2*PI, 2*PI);
       break;
 
       case 4:
-      legMoves[currentMoves].thighPos2 = map(markerY, 0, this.h, -20*PI, 20*PI);
-      legMoves[currentMoves].thighDif2 = map(markerX, 0, this.w, -20*PI, 20*PI);
+      dude.legMoves[dude.currentMoves].thighPos2 = map(markerY, 0, this.h, -20*PI, 20*PI);
+      dude.legMoves[dude.currentMoves].thighDif2 = map(markerX, 0, this.w, -20*PI, 20*PI);
       break;
 
       case 5:
-      legMoves[currentMoves].kneePos = map(markerY, 0, this.h, -2*PI, 2*PI);
-      legMoves[currentMoves].kneeDif = map(markerX, 0, this.w, -2*PI, 2*PI);
+      dude.legMoves[dude.currentMoves].kneePos = map(markerY, 0, this.h, -2*PI, 2*PI);
+      dude.legMoves[dude.currentMoves].kneeDif = map(markerX, 0, this.w, -2*PI, 2*PI);
       break;
 
       case 11:

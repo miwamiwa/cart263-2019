@@ -1,11 +1,11 @@
 class Slider{
 
-  constructor(x, y, index){
+  constructor(x, y, index, w, h){
     this.index = index;
     this.x =x;
     this.y =y;
-    this.w = 30;
-    this.h = 120;
+    this.w = w;
+    this.h = h;
     this.position =this.y+this.h;
     this.margin = 0.1*this.h;
     this.maxValue=200;
@@ -68,10 +68,10 @@ class Slider{
     switch(this.index){
       case 6:
       value = map(this.y+this.h-this.position, 0, this.h, -50, 50);
-      legMoves[currentMoves].height = value;
+      dude.legMoves[dude.currentMoves].height = value;
       break;
       case 7:
-      vigor[currentMoves] = value;
+      dude.vigor[dude.currentMoves] = value;
       break;
       case 8:
       musicObject.maxAmplitude[0] = value;

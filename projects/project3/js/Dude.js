@@ -9,6 +9,11 @@ class Dude{
     this.hipDistance = 25;
     this.shoulderDistance = 20;
 
+    this.currentMoves = 0;
+    this.armMoves = [6];
+    this.legMoves = [6];
+    this.vigor = [0.5, 0.5, 0.5, 0.5];
+
     this.armSpecs = {
       thighAngle: 20,
       thighOrigin: -PI/8,
@@ -43,9 +48,9 @@ class Dude{
 
     for (let i=0; i<2; i++){
       // create arm
-      this.limbs.push(new Limb(200, 240, height/16, this.armSpecs, 2,1-  2*i));
+      this.limbs.push(new Limb(200, 240, window.innerHeight/16, this.armSpecs, 2,1-  2*i));
       // create leg
-      this.limbs.push(new Limb(200, 130, height/14, this.legSpecs, 0,1- 2*i));
+      this.limbs.push(new Limb(200, 130, window.innerHeight/14, this.legSpecs, 0,1- 2*i));
     }
 
   }

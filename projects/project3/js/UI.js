@@ -2,8 +2,8 @@ class UI{
 
   constructor(){
     // panel size
-    this.w = width*6;
-    this.h = height*6;
+    this.w = window.innerWidth*6;
+    this.h = window.innerHeight*6;
 
     this.padTitles = [ "thigh1", "thigh2", "knee","thigh1", "thigh2", "knee","attack/release", "filter freq/res", "delay feedback/time","attack/release", "filter freq/res", "delay feedback/time" ];
 
@@ -22,22 +22,22 @@ class UI{
     this.timeIndicatorX = 0;
     this.timeIndicatorY = 0;
     this.beats = 16;
-    this.timelineW = this.w/2;
+    this.timelineW = 520;
     this.timelineX = -this.timelineW/2;
-    this.timelineY = this.h*0.42;
-    this.timelineH = this.h/32;
+    this.timelineY = window.innerHeight/2 - 130;
+    this.timelineH = 30;
     this.beatW = this.timelineW/this.beats;
 
     // keyboard:
     this.kb = {
-      w: 2*this.w/3,
+      w: 400,
       x: 0,
       y: 0,
-      z: 100,
-      h: this.h/8
+      z: 0,
+      h: 70
     }
     this.kb.x= -this.kb.w/2;
-    this.kb.y = 0.23* this.h;
+    this.kb.y = window.innerHeight/2 - 230;
     this.noteWidth = this.kb.w /24;
 
     // create music note arrays
@@ -59,57 +59,54 @@ class UI{
 
   setupKnobs(){
 
+    let innerW = window.innerWidth;
+    let innerH = window.innerHeight;
+    let padsX = innerW/7;
+    let padsY = 50;
+    let padsMargin = 30;
+    let padSize = innerH/7;
+    let sliderW = padSize/3;
+
     // create first column of xy pads
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(10, i, this.knobIndex, i ));
+      this.pads.push(new XYPad(padsX, padsY+i*(padsMargin+padSize), this.knobIndex, i, padSize ));
       this.knobIndex++;
     }
 
     // create second column of xy pads
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(120, i, this.knobIndex, i+3 ));
+      this.pads.push(new XYPad(padsX+padSize+padsMargin, padsY+i*(padsMargin+padSize), this.knobIndex, i+3, padSize  ));
       this.knobIndex++;
     }
 
     // create sliders
     for (let i=0;i<2; i++){
-      this.sliders.push(new Slider(100+i*80, 460, this.knobIndex));
+      let x = padsX+i*(sliderW+padsMargin);
+      let y = padsY + 3*padSize+4*padsMargin;
+      this.sliders.push(new Slider(x, y, this.knobIndex, sliderW, padSize));
       this.knobIndex++;
     }
 
     // create sliders
     for (let i=0;i<3; i++){
-      this.sliders.push(new Slider(80+i*40, 460, this.knobIndex));
+      let x = innerW-sliderW-(padsX+i*(sliderW+padsMargin));
+      let y = padsY + 3*padSize+4*padsMargin;
+      this.sliders.push(new Slider(x, y, this.knobIndex, sliderW, padSize));
       this.knobIndex++;
     }
 
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(-120, i, this.knobIndex, i+6 ));
+      this.pads.push(new XYPad(innerW-padSize-padsX, padsY+i*(padsMargin+padSize), this.knobIndex, i+6, padSize ));
       this.knobIndex++;
     }
     for (let i=0;i<3; i++){
-      this.pads.push(new XYPad(-240, i, this.knobIndex, i+9 ));
+      let x = innerW-padSize-(padsX+padSize+padsMargin);
+      let y = padsY+i*(padsMargin+padSize);
+      this.pads.push(new XYPad(x, y, this.knobIndex, i+9, padSize  ));
       this.knobIndex++;
     }
   }
 
-  placeUI(){
-
-    for(let i=0; i<3; i++){
-      this.sliders[i+2].x = width - (100+i*80);
-      this.sliders[i+2].valueX =this.sliders[i+2].x+this.sliders[i+2].w/2;
-    }
-
-    for(let i=0; i<6; i++){
-      let margin = this.pads[i+6].x;
-      console.log(margin);
-      this.pads[i+6].x += width -160;
-
-      let selector = i+6;
-      let idName = "#pad"+selector;
-      positionText(this.pads[i+6].x, this.pads[i+6].y, idName);
-    }
-  }
 
   // displayknobs()
   //
@@ -286,7 +283,7 @@ class UI{
 
     // move to timeline's x, y position
     push();
-    translate(0, this.timelineY, 0);
+    translate(0, this.timelineY, -200);
     push();
     translate(this.timelineX, 0, 0);
 
@@ -300,9 +297,9 @@ class UI{
         push();
 
         // if this square's note value isn't null, give it this row's colour
-        if(this.timelines[h][i]!=-1 && h===0) fill(45, 145, 12);
-        if(this.timelines[h][i]!=-1 && h===1) fill(145, 45, 12);
-        if(this.timelines[h][i]!=-1 && h===2) fill(12, 45, 145);
+        if(this.timelines[h][i]!=-1 && h===0) fill(45, 145, 12, 245);
+        if(this.timelines[h][i]!=-1 && h===1) fill(145, 45, 12, 245);
+        if(this.timelines[h][i]!=-1 && h===2) fill(12, 45, 145, 245);
 
         // if this is the hovered element, use a light red
         if(this.hoveredTimeline===h && this.hoveredElement === i ){
@@ -420,4 +417,32 @@ class UI{
         this.noteEditMode = false;
       }
     }
+
+    setKnobs(){
+
+      let whichMove = dude.armMoves[dude.currentMoves];
+      let whichMove2 = dude.legMoves[dude.currentMoves];
+
+      this.pads[0].setValue(whichMove.thighDif, whichMove.thighPos, 0);
+      this.pads[1].setValue(whichMove.thighDif2, whichMove.thighPos2, 1);
+      this.pads[2].setValue(whichMove.kneeDif, whichMove.kneePos, 0);
+      this.pads[3].setValue(whichMove2.thighDif, whichMove2.thighPos, 0);
+      this.pads[4].setValue(whichMove2.thighDif2, whichMove2.thighPos2, 1);
+      this.pads[5].setValue(whichMove2.kneeDif, whichMove2.kneePos, 0);
+      this.pads[6].setValue(musicObject.release[0], musicObject.attack[0], 2);
+      this.pads[7].setValue(musicObject.filterRes[0], musicObject.filterFreq[0], 3);
+      this.pads[8].setValue(musicObject.delayFeedback[0], musicObject.delayDividor[0], 4);
+      this.pads[9].setValue(musicObject.release[1], musicObject.attack[1], 2);
+      this.pads[10].setValue(musicObject.filterRes[1], musicObject.filterFreq[1], 3);
+      this.pads[11].setValue(musicObject.delayFeedback[1], musicObject.delayDividor[1], 4);
+
+      //   this.envelopes[input].setRange(this.maxAmplitude[input], 0);
+      this.sliders[0].setValue(whichMove2.height, 1);
+      this.sliders[1].setValue(dude.vigor[dude.currentMoves], 2);
+
+      this.sliders[2].setValue(musicObject.maxAmplitude[0], 3);
+      this.sliders[3].setValue(musicObject.maxAmplitude[1], 3);
+      this.sliders[4].setValue(musicObject.maxAmplitude[2], 3);
+    }
+
   }

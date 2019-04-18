@@ -1,7 +1,8 @@
 function loadMoves(){
 
+
   // light dancing feet
-  legMoves[0] = {
+  dude.legMoves[0] = {
     height: -19.166666666666664,
   kneeDif: -0.6283185307179586,
   kneePos: 2.2619467105846525,
@@ -14,7 +15,7 @@ function loadMoves(){
 
 
   // light dancing feet
-  legMoves[1] = {
+  dude.legMoves[1] = {
     height: -11.666666666666664,
   kneeDif: 0.1256637061435919,
   kneePos: 2.2619467105846525,
@@ -26,7 +27,7 @@ function loadMoves(){
   }
 
   // do it on the floor
-  legMoves[2] = {
+  dude.legMoves[2] = {
     height: 31.66666666666667,
   kneeDif: 2.1362830044410597,
   kneePos: 0.2513274122871838,
@@ -38,7 +39,7 @@ function loadMoves(){
   }
 
   // swimming legs
-  legMoves[3] = {
+  dude.legMoves[3] = {
     height: -43.333333333333336,
   kneeDif: 0.1256637061435919,
   kneePos: 0.7539822368615514,
@@ -53,7 +54,7 @@ function loadMoves(){
 
 
   // macarena arms (touching shoulders)
-  armMoves[0]= {
+  dude.armMoves[0]= {
     kneeDif: 2.2619467105846525,
 kneePos: -0.3769911184307757,
 speedDif: 0.7,
@@ -64,7 +65,7 @@ thighPos2: 2.053096491,
   }
 
   // back and forth elbows
-  armMoves[1] = {
+  dude.armMoves[1] = {
     kneeDif: -0.3769911184307757,
 kneePos: -1.2566370614359172,
 speedDif: 1,
@@ -75,7 +76,7 @@ thighPos2: -10.053096491,
   }
 
   // party hands
-  armMoves[2] = {
+  dude.armMoves[2] = {
     kneeDif: 1.8849555921538759,
     kneePos: 0.942477796076937,
     speedDif: 1,
@@ -86,7 +87,7 @@ thighPos2: -10.053096491,
   }
 
   // hands in the air2
-  armMoves[3] = {
+  dude.armMoves[3] = {
     kneeDif: 1.3823007675795091,
   kneePos: 4.272566008882118,
   speedDif: 0.1,
@@ -102,10 +103,10 @@ thighPos2: -10.053096491,
 function newDanceMotion(){
 
 
-    dude.limbs[0].changeCurrentMotion(armMoves[currentMoves], 20);
-    dude.limbs[2].changeCurrentMotion(armMoves[currentMoves], 20);
-    dude.limbs[1].changeCurrentMotion(legMoves[currentMoves], 20);
-    dude.limbs[3].changeCurrentMotion(legMoves[currentMoves], 20);
+    dude.limbs[0].changeCurrentMotion(dude.armMoves[dude.currentMoves], 20);
+    dude.limbs[2].changeCurrentMotion(dude.armMoves[dude.currentMoves], 20);
+    dude.limbs[1].changeCurrentMotion(dude.legMoves[dude.currentMoves], 20);
+    dude.limbs[3].changeCurrentMotion(dude.legMoves[dude.currentMoves], 20);
 
 
 }
