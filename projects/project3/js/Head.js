@@ -14,11 +14,12 @@ class Head{
 
   display(){
     push();
+    // while camera is active (until picture is taken), display camera feed in head
     fill(0, 105);
     stroke(235, 85);
     if (this.capture.loadedmetadata && this.camActive) {
     var c = this.capture.get(0, 0, 640, 480);
-  //  image(c, 0, 0);
+
   texture(c);
   if(pictureTaken){
     this.faceImage = c;
@@ -27,11 +28,14 @@ class Head{
   }
   }
 
+// once picture is taken display picture only
   if(!this.camActive) texture(this.faceImage);
 
-    translate(dude.shoulderDistance/2, dude.back.length+20, 0);
+    translate(dude.shoulderDistance/2, dude.back.length+20+this.headBob, 0);
+      // align picture
     rotateY(PI/2);
     rotateX(PI);
+    // display head
     sphere(20);
     pop();
 

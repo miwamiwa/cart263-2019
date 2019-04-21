@@ -114,12 +114,17 @@ class UI{
 
   displayKnobs(){
 
+    push();
+    translate(-width/2, -height/2, 0);
+
     for(let i=0; i<this.pads.length; i++){
       this.pads[i].display();
     }
     for(let i=0; i<this.sliders.length; i++){
       this.sliders[i].display();
     }
+
+    pop();
   }
 
   // checkknobs()
@@ -154,6 +159,8 @@ class UI{
   // display panel behind the dancer and knobs
 
   displayBackground(){
+
+    background(25, 15, 55);
 
     push();
     specularMaterial(250, 125);
@@ -423,23 +430,21 @@ class UI{
       let whichMove = dude.armMoves[dude.currentMoves];
       let whichMove2 = dude.legMoves[dude.currentMoves];
 
-      this.pads[0].setValue(whichMove.thighDif, whichMove.thighPos, 0);
-      this.pads[1].setValue(whichMove.thighDif2, whichMove.thighPos2, 1);
-      this.pads[2].setValue(whichMove.kneeDif, whichMove.kneePos, 0);
-      this.pads[3].setValue(whichMove2.thighDif, whichMove2.thighPos, 0);
-      this.pads[4].setValue(whichMove2.thighDif2, whichMove2.thighPos2, 1);
-      this.pads[5].setValue(whichMove2.kneeDif, whichMove2.kneePos, 0);
-      this.pads[6].setValue(musicObject.release[0], musicObject.attack[0], 2);
-      this.pads[7].setValue(musicObject.filterRes[0], musicObject.filterFreq[0], 3);
-      this.pads[8].setValue(musicObject.delayFeedback[0], musicObject.delayDividor[0], 4);
-      this.pads[9].setValue(musicObject.release[1], musicObject.attack[1], 2);
-      this.pads[10].setValue(musicObject.filterRes[1], musicObject.filterFreq[1], 3);
-      this.pads[11].setValue(musicObject.delayFeedback[1], musicObject.delayDividor[1], 4);
+      this.pads[0].setValue(whichMove.thighOrigin, whichMove.thighDisplacement);
+      this.pads[1].setValue(whichMove.thighOrigin2, whichMove.thighDisplacement2);
+      this.pads[2].setValue(whichMove.kneeOrigin, whichMove.kneeDisplacement);
+      this.pads[3].setValue(whichMove2.thighOrigin, whichMove2.thighDisplacement);
+      this.pads[4].setValue(whichMove2.thighOrigin2, whichMove2.thighDisplacement2);
+      this.pads[5].setValue(whichMove2.kneeOrigin, whichMove2.kneeDisplacement);
+      this.pads[6].setValue(musicObject.release[0], musicObject.attack[0]);
+      this.pads[7].setValue(musicObject.filterRes[0], musicObject.filterFreq[0]);
+      this.pads[8].setValue(musicObject.delayFeedback[0], musicObject.delayDividor[0]);
+      this.pads[9].setValue(musicObject.release[1], musicObject.attack[1]);
+      this.pads[10].setValue(musicObject.filterRes[1], musicObject.filterFreq[1]);
+      this.pads[11].setValue(musicObject.delayFeedback[1], musicObject.delayDividor[1]);
 
-      //   this.envelopes[input].setRange(this.maxAmplitude[input], 0);
       this.sliders[0].setValue(whichMove2.height, 1);
       this.sliders[1].setValue(dude.vigor[dude.currentMoves], 2);
-
       this.sliders[2].setValue(musicObject.maxAmplitude[0], 3);
       this.sliders[3].setValue(musicObject.maxAmplitude[1], 3);
       this.sliders[4].setValue(musicObject.maxAmplitude[2], 3);

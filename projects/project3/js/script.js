@@ -1,100 +1,121 @@
 "use strict";
-
 let velocity = 1;
-let offsetX=0;
-let offsetY =0;
-let offsetZ =-100;
-let groundFill =0;
-let camOffsetX =0;
-let camOffsetY =0;
-
 let ellipses;
 let uiObject;
 let musicObject;
 let canvas;
 let dude;
 let fft;
-
 let pictureTaken = false;
 let soundStarted = false;
 
-
+// setup()
+//
+// loads the game minus sound
 
 function setup(){
 
   //localStorage.clear(); // Clears everything in local storage
+
+  // the next three objects use sound,
+  // but can be initialized without starting sound.
   musicObject= new Music();
   fft = new p5.FFT();
   ellipses = new Ellipses();
+  // load dude and default moves
   dude = new Dude();
   loadMoves();
+  // loads knobs and sliders
   uiObject = new UI();
-  loadSavedGame();
-  uiObject.setKnobs();
 
+  // if there is a saved game,
+  // update moves, music data and knob positions.
+  loadSavedGame();
+  // start moving this dude
+  startMoves(0);
+
+  // create canvas
   frameRate(30);
   canvas = createCanvas(window.innerWidth, window.innerHeight, WEBGL);
+  // place canvas inside a Div so that we can remove text highlighting as well as
+  // right click menu using css, and also position it as fixed below html text.
   canvas.parent('theDiv');
 
-  newDanceMotion();
+  // position html
   positionText(width/2, height*0.05, "#title");
+  // position camera
   camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
+
+  // ortho() removes all scaling due to perspective.
+  // prior to finding this, i tried doing math to map mouse position to fit
+  // perspective but it wasn't working 100%. this solved my issue pretty neatly.
   ortho();
 }
 
+// startsound()
+//
+// switches sound "on" at the first mouse click in order to avoid autoplay issues.
+
 function startSound(){
 
+  // mark sound as started
   soundStarted = true;
+  // load instrument objects and update their parameters using saved game data
   musicObject.setupInstruments();
   uiObject.getValues();
+  // remove instructions to click for sound
   $("#instructions"). remove();
 }
 
+// draw()
+//
+// runs the game loop.
+// displays everything on screen except for text, which is in the html.
 
 function draw(){
 
-  background(25, 15, 55);
+  // display background color, cubes, and tinted layer
   uiObject.displayBackground();
-
-  push();
-  translate(offsetX, offsetY, offsetZ);
-  displayGround();
+  // display dude's limbs, head and back, and display ground
   dude.displayDude();
-  pop();
-
+  // display timeline and keyboard
   uiObject.displayMusicEditor();
-
-  if(soundStarted){
-    musicObject.playMusic();
-  }
-
+  // play sound
+  if(soundStarted) musicObject.playMusic();
+  // run fft analysis and display background ellipses
   analyzeSound();
-
-  push();
-  translate(-width/2, -height/2, 0);
+  // display sliders and pads
   uiObject.displayKnobs();
-  pop();
-
 }
 
+// analyzesound()
+//
+// read the energy contained in different frequency ranges using fft,
+// display background ellipses and animate them using fft result.
 
 function analyzeSound(){
-  let analysis = fft.analyze();
 
-  // energy is constrained between 0 and 255
-  let hi = fft.getEnergy(5000, 20000);
+  // run a new fft
+  fft.analyze();
+
+  // get energy from different frequency ranges
+  // result is a value between 0 and 255
   let mid = fft.getEnergy(350, 1000);
   let mid2 = fft.getEnergy(1000, 2000);
   let mid3 = fft.getEnergy(2000, 3000);
   let lo = fft.getEnergy(20, 300);
+  // let hi = fft.getEnergy(5000, 20000);
 
-  let lightRow = height/2-130;
-  let lightSpace = width/2-130;
-  ellipses.displayEllipses(mid, 0.70, -lightSpace, lightRow, 5, 0, 250);
-  ellipses.displayEllipses(mid2, 0.40, 0, lightRow, 5, 2, 250);
-  ellipses.displayEllipses(mid3, 0.40, lightSpace, lightRow, 5, 3, 250);
+  // set position of ellipse arrays
+  let ellipsesY = height/2-130;
+  let ellipsesX = width/2-130;
+
+  // display an array of ellipses for each frequency range analyzed
+  // displayEllipses(input, centerX, centerY, number of ellipses, timer, size)
+  ellipses.displayEllipses(mid, 0.70, -ellipsesX, ellipsesY, 5, 0, 250);
+  ellipses.displayEllipses(mid2, 0.40, 0, ellipsesY, 5, 2, 250);
+  ellipses.displayEllipses(mid3, 0.40, ellipsesX, ellipsesY, 5, 3, 250);
   ellipses.displayEllipses(lo, 0.75, 0, 0, 20, 1, 400);
-
 }
 
 
@@ -113,13 +134,25 @@ function keyPressed(){
   }
 }
 
+// startmoves(input)
+//
+// three tasks to execute when switching between moves
+
 function startMoves(input){
 
+  // keep track of the current motion pattern
   dude.currentMoves =input;
-  newDanceMotion();
+  // update each limb's motion
+  dude.newDanceMotion();
+  // update pads and sliders positions
   uiObject.setKnobs();
 }
 
+// mousepressed()
+//
+// check for interaction with pads or sliders,
+// save game data on right-click (to be changed to another input),
+// if sound isn't started yet, start sound.
 
 function mousePressed(){
 
@@ -128,43 +161,51 @@ function mousePressed(){
   if(!soundStarted) startSound();
 }
 
+// mousedragged()
+//
+// check for interaction with pads or sliders
+
 function mouseDragged(){
 
   if(soundStarted) uiObject.checkKnobs("drag");
 }
+
+// mousereleased()
+//
+// check for interaction with pads or sliders
 
 function mouseReleased(){
 
   if(soundStarted) uiObject.checkKnobs("stop");
 }
 
-
-function displayGround(){
-
-  push();
-  fill(groundFill);
-  translate(-200,200, 99)
-  rotateX(PI/2.1)
-  noStroke();
-  rect(0, 0, 400, 400);
-  pop();
-}
+// loadsavedgame()
+//
+// check if there is a game data variable in the local storage
+// if there isn't or it is empty, stick to default game parameters.
+// if there is a saved game, load game data.
 
 
 function loadSavedGame() {
 
-  let storedData = localStorage.getItem('storage');
+  // find saved game variable
+  let storedData = localStorage.getItem('CestTaToune');
 
   if (storedData === null) {
+    // if there isn't a saved game, skip the next step
     return false;
   }
 
+  // if there is a saved game..:
   let gameData = JSON.parse(storedData);
 
+  // load saved motion
   dude.legMoves = gameData.legMoves;
   dude.armMoves = gameData.armMoves;
   dude.vigor = gameData.vigor;
+  // load saved music
   uiObject.timelines = gameData.timelines;
+  // load saved synthesizor setup
   musicObject.attack = gameData.attack;
   musicObject.release = gameData.release;
   musicObject.filterRes = gameData.filterRes;
@@ -176,10 +217,14 @@ function loadSavedGame() {
   return true;
 }
 
-
+// saveinfo()
+//
+// store game data into an object,
+// the store the object in the local storage.
 
 function saveInfo(){
 
+  // save game data in an object
   let sendData = {
     armMoves: dude.armMoves,
     legMoves: dude.legMoves,
@@ -194,22 +239,38 @@ function saveInfo(){
     ampLevels: musicObject.maxAmplitude,
   }
 
+  // stringify and store saved game data
   let setDataAsJSON = JSON.stringify(sendData);
-  localStorage.setItem('storage', setDataAsJSON);
+  localStorage.setItem('CestTaToune', setDataAsJSON);
 }
+
+// positiontext()
+//
+// a function to reposition html text elements. WEBGL doesn't support text
+// as far as i know, so i'm using jquery to move things around since my
+// sketch size is adaptive.
+// William mentionned i could have used p5.dom for this, which is true! but
+// i guess jquery is still fresh in my mind. This came about late in the project;
+// at this point i'm trying to tie things together rather than explore new.
 
 function positionText(x, y, selector){
 
   let wid =0;
   let hei =0;
+
+  // adapt x, y position to this object's width and height:
+
+  // if it's the main title place it this way
   if(selector==="#title") {
     wid = - $(selector).width()/2;
   }
+  // if it's any other text description place it that way
   else {
-    wid = - $(selector).width()/4 -10;
+    wid = - $(selector).width()/4 -5;
     hei = + $(selector).height()*1.5 + 40;
   }
 
+  // reposition object
   $(selector).css("left", x+wid+"px");
   $(selector).css("top", y+hei+"px");
 }

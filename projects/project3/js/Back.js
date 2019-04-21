@@ -3,14 +3,7 @@ class Back{
   constructor(){
     this.length = 50;
     this.leanForward = velocity*10;
-    this.neck = {
-      x:0,
-      y:0,
-    };
-    this.butt = {
-      x:0,
-      y:0,
-    };
+
 
 }
 
@@ -22,30 +15,7 @@ if(backHeight<0){
 };
 
 this.leanForward =  map(-velocity, 0, 1.8, 0, 50) + sin(radians(frameCount))*10 + backHeight/2;
-  this.neck = {
-    x:0,
-    y:0,
-  };
-  this.butt = {
-    x:0,
-    y:0,
-  };
 
-
-  this.butt.x+=dude.limbs[0].waist.x;
-  this.butt.y+=dude.limbs[0].waist.y;
-  this.butt.x+=dude.limbs[2].waist.x;
-  this.butt.y+=dude.limbs[2].waist.y;
-
-  this.neck.x+=dude.limbs[1].waist.x;
-  this.neck.y+=dude.limbs[1].waist.y;
-  this.neck.x+=dude.limbs[3].waist.x;
-  this.neck.y+=dude.limbs[3].waist.y;
-
-  this.butt.x /=2;
-  this.butt.y /=2;
-  this.neck.x /=2;
-  this.neck.y /=2;
 }
 
 display(){

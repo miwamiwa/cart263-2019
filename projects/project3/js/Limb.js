@@ -4,38 +4,14 @@ class Limb{
 
     this.direction = direction*PI/2;
     this.xflip = xflip;
-
-    if(direction===0){
-      this.flip = -1;
-    }
-
-    if(direction===2){
-      this.flip = 1;
-    }
-
-    this.footHitGround = false;
-    this.centerX = x;
-    this.centerY = y;
+    this.flip = -1 + direction;
+    this.legOverlap = false;
     this.speed =13.5;
     this.transition=0;
-
-    this.leanX = specs.leanX;
-    this.leanY = specs.leanY;
-
     this.currentHeight=0;
-
-    this.waist = {
-
-      x: 100,
-      y:50,
-      minDY:-5,
-      maxDY:5,
-      minDX:-5,
-      maxDX:3
-    };
+    this.backHeight =0;
 
     this.thigh = {
-
       length: length,
       angle: specs.thighAngle,
       origin: specs.thighOrigin,
@@ -46,7 +22,6 @@ class Limb{
     }
 
     this.knee = {
-
       x: 0,
       y: 0,
       angle: specs.kneeAngle,
@@ -56,193 +31,200 @@ class Limb{
       constraint2: specs.kneeConstraint2
     }
 
-    this.shin = {
-      length: this.thigh.length
-    }
-
-    this.foot = {
-      x: 0,
-      y: 0
-    }
-
     this.current = {
       height:0,
-      thighPos:0,
-      kneePos:0,
-      thighDif:0,
-      kneeDif:0,
-      speedDif:0,
-      thighDif2:0,
-      thighPos2:0
+      thighDisplacement:0,
+      kneeDisplacement:0,
+      thighOrigin:0,
+      kneeOrigin:0,
+      thighOrigin2:0,
+      thighDisplacement2:0
     }
 
     this.last = this.current;
-    this.temp = this.current;
-
-    this.tempTimer = 0;
-    this.backHeight =0;
   }
+
+  // update()
+  //
+  // update this limb's parts' position, and listen for leg overlaps
+  //
+  // each part's rotation is given by a variable controlled by a sinusiodal
+  // function that oscillates around an Origin, following a maximum range of
+  // displacement - these are the two parameters which the user can manipulate
+  // using the xy-pads to create custom motion. "vigor" is also used to extend
+  // both the range and speed of motion.
 
   update(){
 
-    // get this limb's current motion pattern for this frame.
-    let thisFrame;
+    // --------------------- CALCULATE ROTATION --------------------- //
+    // get this origin and max displacement values for this frame.
+    // currentmotion() allows a slow ramp from one set of values to another
+    // when switching motions.
+    let thisFrame = this.currentMotion();
 
-    // get either the "current" motion
-    if(frameCount >= this.tempTimer){
-      thisFrame = this.currentMotion();
-    }
+    // get this frame's max displacement for each part
+    let thighDisplacement = dude.vigor[dude.currentMoves] * thisFrame.thighDisplacement;
+    let thighDisplacement2 = dude.vigor[dude.currentMoves] * thisFrame.thighDisplacement2;
+    let kneeDisplacement = dude.vigor[dude.currentMoves] * thisFrame.kneeDisplacement;
 
-    // or get the "temporary" motion.
-    else if (frameCount < this.tempTimer){
-      thisFrame = this.tempMotion();
-      this.last = thisFrame;
-    }
+    // get this frame's angle origin for each part
+    // by adding together default origin and current origin
+    let thighOrigin = this.thigh.origin + thisFrame.thighOrigin;
+    let thighOrigin2 = this.thigh.origin2 + thisFrame.thighOrigin2;
+    let kneeOrigin = this.knee.origin + thisFrame.kneeOrigin;
 
-    let frame = frameCount * velocity;
+    // get "angle" to process from framecount and this limb's speed
+    let currentAngle = radians(frameCount * velocity * this.speed);
 
-    // speedfact is actually the force with which movements are executed
-    // (it scales the range of movement)
+    // get the current angle of each part by mapping sin(angle) or cos(angle)
+    // to a range that reflects the current origin and max displacement:
 
-     let speedFact = dude.vigor[dude.currentMoves] * thisFrame.speedDif;
+    // map thigh x-rotate,
+    let min1 = thighOrigin - thighDisplacement;
+    let max1 = thighOrigin+thighDisplacement;
+    this.thigh.angle = map (
+      sin( currentAngle ), -1*this.xflip, this.xflip, min1, max1
+    );
 
+    // map thigh z-rotate
+    let min2 = thighOrigin2 + thighDisplacement2;
+    let max2 = thighOrigin2- thighDisplacement2;
+    this.thigh.angle2 = map (
+      cos( currentAngle ), -1, 1, min2, max2
+    );
 
-    let thighDisplacement = this.thigh.displacement * speedFact * thisFrame.thighPos;
-    let thighDisplacement2 = this.thigh.displacement2 * speedFact * thisFrame.thighPos2;
-    let kneeDisplacement = this.knee.displacement * speedFact * thisFrame.kneePos;
+    // map knee x-rotate
+    let min3 = kneeOrigin- kneeDisplacement;
+    let max3 = kneeOrigin+ kneeDisplacement;
+    this.knee.angle = map (
+      sin( currentAngle ), -1*this.xflip, this.xflip, min3, max3
+    );
 
-    let thighOrigin = this.thigh.origin + thisFrame.thighDif;
-    let thighOrigin2 = this.thigh.origin2 + thisFrame.thighDif2;
-    let kneeOrigin = this.knee.origin + thisFrame.kneeDif;
-
-    let leanX = this.leanX*velocity;
-    let leanY = this.leanY*velocity;
-
-    let currentAngle = radians(frame*this.speed);
-
-    let inverseMotion=1;
-    if(this.xflip===-1 )
-    inverseMotion = -1;
-
-
-    this.thigh.angle = map (sin( currentAngle ), inverseMotion*(-1), inverseMotion*1, thighOrigin- thighDisplacement, thighOrigin+thighDisplacement);
-
-    this.thigh.angle2 = map (cos( currentAngle ), -1, 1,thighOrigin2 + thighDisplacement2, thighOrigin2- thighDisplacement2);
-
-    this.knee.angle = map (sin( currentAngle ), inverseMotion*(-1), inverseMotion*1, kneeOrigin- kneeDisplacement, kneeOrigin+ kneeDisplacement);
-
+    // get the current height value.
     this.currentHeight = thisFrame.height;
 
+    // constrain knee angle
     if(this.knee.constraint1!=0){
-      this.knee.angle = constrain(this.knee.angle,  this.knee.constraint1, this.knee.constraint2  )
-    }
-
-    push();
-
-    // stylize this limb
-    strokeWeight(1);
-    stroke(45, 255);
-    let greenFill = 100+cos(radians(frameCount*2 ))*85;
-    let redFill = 100+cos(radians(frameCount/1.1))*65;
-
-    if(this.flip===1) fill(redFill, greenFill, 45);
-    if(this.flip===-1) fill(greenFill, 45, redFill)
-
-    // apply thigh rotation
-    rotateZ(this.xflip*radians(this.thigh.angle2));
-    rotateX(this.flip*this.thigh.angle - radians(dude.back.leanForward));
-    rotateY(this.direction*PI - 2* this.xflip*dude.hipMove);
-    translate(0, -this.thigh.length/2, 0);
-
-    // draw thigh
-    box(10, this.thigh.length, 10);
-
-    // apply knee rotation
-    translate(0, -this.thigh.length/2, 0)
-    rotateX(this.knee.angle);
-
-
-    if(this.flip===-1)
-    rotateZ(radians(-3*dude.hipMove))
-
-    translate(0,  this.thigh.length/2, 0);
-
-    // draw knee
-    box(10, this.thigh.length, 10);
-    pop();
-
-
-    let translate2 = this.thigh.length * ( cos(this.direction*this.thigh.angle - radians(dude.back.leanForward)) + cos(this.knee.angle) );
-
-    // the following events are triggered ONCE, not each frame.
-    if(this.flip===-1){
-      if(translate2<0&& !this.footHitGround){
-
-        //nextLegNote();
-
-        this.footHitGround = true;
-
-        if(this.xflip ===1)
-        groundFill = color(185, 45, 45, 205);
-
-        if(this.xflip ===-1)
-        groundFill = color(45, 185, 45, 205);
+      this.knee.angle = constrain(
+        this.knee.angle,
+        this.knee.constraint1, this.knee.constraint2  )
       }
-      if(translate2>0 && this.footHitGround){
-        this.footHitGround = false;
+
+      // --------------------- CHECK OVERLAP --------------------- //
+      // if this limb is a leg
+      if(this.flip===-1){
+        // check "feet hit ground" / leg overlap:
+        // get current thigh angle from origin
+        let angle = sin(this.thigh.angle-thighOrigin);
+        // if thigh angle excedes 0,
+        if(angle<0&& !this.legOverlap){
+          // mark leg as having overlapped 0
+          this.legOverlap = true;
+          // change ground fill depending on if left/right leg
+          if(this.xflip ===1) dude.groundFill = color(185, 45, 45, 205);
+          if(this.xflip ===-1) dude.groundFill = color(45, 185, 45, 205);
+        }
+        // if thigh angle is less than 0, reset overlap marker.
+        if(angle>0 && this.legOverlap){
+          this.legOverlap = false;
+        }
       }
     }
 
-    if(this.flip===1){
-      if(translate2<0&& !this.footHitGround){
+    // display()
+    //
+    // apply rotates and display
 
-        //nextArmNote();
-        this.footHitGround = true;
+    display(){
+
+      push();
+      // stylize this limb
+      strokeWeight(1);
+      stroke(45, 255);
+
+      // vary fill values
+      let greenFill = 100+cos(radians(frameCount*2 ))*85;
+      let redFill = 100+cos(radians(frameCount/1.1))*65;
+
+      // give arms and legs a different fill
+      if(this.flip===1) fill(redFill, greenFill, 45);
+      if(this.flip===-1) fill(greenFill, 45, redFill)
+
+      // apply thigh rotation
+      rotateZ(this.xflip*radians(this.thigh.angle2));
+      rotateX(this.flip*this.thigh.angle - radians(dude.back.leanForward));
+      rotateY(this.direction*PI - 2* this.xflip*dude.hipMove);
+      translate(0, -this.thigh.length/2, 0);
+
+      // draw thigh
+      box(10, this.thigh.length, 10);
+
+      // apply knee rotation
+      translate(0, -this.thigh.length/2, 0)
+      rotateX(this.knee.angle);
+      // rotate this limb to match hip motion
+      rotateZ(radians(-3*dude.hipMove));
+      translate(0,  this.thigh.length/2, 0);
+
+      // draw knee
+      box(10, this.thigh.length, 10);
+      pop();
+    }
+
+    // changecurrentmotion()
+    //
+    // starts transition and sets its length.
+    // updates which is the last motion and which is the current motion.
+
+    changeCurrentMotion(motion, transition){
+
+      // start transition
+      this.transition = 1;
+      // set its length
+      this.transitionLength = transition;
+      // update current and last motion
+      this.last = this.current;
+      this.current = motion;
+    }
+
+    // currentMotion()
+    //
+    // if we are currently in transition between motions, this function will
+    // ramp between the last and current motion values over time. if not, it
+    // returns the current motion.
+
+    currentMotion(){
+
+      // an object to hold this function's result
+      let result = {
+        height:0,
+        thighDisplacement:0,
+        thighDisplacement2:0,
+        kneeDisplacement:0,
+        thighOrigin:0,
+        thighOrigin2:0,
+        kneeOrigin:0,
       }
-      if(translate2>0 && this.footHitGround){
-        this.footHitGround = false;
+      // if transition is active, ramp from this.last values to this.current values
+      if(this.transition>0){
+        result.height=lerp(this.current.height, this.last.height, this.transition);
+        result.thighDisplacement=lerp(this.current.thighDisplacement, this.last.thighDisplacement, this.transition);
+        result.kneeDisplacement=lerp(this.current.kneeDisplacement, this.last.kneeDisplacement, this.transition);
+        result.thighOrigin=lerp(this.current.thighOrigin, this.last.thighOrigin, this.transition);
+        result.kneeOrigin=lerp(this.current.kneeOrigin, this.last.kneeOrigin, this.transition);
+        result.thighOrigin2=lerp(this.current.thighOrigin2, this.last.thighOrigin2, this.transition);
+        result.thighDisplacement2=lerp(this.current.thighDisplacement2, this.last.thighDisplacement2, this.transition);
+        this.backHeight = result.height;
+        // increment transition by removing 1/length.
+        // transition stops when it reaches 0.
+        this.transition-=1/this.transitionLength;
       }
+      else {
+        // if transition isn't active, result becomes current motion values.
+        result = this.current;
+        this.backHeight = this.current.height;
+      }
+      // return result
+      return result;
     }
   }
-
-
-  changeCurrentMotion(motion, transition){
-
-    this.transitionLength = transition;
-    this.last = this.current;
-    this.current = motion;
-    this.transition = 1;
-  }
-
-
-  currentMotion(){
-
-    let result = {
-      height:0,
-      thighPos:0,
-      thighPos2:0,
-      kneePos:0,
-      thighDif:0,
-      thighDif2:0,
-      kneeDif:0,
-      speedDif:0
-    }
-    if(this.transition>0){
-      result.height=lerp(this.current.height, this.last.height, this.transition);
-      result.thighPos=lerp(this.current.thighPos, this.last.thighPos, this.transition);
-      result.kneePos=lerp(this.current.kneePos, this.last.kneePos, this.transition);
-      result.thighDif=lerp(this.current.thighDif, this.last.thighDif, this.transition);
-      result.kneeDif=lerp(this.current.kneeDif, this.last.kneeDif, this.transition);
-      result.speedDif=lerp(this.current.speedDif, this.last.speedDif, this.transition);
-      result.thighDif2=lerp(this.current.thighDif2, this.last.thighDif2, this.transition);
-      result.thighPos2=lerp(this.current.thighPos2, this.last.thighPos2, this.transition);
-      this.backHeight = result.height;
-      this.transition-=1/this.transitionLength;
-    }
-    else {
-      result = this.current;
-      this.backHeight = this.current.height;
-    }
-    return result;
-  }
-}

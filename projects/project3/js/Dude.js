@@ -9,6 +9,14 @@ class Dude{
     this.hipDistance = 25;
     this.shoulderDistance = 20;
 
+    this.groundFill =0;
+
+    this.offsetX=0;
+    this.offsetY =0;
+    this.offsetZ =-100;
+
+
+
     this.currentMoves = 0;
     this.armMoves = [6];
     this.legMoves = [6];
@@ -52,10 +60,18 @@ class Dude{
       // create leg
       this.limbs.push(new Limb(200, 130, window.innerHeight/14, this.legSpecs, 0,1- 2*i));
     }
-
   }
 
   displayDude(){
+
+    push();
+    // move to dude's position
+    translate(this.offsetX, this.offsetY, this.offsetZ);
+
+    // display "ground" below dude
+    // that is the square that switches color on each footstep
+    this.displayGround();
+
     // scale the entire dude
     scale(2);
 
@@ -72,18 +88,22 @@ class Dude{
     push();
     rotateZ(-3*this.hipMove);
     this.limbs[1].update();
+    this.limbs[1].display();
     // update & display leg 2
     translate(this.shoulderDistance, 0, 0);
     this.limbs[3].update();
+    this.limbs[3].display();
     pop();
     // move to shoulder position
     push();
     translate(0, this.back.length, -this.shoulderDistance/2-this.hipDistance/2 );
     // update & display arm 1
     this.limbs[0].update();
+    this.limbs[0].display();
     // update & display arm 2
     translate(this.hipDistance, 0, 0);
     this.limbs[2].update();
+    this.limbs[2].display();
     pop();
 
     // update this.back and this.head position and display
@@ -91,5 +111,32 @@ class Dude{
     this.back.display();
     this.head.update();
     this.head.display();
+
+    pop();
   }
+
+  displayGround(){
+
+    push();
+    fill(this.groundFill);
+    translate(-310,80, 99)
+    rotateX(0)
+    noStroke();
+    rect(0, 0, 620, 230);
+    pop();
+  }
+
+
+  // newdancemotion()
+  //
+  // assigns new motion parameters to each limb
+
+    newDanceMotion(){
+
+    this.limbs[0].changeCurrentMotion(this.armMoves[this.currentMoves], 20);
+    this.limbs[2].changeCurrentMotion(this.armMoves[this.currentMoves], 20);
+    this.limbs[1].changeCurrentMotion(this.legMoves[this.currentMoves], 20);
+    this.limbs[3].changeCurrentMotion(this.legMoves[this.currentMoves], 20);
+  }
+
 }
