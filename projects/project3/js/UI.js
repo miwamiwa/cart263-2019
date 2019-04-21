@@ -5,8 +5,6 @@ class UI{
     this.w = window.innerWidth*6;
     this.h = window.innerHeight*6;
 
-    this.padTitles = [ "thigh1", "thigh2", "knee","thigh1", "thigh2", "knee","attack/release", "filter freq/res", "delay feedback/time","attack/release", "filter freq/res", "delay feedback/time" ];
-
     // knobs and such
     this.sliders = [];
     this.pads = [];
@@ -49,6 +47,20 @@ class UI{
       }
     }
 
+    // click to start sound
+    positionText(window.innerWidth*0.405 , window.innerHeight*0.5, "#instructions");
+    // edit synths
+    positionText(window.innerWidth*0.16, window.innerHeight*0.2, "#instruct1");
+    // edit dancing
+    positionText(window.innerWidth-window.innerWidth*0.28, window.innerHeight*0.2, "#instruct2");
+    // use timeline and keyboard
+    positionText(window.innerWidth*0.435, window.innerHeight*0.67, "#instruct3");
+    // capture photo
+    positionText(window.innerWidth*0.395, window.innerHeight*0.01, "#instruct4");
+    this.text1Active = true;
+    this.text2Active = true;
+    this.text3Active = true;
+
     // create sliders and XY-pads
     this.setupKnobs();
   }
@@ -62,44 +74,37 @@ class UI{
     let innerW = window.innerWidth;
     let innerH = window.innerHeight;
     let padsX = innerW/7;
+    let sliderX = innerW/12;
     let padsY = 50;
     let padsMargin = 30;
     let padSize = innerH/7;
-    let sliderW = padSize/3;
+    let sliderW = innerW/48;
 
-    // create first column of xy pads
-    for (let i=0;i<3; i++){
+    for (let i=0;i<3; i++){  // create first column of xy pads
       this.pads.push(new XYPad(padsX, padsY+i*(padsMargin+padSize), this.knobIndex, i, padSize ));
       this.knobIndex++;
     }
-
-    // create second column of xy pads
-    for (let i=0;i<3; i++){
+    for (let i=0;i<3; i++){  // create second column of xy pads
       this.pads.push(new XYPad(padsX+padSize+padsMargin, padsY+i*(padsMargin+padSize), this.knobIndex, i+3, padSize  ));
       this.knobIndex++;
     }
-
-    // create sliders
-    for (let i=0;i<2; i++){
-      let x = padsX+i*(sliderW+padsMargin);
+    for (let i=0;i<2; i++){  // create sliders on the left
+      let x = sliderX+i*(sliderW+padsMargin);
       let y = padsY + 3*padSize+4*padsMargin;
-      this.sliders.push(new Slider(x, y, this.knobIndex, sliderW, padSize));
+      this.sliders.push(new Slider(x, y, this.knobIndex, sliderW, padSize, i));
       this.knobIndex++;
     }
-
-    // create sliders
-    for (let i=0;i<3; i++){
-      let x = innerW-sliderW-(padsX+i*(sliderW+padsMargin));
+    for (let i=0;i<4; i++){ // create sliders on the right
+      let x = innerW-sliderW-(sliderX+i*(sliderW+padsMargin));
       let y = padsY + 3*padSize+4*padsMargin;
-      this.sliders.push(new Slider(x, y, this.knobIndex, sliderW, padSize));
+      this.sliders.push(new Slider(x, y, this.knobIndex, sliderW, padSize, i+2));
       this.knobIndex++;
     }
-
-    for (let i=0;i<3; i++){
+    for (let i=0;i<3; i++){ //create third column of xy pads
       this.pads.push(new XYPad(innerW-padSize-padsX, padsY+i*(padsMargin+padSize), this.knobIndex, i+6, padSize ));
       this.knobIndex++;
     }
-    for (let i=0;i<3; i++){
+    for (let i=0;i<3; i++){ // create fourth column of xy pads
       let x = innerW-padSize-(padsX+padSize+padsMargin);
       let y = padsY+i*(padsMargin+padSize);
       this.pads.push(new XYPad(x, y, this.knobIndex, i+9, padSize  ));
@@ -110,7 +115,7 @@ class UI{
 
   // displayknobs()
   //
-  // a function to display all knobs, used in draw()
+  // a function to display all knobs, called in draw()
 
   displayKnobs(){
 
@@ -144,6 +149,9 @@ class UI{
     }
   }
 
+  // getvalues()
+  //
+  // assign each knob's output to its associated game parameter
 
   getValues(){
     for(let i=0; i<this.pads.length; i++){
@@ -156,43 +164,57 @@ class UI{
 
   // displaybackground()
   //
-  // display panel behind the dancer and knobs
+  // display background and rotating cubes
 
   displayBackground(){
 
     background(25, 15, 55);
 
     push();
-    specularMaterial(250, 125);
+    // rotate a bit to align with camera (camera height is -100)
     rotateX(0.078*PI);
+
     push();
-    translate(-this.w/2, -1*this.h/16, -400);
+    // box 1:
+    // position
+    translate(-width/4, 0, -600);
+    // rotate over time
+    rotateX( radians(frameCount) );
+    rotateZ( radians(frameCount) );
+    // stylize
     stroke(185, 50);
-    rotateX( radians(frameCount));
-    rotateZ(radians(frameCount));
-    box(800);
+    specularMaterial(210, 210, 12, 125);
+    // display
+    box(width/2);
     pop();
 
     push();
-    translate(+this.w/2, 1*this.h/16, -400);
-    stroke(185);
-    rotateX( radians(frameCount*0.6));
+    // box 2:
+    translate(+width/4, 0, -600);
+    rotateX( -radians(frameCount*0.6));
     rotateZ(radians(frameCount*0.4));
-    box(800);
+    specularMaterial(210, 21, 210, 125);
+    stroke(185);
+    // display
+    box(width/2);
     pop();
 
     push();
-    translate(9, -1*this.h/16, -400);
-    stroke(185);
+    // box 3:
+    translate(9, 0, -600);
     rotateX( radians(frameCount*0.3));
-    rotateZ(radians(frameCount*0.4));
-    box(800);
+    rotateZ(-radians(frameCount*0.4));
+    specularMaterial(21, 210, 210, 125);
+    stroke(185);
+    // display
+    box(width/2);
     pop();
 
+    // place transparent grey rect 300px ahead
     translate(0, 0, -300);
-    fill(0, 205);
+    fill(255, 135);
     rect(-width/2, -height/2, width, height);
-    if(!soundStarted) positionText(250, height*0.65, "#instructions");
+
     pop();
   }
 
@@ -252,6 +274,11 @@ class UI{
             this.selectedTimelineElement = i;
             this.selectedTimeline = j;
 
+            if(uiObject.text3Active) {
+              uiObject.text3Active = false;
+              $("#instruct3").remove();
+            }
+
             // if this was a right click
             if(mouseButton===RIGHT){
               // stop edit mode
@@ -290,7 +317,7 @@ class UI{
 
     // move to timeline's x, y position
     push();
-    translate(0, this.timelineY, -200);
+    translate(0, this.timelineY, 400);
     push();
     translate(this.timelineX, 0, 0);
 
@@ -304,9 +331,9 @@ class UI{
         push();
 
         // if this square's note value isn't null, give it this row's colour
-        if(this.timelines[h][i]!=-1 && h===0) fill(45, 145, 12, 245);
-        if(this.timelines[h][i]!=-1 && h===1) fill(145, 45, 12, 245);
-        if(this.timelines[h][i]!=-1 && h===2) fill(12, 45, 145, 245);
+        if(this.timelines[h][i]!=-1 && h===0) fill(45, 145, 12, 254);
+        if(this.timelines[h][i]!=-1 && h===1) fill(145, 45, 12, 254);
+        if(this.timelines[h][i]!=-1 && h===2) fill(12, 45, 145, 254);
 
         // if this is the hovered element, use a light red
         if(this.hoveredTimeline===h && this.hoveredElement === i ){
@@ -325,14 +352,16 @@ class UI{
 
         // move to this square's x, y position
         translate(i*this.beatW, (h)*this.timelineH, 0);
-        strokeWeight(1);
+        strokeWeight(4);
+        stroke(125, 125)
         // display the timeline element.
         rect(0, 0, this.beatW, this.timelineH);
 
         // BEAT MARKS:
         // display beat marks on every 4th square on the timeline.
         if(i%4===0){
-          strokeWeight(3);
+          strokeWeight(10);
+          stroke(45, 200);
           line(-this.beatW/8, 0, this.beatW/8, this.timelineH);
           // display an extra beat mark on top of the timeline,
           // so we can tell where the time indicator lies within the measure.
@@ -444,10 +473,12 @@ class UI{
       this.pads[11].setValue(musicObject.delayFeedback[1], musicObject.delayDividor[1]);
 
       this.sliders[0].setValue(whichMove2.height, 1);
-      this.sliders[1].setValue(dude.vigor[dude.currentMoves], 2);
+      this.sliders[1].setValue(dude.vigor[dude.currentMoves], 3);
       this.sliders[2].setValue(musicObject.maxAmplitude[0], 3);
       this.sliders[3].setValue(musicObject.maxAmplitude[1], 3);
       this.sliders[4].setValue(musicObject.maxAmplitude[2], 3);
-    }
+      this.sliders[5].setValue(musicObject.subDivisionLength, 2);
 
+
+    }
   }

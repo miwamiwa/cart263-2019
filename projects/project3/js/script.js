@@ -42,7 +42,7 @@ function setup(){
   canvas.parent('theDiv');
 
   // position html
-  positionText(width/2, height*0.05, "#title");
+  positionText(width*0.1, height*0.95, "#title");
   // position camera
   camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
 
@@ -115,7 +115,7 @@ function analyzeSound(){
   ellipses.displayEllipses(mid, 0.70, -ellipsesX, ellipsesY, 5, 0, 250);
   ellipses.displayEllipses(mid2, 0.40, 0, ellipsesY, 5, 2, 250);
   ellipses.displayEllipses(mid3, 0.40, ellipsesX, ellipsesY, 5, 3, 250);
-  ellipses.displayEllipses(lo, 0.75, 0, 0, 20, 1, 400);
+  ellipses.displayEllipses(lo, 0.77, 0, 0, 20, 1, 400);
 }
 
 
@@ -130,7 +130,10 @@ function keyPressed(){
     case "2": startMoves(1); break;
     case "3": startMoves(2); break;
     case "4": startMoves(3); break;
-    case " ": pictureTaken = true; break;
+    case " ":
+    pictureTaken = true;
+    $("#instruct4").remove();
+    break;
   }
 }
 
@@ -198,6 +201,7 @@ function loadSavedGame() {
 
   // if there is a saved game..:
   let gameData = JSON.parse(storedData);
+  console.log(gameData);
 
   // load saved motion
   dude.legMoves = gameData.legMoves;
@@ -213,6 +217,8 @@ function loadSavedGame() {
   musicObject.filterFreq = gameData.filterFreq;
   musicObject.delayDividor = gameData.delayDiv;
   musicObject.maxAmplitude = gameData.ampLevels;
+  musicObject.subDivisionLength = gameData.tempo;
+  musicObject.maxAmplitude = gameData.amplitudes;
 
   return true;
 }
@@ -237,6 +243,8 @@ function saveInfo(){
     delayFb: musicObject.delayFeedback,
     delayDiv: musicObject.delayDividor,
     ampLevels: musicObject.maxAmplitude,
+    tempo: musicObject.subDivisionLength,
+    amplitudes: musicObject.maxAmplitude,
   }
 
   // stringify and store saved game data
@@ -261,15 +269,18 @@ function positionText(x, y, selector){
   // adapt x, y position to this object's width and height:
 
   // if it's the main title place it this way
-  if(selector==="#title") {
-    wid = - $(selector).width()/2;
+ if( $(selector).hasClass("pad")){
+    wid = -$(selector).width()*0.2;
+    hei = 0.02*window.innerHeight;
   }
-  // if it's any other text description place it that way
-  else {
-    wid = - $(selector).width()/4 -5;
-    hei = + $(selector).height()*1.5 + 40;
-  }
-
+  else   if( $(selector).hasClass("slider")){
+      hei = 0.15*window.innerHeight;
+      wid = -$(selector).width()*0.2;
+    }
+    else   if( $(selector).hasClass("moveable")){
+        hei = -$(selector).height()*0.25;
+        wid = -$(selector).width()*0.25;
+      }
   // reposition object
   $(selector).css("left", x+wid+"px");
   $(selector).css("top", y+hei+"px");

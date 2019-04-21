@@ -1,6 +1,6 @@
 class Slider{
 
-  constructor(x, y, index, w, h){
+  constructor(x, y, index, w, h, selector){
     this.index = index;
     this.x =x;
     this.y =y;
@@ -13,6 +13,9 @@ class Slider{
     this.lastX =0;
     this.lastY =0;
     this.selected = false;
+
+    // position the div that holds this pad's text description
+    positionText(this.x, this.y, "#slid"+selector);
   }
 
   display(){
@@ -31,13 +34,13 @@ class Slider{
     ellipse(this.x+this.w/2,  this.position, 10);
     pop();
   }
-
+/*
   update(value, minval, maxval){
     this.position = value;
     this.minValue = minval;
     this.maxValue = maxval;
   }
-
+*/
   checkMouse(type){
     if(
       mouseX>this.x
@@ -49,6 +52,15 @@ class Slider{
       if(type==="press"){
         this.position = constrain(mouseY, this.y, this.y+this.h);
         this.selected = true;
+        // remove instructions from screen
+        if(this.index<=7&&uiObject.text1Active) {
+          uiObject.text1Active = false;
+          $("#instruct1").remove();
+        }
+        else if(this.index>=9&&uiObject.text2Active) {
+          uiObject.text2Active = false;
+          $("#instruct2").remove();
+        }
       }
     }
 
@@ -62,12 +74,12 @@ class Slider{
   }
 
   getValue(){
-    let value = map(this.y+this.h - this.position, 0, this.h, 0.01, 1);
+    let value = map(this.y+this.h - this.position, 0, this.h, 0, 1);
 
 
     switch(this.index){
       case 6:
-      value = map(this.y+this.h-this.position, 0, this.h, -50, 50);
+      value = map(this.y+this.h-this.position, 0, this.h,window.innerHeight/96, -window.innerHeight/4);
       dude.legMoves[dude.currentMoves].height = value;
       break;
       case 7:
@@ -86,6 +98,13 @@ class Slider{
       musicObject.envelopes[2].setRange( musicObject.maxAmplitude[2], 0);
       musicObject.envelopes[2].setADSR(0.01, 0.05, 0.3*musicObject.maxAmplitude[2], 0.4);
       break;
+      case 11:
+      for (let i=0; i<dude.limbs.length; i++){
+        dude.limbs[i].speed =  1+value*value*15;
+      }
+      value = map(this.y+this.h-this.position, 0, this.h, 1, 0);
+      musicObject.subDivisionLength = floor(2+30*value);
+      break;
     }
   }
 
@@ -94,19 +113,20 @@ class Slider{
 
     switch(mode){
       case 1:
-      val = map(input, -50, 50, 0, this.h);
-      break;
-
-      case 2:
-      val = map(input, 0, 1, 0,  this.h);
+      val = map(input, this.h,window.innerHeight/96, -window.innerHeight/4, 0, this.h);
       break;
 
       case 3:
-      val = map(input, 0, 1, 0, this.h);
+      val = map(input, 0, 1, 0,  this.h);
       break;
 
+      case 2:
+      val = map(  (input-2)/30 , 1, 0, 0, this.h);
+      break;
 
-
+      case 4:
+      val = map(input, 1, 0, 0, this.h);
+      break;
     }
 
     this.position = this.y + this.h - val;

@@ -9,6 +9,7 @@ so the canvas is flush with the top left corner.
 
 body {
   font-family: 'VT323', monospace;
+  font-weight: bolder;
   padding: 0px;
   margin: 0;
   user-select: none;
@@ -27,23 +28,60 @@ body {
   align-content: center;
   top:0;
   left:0;
-  font-size:50px;
+  font-size:30px;
 }
 
 #instructions{
-  color:white;
-  font-size:100px;
+  color: #ff66ff;
+  font-size:3vw;
   z-index:50;
-  position:fixed;
   width:auto;
-  }
+}
+
+
+#instruct1{
+  color: #ff6600;
+}
+#instruct2{
+  color: #9933ff;
+}
+#instruct3{
+  color:#00cc66;
+}
+#instruct4{
+  color: #ffff00;
+}
+.moveable{
+  position:fixed;
+  text-shadow: 3px 3px black, -3px -3px white;
+  z-index:50;
+  font-size:4vw;
+  background-color: rgb(200, 200, 200, 0.7);
+  border-radius:15px;
+  text-align:center;
+  padding:10px;
+  width: auto;
+  line-height: 3.5vw;
+}
+#instruct4{
+  font-size:3vw;
+  line-height: 2.5vw;
+}
+.slider{
+  position:fixed;
+  font-size:2vw;
+  line-height: 1.5vw;
+  color:#6699ff;
+}
 
 .pad{
 
-  color:black;
-  width:200px;
+  color:#ff9966;
+  opacity:0.7;
+  width:150px;
   position:fixed;
-  z-index:50;
-  font-size:15px;
+  z-index:0;
+  font-size:2vw;
+  line-height: 2vw;
   text-align:center;
 }

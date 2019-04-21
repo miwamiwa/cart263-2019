@@ -32,10 +32,10 @@ class XYPad{
     this.colour = color(255, 80);
 
     // default output range
-    this.minRangeX = -2*PI;
-    this.maxRangeX = 2*PI;
-    this.minRangeY = -2*PI;
-    this.maxRangeY = 2*PI;
+    this.minRangeX = -0.5*PI;
+    this.maxRangeX = 0.5*PI;
+    this.minRangeY = 0*PI;
+    this.maxRangeY = 0.8*PI;
     // check index and update range accordingly
     this.setRange();
   }
@@ -47,33 +47,57 @@ class XYPad{
 // the correct range.
 
   setRange(){
+    if(this.index==2||this.index==5){
+      this.minRangeX = -0.1*PI;
+      this.maxRangeX = 1*PI;
+      this.minRangeY = 0*PI;
+      this.maxRangeY = 2*PI;
+    }
+    else if(this.index==3){
+      this.minRangeX = -0.1*PI;
+      this.maxRangeX = 0.75*PI;
+      this.minRangeY = 0*PI;
+      this.maxRangeY = 0.8*PI;
+    }
     // range of thigh z-axis rotate pad
-    if(this.index==1||this.index==4){
-      this.minRangeX *=10;
-      this.maxRangeX *=10;
-      this.minRangeY *=10;
-      this.maxRangeY *=10;
+    else if(this.index==1){
+      this.minRangeX = -50*PI;
+      this.maxRangeX = 1*PI;
+      this.minRangeY = 0*PI;
+      this.maxRangeY = 15*PI;
+    }
+    else if(this.index==4){
+      this.minRangeX = -10*PI;
+      this.maxRangeX = 4*PI;
+      this.minRangeY = 0*PI;
+      this.maxRangeY = 15*PI;
     }
     // range of attack/release pad
-    else if(this.index==11||this.index==14){
-      this.minRangeX = 0.0001;
-      this.maxRangeX = 0.5;
+    else if(this.index==12||this.index==15){
+      this.minRangeX = 1;
+      this.maxRangeX = 0.0001;
       this.minRangeY = 0.0001;
-      this.maxRangeY = 1;
+      this.maxRangeY = 0.5;
     }
     // range of filter freq/res pad
-    else if(this.index==12||this.index==15){
-      this.minRangeX = 0.1;
-      this.maxRangeX = 50;
-      this.minRangeY = 10;
-      this.maxRangeY = 8000;
+    else if(this.index==13){
+      this.minRangeX = 50;
+      this.maxRangeX = 0.1;
+      this.minRangeY = 1;
+      this.maxRangeY = 4000;
+    }
+    else if(this.index==16){
+      this.minRangeX = 50;
+      this.maxRangeX = 0.1;
+      this.minRangeY = 1;
+      this.maxRangeY = 12000;
     }
     // range of delay feedback/time pad
-    else if(this.index==13||this.index==16){
-      this.minRangeX = 0;
-      this.maxRangeX = 0.9;
+    else if(this.index==14||this.index==17){
+      this.minRangeX = 0.9;
+      this.maxRangeX = 0;
       this.minRangeY =0;
-      this.maxRangeY =0.9;
+      this.maxRangeY =0.45;
     }
   }
 
@@ -205,33 +229,33 @@ class XYPad{
       dude.legMoves[dude.currentMoves].kneeDisplacement = mapY;
       dude.legMoves[dude.currentMoves].kneeOrigin = mapX;
 
-      break; case 11: // attack / release for synth1
+      break; case 12: // attack / release for synth1
       musicObject.attack[0] = mapY;
       musicObject.release[0] = mapX;
       musicObject.envelopes[0].setADSR(musicObject.attack[0], 0.1, 0.3, musicObject.release[0]);
 
-      break; case 12: // filter freq/res for synth1
+      break; case 13: // filter freq/res for synth1
       musicObject.filterFreq[0] = mapY;
       musicObject.filterRes[0] = mapX;
       musicObject.filters[0].freq( musicObject.filterFreq[0] );
       musicObject.filters[0].res( musicObject.filterRes[0] );
 
-      break; case 13: // delay feeback/time for synth1
+      break; case 14: // delay feeback/time for synth1
       musicObject.delayDividor[0] = mapY;
       musicObject.delayFeedback[0] = mapX;
 
-      break; case 14: // attack / release for synth2
+      break; case 15: // attack / release for synth2
       musicObject.attack[1] = mapY;
       musicObject.release[1] = mapX;
       musicObject.envelopes[1].setADSR(musicObject.attack[1], 0.1, 0.3, musicObject.release[1]);
 
-      break; case 15: // filter freq/res for synth2
+      break; case 16: // filter freq/res for synth2
       musicObject.filterFreq[1] = mapY;
       musicObject.filterRes[1] = mapX;
       musicObject.filters[1].freq( musicObject.filterFreq[1] );
       musicObject.filters[1].res( musicObject.filterRes[1] );
 
-      break; case 16: // delay feedback/time for synth2
+      break; case 17: // delay feedback/time for synth2
       musicObject.delayDividor[1] = mapY;
       musicObject.delayFeedback[1] = mapX;
       break;
@@ -244,6 +268,14 @@ class XYPad{
 
   updatePos(){
 
+    if(this.index<=5&&uiObject.text1Active) {
+      uiObject.text1Active = false;
+      $("#instruct1").remove();
+    }
+    else if(this.index>=12&&uiObject.text2Active) {
+      uiObject.text2Active = false;
+      $("#instruct2").remove();
+    }
     this.valueX = constrain(mouseX, this.x, this.x+this.w);
     this.valueY = constrain(mouseY, this.y, this.y+this.h);
   }

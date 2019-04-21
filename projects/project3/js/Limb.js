@@ -1,16 +1,30 @@
+/*
+Limb.js
+This class handles displaying and updating the position of the two parts that
+make a single limb (functions update() and display()). In here, the two parts
+are called thigh and knee (it should be shin..) regardless of if this limb is
+a leg or an arm. function currentMotion() handles ramping from one set of
+motion values to another over time after a motion change. This combined with
+what's going on in update() ensures smoothe and continuous motion throughout.
+*/
 class Limb{
 
   constructor(x, y, length, specs, direction, xflip){
 
     this.direction = direction*PI/2;
-    this.xflip = xflip;
-    this.flip = -1 + direction;
     this.legOverlap = false;
     this.speed =13.5;
     this.transition=0;
     this.currentHeight=0;
     this.backHeight =0;
+    this.greenFill =0;
+    // flip limb to correct position:
+    // left limb or right limb
+    this.xflip = xflip;
+    // leg or arm
+    this.flip = -1 + direction;
 
+    // thigh's base configuration
     this.thigh = {
       length: length,
       angle: specs.thighAngle,
@@ -20,7 +34,7 @@ class Limb{
       origin2: specs.thighOrigin2,
       displacement2: specs.thighDisplacement2,
     }
-
+    // knee's base configuration
     this.knee = {
       x: 0,
       y: 0,
@@ -30,7 +44,7 @@ class Limb{
       constraint1: specs.kneeConstraint1,
       constraint2: specs.kneeConstraint2
     }
-
+    // current set of motion parameters
     this.current = {
       height:0,
       thighDisplacement:0,
@@ -40,7 +54,7 @@ class Limb{
       thighOrigin2:0,
       thighDisplacement2:0
     }
-
+    // last set of motion parameters
     this.last = this.current;
   }
 
@@ -48,11 +62,10 @@ class Limb{
   //
   // update this limb's parts' position, and listen for leg overlaps
   //
-  // each part's rotation is given by a variable controlled by a sinusiodal
-  // function that oscillates around an Origin, following a maximum range of
-  // displacement - these are the two parameters which the user can manipulate
-  // using the xy-pads to create custom motion. "vigor" is also used to extend
-  // both the range and speed of motion.
+  // in a nutshell: each part's rotation is given by a sin() or cos()
+  // function which constantly oscillates around an origin angle, from negative
+  // max displacement value to positive max displacement value. User alters
+  // motion by manipulating origin and max displacement values.
 
   update(){
 
@@ -73,32 +86,32 @@ class Limb{
     let thighOrigin2 = this.thigh.origin2 + thisFrame.thighOrigin2;
     let kneeOrigin = this.knee.origin + thisFrame.kneeOrigin;
 
-    // get "angle" to process from framecount and this limb's speed
-    let currentAngle = radians(frameCount * velocity * this.speed);
+    // get current arm position from framecount and this limb's speed
+    let currentPosition = radians(frameCount * velocity * this.speed);
 
-    // get the current angle of each part by mapping sin(angle) or cos(angle)
-    // to a range that reflects the current origin and max displacement:
+    // get current angle of each part by mapping arm position to range defined
+    // by origin and displacement
+
+    // get thigh x-rotate range
+    let min1 = thighOrigin - thighDisplacement;
+    let max1 = thighOrigin + thighDisplacement;
 
     // map thigh x-rotate,
-    let min1 = thighOrigin - thighDisplacement;
-    let max1 = thighOrigin+thighDisplacement;
-    this.thigh.angle = map (
-      sin( currentAngle ), -1*this.xflip, this.xflip, min1, max1
-    );
+    this.thigh.angle = map( sin(currentPosition), -1*this.xflip, this.xflip, min1, max1 );
+
+    // get thigh z-rotate range
+    let min2 = thighOrigin2 + thighDisplacement2;
+    let max2 = thighOrigin2 - thighDisplacement2;
 
     // map thigh z-rotate
-    let min2 = thighOrigin2 + thighDisplacement2;
-    let max2 = thighOrigin2- thighDisplacement2;
-    this.thigh.angle2 = map (
-      cos( currentAngle ), -1, 1, min2, max2
-    );
+    this.thigh.angle2 = map( cos(currentPosition), -1, 1, min2, max2 );
+
+    // get knee x-rotate range
+    let min3 = kneeOrigin - kneeDisplacement;
+    let max3 = kneeOrigin + kneeDisplacement;
 
     // map knee x-rotate
-    let min3 = kneeOrigin- kneeDisplacement;
-    let max3 = kneeOrigin+ kneeDisplacement;
-    this.knee.angle = map (
-      sin( currentAngle ), -1*this.xflip, this.xflip, min3, max3
-    );
+    this.knee.angle = map( sin(currentPosition), -1*this.xflip, this.xflip, min3, max3 );
 
     // get the current height value.
     this.currentHeight = thisFrame.height;
@@ -111,7 +124,9 @@ class Limb{
       }
 
       // --------------------- CHECK OVERLAP --------------------- //
-      // if this limb is a leg
+      // i'm not using this a whole lot, but this part allows me to trigger
+      // events in sync with footstep rate
+      // if this limb is a leg (not an arm)
       if(this.flip===-1){
         // check "feet hit ground" / leg overlap:
         // get current thigh angle from origin
@@ -133,7 +148,7 @@ class Limb{
 
     // display()
     //
-    // apply rotates and display
+    // apply fills, rotates and display boxes that make up the limb
 
     display(){
 
@@ -143,12 +158,16 @@ class Limb{
       stroke(45, 255);
 
       // vary fill values
-      let greenFill = 100+cos(radians(frameCount*2 ))*85;
-      let redFill = 100+cos(radians(frameCount/1.1))*65;
+      if(this.legOverlap) this.greenFill = 100+cos(radians(frameCount*8 ))*85;
+      let redFill = 100+cos(radians(frameCount/1.1))*95;
+
 
       // give arms and legs a different fill
-      if(this.flip===1) fill(redFill, greenFill, 45);
-      if(this.flip===-1) fill(greenFill, 45, redFill)
+      if(this.flip===1){
+        if(this.xflip===1) fill(redFill, musicObject.filterRes[1]*2, 45);
+        if(this.xflip===-1) fill(250-redFill, musicObject.filterRes[0]*2, 45);
+      }
+      if(this.flip===-1) fill(this.greenFill, this.greenFill, redFill)
 
       // apply thigh rotation
       rotateZ(this.xflip*radians(this.thigh.angle2));

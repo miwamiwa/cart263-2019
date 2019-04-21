@@ -1,27 +1,31 @@
+/*
+Dude.js()
+This class handles creating and displaying the dude's head, back and limbs,
+as well as the "ground" below him. It also includes a function to update each
+limb's motion at once.
+*/
 class Dude{
 
   constructor(){
 
-    this.back = new Back();
-    this.head = new Head();
-    this.limbs = [];
+    // dude position
+    this.offsetX=0;
+    this.offsetY =-50;
+    this.offsetZ =100;
+    // hip motion
     this.hipMove;
+    // distance between limbs
     this.hipDistance = 25;
     this.shoulderDistance = 20;
-
-    this.groundFill =0;
-
-    this.offsetX=0;
-    this.offsetY =0;
-    this.offsetZ =-100;
-
-
-
+    // ground
+    this.groundFill =color(45, 185, 45, 205);
+    // moves
     this.currentMoves = 0;
-    this.armMoves = [6];
-    this.legMoves = [6];
+    this.armMoves = [4];
+    this.legMoves = [4];
     this.vigor = [0.5, 0.5, 0.5, 0.5];
 
+    // this configures a new limb object for arm motion
     this.armSpecs = {
       thighAngle: 20,
       thighOrigin: -PI/8,
@@ -34,10 +38,8 @@ class Dude{
       kneeDisplacement: 0.8*PI,
       kneeConstraint1:1* PI,
       kneeConstraint2:1.9* PI,
-      leanX: 4,
-      leanY: 10
     }
-
+    // this configures a new limb object for leg motion
     this.legSpecs = {
       thighAngle: 20,
       thighOrigin: -PI/8,
@@ -50,9 +52,10 @@ class Dude{
       kneeDisplacement: 5*PI/7,
       kneeConstraint1: PI,
       kneeConstraint2:1.9* PI,
-      leanX:0,
-      leanY:-4,
     }
+
+    // Create objects:
+    this.limbs = [];
 
     for (let i=0; i<2; i++){
       // create arm
@@ -60,7 +63,14 @@ class Dude{
       // create leg
       this.limbs.push(new Limb(200, 130, window.innerHeight/14, this.legSpecs, 0,1- 2*i));
     }
+
+    this.back = new Back();
+    this.head = new Head();
   }
+
+  // displaydude()
+  //
+  // rotate, translate and display the four limbs, back and head.
 
   displayDude(){
 
@@ -69,7 +79,6 @@ class Dude{
     translate(this.offsetX, this.offsetY, this.offsetZ);
 
     // display "ground" below dude
-    // that is the square that switches color on each footstep
     this.displayGround();
 
     // scale the entire dude
@@ -78,9 +87,10 @@ class Dude{
     // calculate hip motion
     this.hipMove = sin( radians(frameCount*4))/20 * velocity;
 
-
+    // move to hip position
     translate(this.hipMove*100, this.limbs[1].currentHeight, 0)
-    rotateZ(PI+this.hipMove);
+    // bob back left/right
+    rotateZ(PI+2*this.hipMove);
     rotateX( radians(this.back.leanForward));
     translate(-this.shoulderDistance/2,0,0);
 
@@ -115,14 +125,18 @@ class Dude{
     pop();
   }
 
+  // displayground()
+  //
+  // display the "ground", a rect that changes color with leg overlaps
+
   displayGround(){
 
     push();
     fill(this.groundFill);
     translate(-310,80, 99)
-    rotateX(0)
     noStroke();
-    rect(0, 0, 620, 230);
+    rect(10, 20, 600, 200);
+    rect(0, 30, 620, 180);
     pop();
   }
 

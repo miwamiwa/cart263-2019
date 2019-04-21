@@ -1,34 +1,47 @@
+/*
+Ellipses.js
+This class handles generating groups of ellipses that react to sound.
+displayEllipses() can be configured to display multiple groups of ellipses.
+*/
 class Ellipses {
 
   constructor(){
-
+    // keeps track of each ellipse's motion
     this.animator = [5];
-    this.animationTimer = [0, 0, 0, 0, 0];
-    this.ellipseSpacing = 30;
-
     for(let i=0; i<5; i++){
       this.animator[i] = new Array(20);
       for (let j=0; j<20; j++){
         this.animator[i][j] = j;
       }
     }
+    // timer during which ellipses move faster
+    this.animationTimer = [0, 0, 0, 0, 0];
+    // initial spacing
+    this.ellipseSpacing = 30;
   }
 
+// displayEllipses()
+//
+// - displays a group of animated ellipses at middle position x, y
+// - if input value lies above the given threshold, ellipses will move faster
+// for a short amount of time.
+// - other inputs are the number of ellipses to display, which timer in the
+// this.animationTimer array to use, and maximum size.
 
+  displayEllipses(input, thresh, x, y, numberOfEllipses, timer, size){
 
-  displayEllipses(input, thresh, x, y, numberOfEllipses, timer, bigness){
-
+    // if input excedes threshold
       if(input>(thresh)*255){
-    //    console.log("oi");
+        // extend animation timer length
         this.animationTimer[timer] = frameCount +3;
       }
-
     push();
-    translate(x, y, -400);
+
+    // move to inputed ellipse position
+    translate(x, y, -600);
+
       // for each ellipse
       for(let i=0; i<numberOfEllipses; i++){
-
-        // set position
         let ellipseX = 0;
         let ellipseY = 0;
         let ellipseR;
@@ -44,17 +57,20 @@ class Ellipses {
         }
 
         // calculate radius
-        ellipseR = this.ellipseSpacing*i + sin( radians( 100*this.animator[timer][i]/100 ) )*bigness;
+        ellipseR = this.ellipseSpacing*i + sin( radians( 100*this.animator[timer][i]/100 ) )*size;
 
-        // display ellipse
+        // choose fill
         noStroke();
-        if(bigness<350){
-          fill(10000/bigness, (this.animationTimer[timer]-frameCount)*120, 65, 75);
+        if(size<350){
+          // small groups get this fill
+          fill(20000/size, (this.animationTimer[timer]-frameCount)*120, 145, 75);
         }
         else {
-          fill((this.animationTimer[timer]-frameCount)*120, 10000/bigness, 65, 75);
+          // big groups get this fill
+          fill((this.animationTimer[timer]-frameCount)*120, 20000/size, 145, 75);
         }
 
+        // display ellipse
         ellipse(ellipseX, ellipseY, ellipseR, ellipseR);
       }
       pop();
