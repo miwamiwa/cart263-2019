@@ -163,19 +163,26 @@ class Limb{
       push();
       // stylize this limb
       strokeWeight(1);
-      stroke(45, 255);
+      stroke(45, 175);
 
       // vary fill values
-      if(this.legOverlap) this.greenFill = 100+cos(radians(frameCount*8 ))*85;
-      let redFill = 100+cos(radians(frameCount/1.1))*95;
+      let redFill = cos(radians(frameCount/0.8));
 
+      if(this.legOverlap) {
+        this.greenFill = 30+cos(radians(frameCount*8 ))*25;
+        redFill = 185+cos(radians(frameCount*3))*30;
+      }
+      else {
+        this.greenFill = 200+cos(radians(frameCount*8 ))*45;
+        redFill = 30+cos(radians(frameCount*3))*25;
+      }
 
       // give arms and legs a different fill
       if(this.flip===1){
-        if(this.xflip===1) fill(redFill, musicObject.filterRes[1]*2, 45);
-        if(this.xflip===-1) fill(250-redFill, musicObject.filterRes[0]*2, 45);
+        if(this.xflip===1) fill(this.greenFill, redFill, 23);
+        if(this.xflip===-1)  fill(23, redFill, this.greenFill);
       }
-      if(this.flip===-1) fill(this.greenFill, this.greenFill, redFill)
+      if(this.flip===-1) fill(redFill, 25, this.greenFill);
 
       // apply thigh rotation
       rotateZ(this.xflip*radians(this.thigh.angle2));

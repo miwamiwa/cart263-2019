@@ -49,6 +49,13 @@ function setup(){
   positionText(width*0.01, height*0.95, "#title");
   // position camera
   camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
+  // automatically take a picture after 10 seconds
+  setTimeout(function(){
+    if(!pictureTaken){
+      pictureTaken = true;
+      $("#instruct4").remove();
+    }
+  }, 10000);
 
   // ortho() removes all scaling due to perspective.
   // prior to finding this, i tried doing math to map mouse position to fit
@@ -156,8 +163,11 @@ function keyPressed(){
     case "4": startMoves(3); break;
     case "q": saveInfo(); break;
     case " ":
-    pictureTaken = true;
-    $("#instruct4").remove();
+    if(!pictureTaken){
+      pictureTaken = true;
+      $("#instruct4").remove();
+    }
+
     break;
   }
 }
