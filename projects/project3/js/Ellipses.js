@@ -3,7 +3,9 @@ Ellipses.js
 This class handles generating groups of ellipses that react to sound.
 displayEllipses() can be configured to display multiple groups of ellipses.
 */
+
 class Ellipses {
+
 
   constructor(){
     // keeps track of each ellipse's motion
@@ -19,6 +21,10 @@ class Ellipses {
     // initial spacing
     this.ellipseSpacing = 30;
   }
+
+
+
+
 
 // displayEllipses()
 //
@@ -48,7 +54,7 @@ class Ellipses {
 
         // increment animation
         if(frameCount<this.animationTimer[timer]){
-          // this.animationTimer is active, speed up animation
+          // if this.animationTimer is active, speed up animation
           this.animator[timer][i] +=i*2;
         }
         else {
@@ -75,4 +81,6 @@ class Ellipses {
       }
       pop();
     }
+
+
 }

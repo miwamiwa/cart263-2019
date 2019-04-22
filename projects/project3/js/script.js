@@ -1,4 +1,5 @@
 "use strict";
+
 let velocity = 1;
 let ellipses;
 let uiObject;
@@ -8,6 +9,9 @@ let dude;
 let fft;
 let pictureTaken = false;
 let soundStarted = false;
+
+
+
 
 // setup()
 //
@@ -42,7 +46,7 @@ function setup(){
   canvas.parent('theDiv');
 
   // position html
-  positionText(width*0.1, height*0.95, "#title");
+  positionText(width*0.01, height*0.95, "#title");
   // position camera
   camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
 
@@ -51,6 +55,11 @@ function setup(){
   // perspective but it wasn't working 100%. this solved my issue pretty neatly.
   ortho();
 }
+
+
+
+
+
 
 // startsound()
 //
@@ -62,10 +71,15 @@ function startSound(){
   soundStarted = true;
   // load instrument objects and update their parameters using saved game data
   musicObject.setupInstruments();
-  uiObject.getValues();
+  uiObject.setKnobs();
   // remove instructions to click for sound
   $("#instructions"). remove();
 }
+
+
+
+
+
 
 // draw()
 //
@@ -87,6 +101,11 @@ function draw(){
   // display sliders and pads
   uiObject.displayKnobs();
 }
+
+
+
+
+
 
 // analyzesound()
 //
@@ -119,6 +138,11 @@ function analyzeSound(){
 }
 
 
+
+
+
+
+
 // keypressed()
 //
 // fire different moves on key press.
@@ -130,12 +154,18 @@ function keyPressed(){
     case "2": startMoves(1); break;
     case "3": startMoves(2); break;
     case "4": startMoves(3); break;
+    case "q": saveInfo(); break;
     case " ":
     pictureTaken = true;
     $("#instruct4").remove();
     break;
   }
 }
+
+
+
+
+
 
 // startmoves(input)
 //
@@ -151,6 +181,11 @@ function startMoves(input){
   uiObject.setKnobs();
 }
 
+
+
+
+
+
 // mousepressed()
 //
 // check for interaction with pads or sliders,
@@ -160,9 +195,13 @@ function startMoves(input){
 function mousePressed(){
 
   if(soundStarted) uiObject.checkKnobs("press");
-  if(mouseButton===RIGHT) saveInfo();
   if(!soundStarted) startSound();
 }
+
+
+
+
+
 
 // mousedragged()
 //
@@ -173,6 +212,10 @@ function mouseDragged(){
   if(soundStarted) uiObject.checkKnobs("drag");
 }
 
+
+
+
+
 // mousereleased()
 //
 // check for interaction with pads or sliders
@@ -181,6 +224,11 @@ function mouseReleased(){
 
   if(soundStarted) uiObject.checkKnobs("stop");
 }
+
+
+
+
+
 
 // loadsavedgame()
 //
@@ -192,7 +240,7 @@ function mouseReleased(){
 function loadSavedGame() {
 
   // find saved game variable
-  let storedData = localStorage.getItem('CestTaToune');
+  let storedData = localStorage.getItem('CestTaTouneData');
 
   if (storedData === null) {
     // if there isn't a saved game, skip the next step
@@ -218,10 +266,14 @@ function loadSavedGame() {
   musicObject.delayDividor = gameData.delayDiv;
   musicObject.maxAmplitude = gameData.ampLevels;
   musicObject.subDivisionLength = gameData.tempo;
-  musicObject.maxAmplitude = gameData.amplitudes;
 
   return true;
 }
+
+
+
+
+
 
 // saveinfo()
 //
@@ -244,13 +296,18 @@ function saveInfo(){
     delayDiv: musicObject.delayDividor,
     ampLevels: musicObject.maxAmplitude,
     tempo: musicObject.subDivisionLength,
-    amplitudes: musicObject.maxAmplitude,
   }
 
   // stringify and store saved game data
+  console.log(sendData)
   let setDataAsJSON = JSON.stringify(sendData);
-  localStorage.setItem('CestTaToune', setDataAsJSON);
+  localStorage.setItem('CestTaTouneData', setDataAsJSON);
 }
+
+
+
+
+
 
 // positiontext()
 //

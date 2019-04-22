@@ -7,7 +7,10 @@ a leg or an arm. function currentMotion() handles ramping from one set of
 motion values to another over time after a motion change. This combined with
 what's going on in update() ensures smoothe and continuous motion throughout.
 */
+
 class Limb{
+
+
 
   constructor(x, y, length, specs, direction, xflip){
 
@@ -58,6 +61,10 @@ class Limb{
     this.last = this.current;
   }
 
+
+
+
+
   // update()
   //
   // update this limb's parts' position, and listen for leg overlaps
@@ -70,16 +77,15 @@ class Limb{
   update(){
 
     // --------------------- CALCULATE ROTATION --------------------- //
+
     // get this origin and max displacement values for this frame.
     // currentmotion() allows a slow ramp from one set of values to another
     // when switching motions.
     let thisFrame = this.currentMotion();
-
     // get this frame's max displacement for each part
     let thighDisplacement = dude.vigor[dude.currentMoves] * thisFrame.thighDisplacement;
     let thighDisplacement2 = dude.vigor[dude.currentMoves] * thisFrame.thighDisplacement2;
     let kneeDisplacement = dude.vigor[dude.currentMoves] * thisFrame.kneeDisplacement;
-
     // get this frame's angle origin for each part
     // by adding together default origin and current origin
     let thighOrigin = this.thigh.origin + thisFrame.thighOrigin;
@@ -95,21 +101,18 @@ class Limb{
     // get thigh x-rotate range
     let min1 = thighOrigin - thighDisplacement;
     let max1 = thighOrigin + thighDisplacement;
-
     // map thigh x-rotate,
     this.thigh.angle = map( sin(currentPosition), -1*this.xflip, this.xflip, min1, max1 );
 
     // get thigh z-rotate range
     let min2 = thighOrigin2 + thighDisplacement2;
     let max2 = thighOrigin2 - thighDisplacement2;
-
     // map thigh z-rotate
     this.thigh.angle2 = map( cos(currentPosition), -1, 1, min2, max2 );
 
     // get knee x-rotate range
     let min3 = kneeOrigin - kneeDisplacement;
     let max3 = kneeOrigin + kneeDisplacement;
-
     // map knee x-rotate
     this.knee.angle = map( sin(currentPosition), -1*this.xflip, this.xflip, min3, max3 );
 
@@ -145,6 +148,11 @@ class Limb{
         }
       }
     }
+
+
+
+
+
 
     // display()
     //
@@ -190,6 +198,10 @@ class Limb{
       pop();
     }
 
+
+
+
+
     // changecurrentmotion()
     //
     // starts transition and sets its length.
@@ -205,6 +217,10 @@ class Limb{
       this.last = this.current;
       this.current = motion;
     }
+
+
+
+
 
     // currentMotion()
     //

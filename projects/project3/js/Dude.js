@@ -6,6 +6,9 @@ limb's motion at once.
 */
 class Dude{
 
+// constructor()
+// configure and create leg arm head and back objects.
+
   constructor(){
 
     // dude position
@@ -23,7 +26,7 @@ class Dude{
     this.currentMoves = 0;
     this.armMoves = [4];
     this.legMoves = [4];
-    this.vigor = [0.5, 0.5, 0.5, 0.5];
+    this.vigor = [0.2, 0.8, 0.5, 0.4];
 
     // this configures a new limb object for arm motion
     this.armSpecs = {
@@ -67,6 +70,11 @@ class Dude{
     this.back = new Back();
     this.head = new Head();
   }
+
+
+
+
+
 
   // displaydude()
   //
@@ -125,6 +133,10 @@ class Dude{
     pop();
   }
 
+
+
+
+
   // displayground()
   //
   // display the "ground", a rect that changes color with leg overlaps
@@ -132,7 +144,9 @@ class Dude{
   displayGround(){
 
     push();
+    // assign fill
     fill(this.groundFill);
+    // move to limb position and display
     translate(-310,80, 99)
     noStroke();
     rect(10, 20, 600, 200);
@@ -141,16 +155,22 @@ class Dude{
   }
 
 
+
+
+
   // newdancemotion()
   //
   // assigns new motion parameters to each limb
 
     newDanceMotion(){
-
+      // start arm motion
     this.limbs[0].changeCurrentMotion(this.armMoves[this.currentMoves], 20);
     this.limbs[2].changeCurrentMotion(this.armMoves[this.currentMoves], 20);
+    // start leg motion
     this.limbs[1].changeCurrentMotion(this.legMoves[this.currentMoves], 20);
     this.limbs[3].changeCurrentMotion(this.legMoves[this.currentMoves], 20);
   }
+
+
 
 }

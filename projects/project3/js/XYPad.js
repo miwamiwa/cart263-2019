@@ -1,5 +1,6 @@
 class XYPad{
 
+
 // on start:
   constructor(x, y, index, selector, size){
 
@@ -39,6 +40,11 @@ class XYPad{
     // check index and update range accordingly
     this.setRange();
   }
+
+
+
+
+
 
 // setrange()
 //
@@ -101,6 +107,11 @@ class XYPad{
     }
   }
 
+
+
+
+
+
   // display()
   //
   // display pad and knob
@@ -130,6 +141,11 @@ class XYPad{
     ellipse(this.valueX, this.valueY ,8, 8);
     pop();
   }
+
+
+
+
+
 
 // checkmouse()
 //
@@ -166,6 +182,11 @@ class XYPad{
     }
   }
 
+
+
+
+
+
   // setvalue()
   //
   // set knob position by mapping it back using this pad's game parameter.
@@ -185,6 +206,11 @@ class XYPad{
     let val4 = this.x + this.w - val3;
     this.valueX = val4;
   }
+
+
+
+
+
 
   // getvalue()
   //
@@ -261,6 +287,11 @@ class XYPad{
       break;
     }
   }
+
+
+
+
+
 
   // updatepos()
   //

@@ -1,4 +1,12 @@
+/*
+Head.js
+handles creating and displaying the head.
+features adding a webcam image as texture for the head's sphere.
+also features a head bob.
+*/
+
 class Head{
+
 
   constructor(){
 
@@ -12,6 +20,9 @@ class Head{
     this.size = 20;
   }
 
+
+
+
   // update()
   //
   // update head's y position so that it bobs a little
@@ -20,6 +31,10 @@ class Head{
 
     this.headBob = map(sin(frameCount*velocity/7), -1, 1, -2, 2);
   }
+
+
+
+
 
   // display()
   //
@@ -60,6 +75,5 @@ class Head{
     // display head
     sphere(this.size);
     pop();
-
   }
 }

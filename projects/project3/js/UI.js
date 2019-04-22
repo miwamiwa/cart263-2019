@@ -1,6 +1,18 @@
+/*
+UI.js
+a monstruous script indeed.
+- sets up knobs,
+- display knobs,
+-  check knobs getvalues, display background, display music editor, update timeline,
+display timeline, display keyboard, set knobs
+*/
+
 class UI{
 
+
+
   constructor(){
+
     // panel size
     this.w = window.innerWidth*6;
     this.h = window.innerHeight*6;
@@ -46,6 +58,9 @@ class UI{
         this.timelines[i][j] = -1;
       }
     }
+      //default timelines:
+    this.timelines[1] =  [0, -1, -1, 0, -1, -1, 0, -1, -1, -1, 3, -1, 5, -1, 3, -1];
+    this.timelines[2] = [0, -1, 22, -1, 14, 0, -1, -1, 0, -1, 22, -1, 12, 15, 18, -1];
 
     // click to start sound
     positionText(window.innerWidth*0.405 , window.innerHeight*0.5, "#instructions");
@@ -64,6 +79,11 @@ class UI{
     // create sliders and XY-pads
     this.setupKnobs();
   }
+
+
+
+
+
 
   // setupknobs()
   //
@@ -113,6 +133,10 @@ class UI{
   }
 
 
+
+
+
+
   // displayknobs()
   //
   // a function to display all knobs, called in draw()
@@ -132,9 +156,14 @@ class UI{
     pop();
   }
 
+
+
+
+
+
   // checkknobs()
   //
-  // check knobs for mouse interaction,
+  // called on mouse events, checks for interaction with knobs
   // update game parameters tied to knobs.
   // types of interaction: mouse pressed, dragged, or released.
 
@@ -149,9 +178,15 @@ class UI{
     }
   }
 
+
+
+
+
+
   // getvalues()
   //
-  // assign each knob's output to its associated game parameter
+  // assign each knob's output to its associated game parameter.
+  // triggered in setup()
 
   getValues(){
     for(let i=0; i<this.pads.length; i++){
@@ -161,6 +196,11 @@ class UI{
       this.sliders[i].getValue();
     }
   }
+
+
+
+
+
 
   // displaybackground()
   //
@@ -218,6 +258,11 @@ class UI{
     pop();
   }
 
+
+
+
+
+
   // displaymusiceditor()
   //
   // a function to display both keyboard and timeline, called in draw().
@@ -231,6 +276,11 @@ class UI{
     this.displayTimeline();
     pop();
   }
+
+
+
+
+
 
   // updatetimeline()
   //
@@ -307,6 +357,11 @@ class UI{
     }
   }
 
+
+
+
+
+
   // displaytimeline()
   //
   // pick appropriate colours for timeline elements,
@@ -380,6 +435,11 @@ class UI{
     pop();
   }
 
+
+
+
+
+
   // displaykeyboard()
   //
   // check for mouse interaction with keyboard,
@@ -441,7 +501,6 @@ class UI{
 
     // if mouse is pressed off-keyboard while edit mode is active,
     // stop edit mode.
-
     if(
       (  mouseX < width/2+this.kb.x
         || mouseX > width/2+this.kb.x+24*this.noteWidth
@@ -454,11 +513,21 @@ class UI{
       }
     }
 
+
+
+
+
+    // setknobs()
+    //
+    // set position of all slider and pad knobs after loading a new game
+    // or after changing motions
     setKnobs(){
 
+      // select current arm and leg motion
       let whichMove = dude.armMoves[dude.currentMoves];
       let whichMove2 = dude.legMoves[dude.currentMoves];
 
+      // update pads
       this.pads[0].setValue(whichMove.thighOrigin, whichMove.thighDisplacement);
       this.pads[1].setValue(whichMove.thighOrigin2, whichMove.thighDisplacement2);
       this.pads[2].setValue(whichMove.kneeOrigin, whichMove.kneeDisplacement);
@@ -472,13 +541,15 @@ class UI{
       this.pads[10].setValue(musicObject.filterRes[1], musicObject.filterFreq[1]);
       this.pads[11].setValue(musicObject.delayFeedback[1], musicObject.delayDividor[1]);
 
+      // update sliders
       this.sliders[0].setValue(whichMove2.height, 1);
       this.sliders[1].setValue(dude.vigor[dude.currentMoves], 3);
       this.sliders[2].setValue(musicObject.maxAmplitude[0], 3);
       this.sliders[3].setValue(musicObject.maxAmplitude[1], 3);
       this.sliders[4].setValue(musicObject.maxAmplitude[2], 3);
       this.sliders[5].setValue(musicObject.subDivisionLength, 2);
-
-
     }
+
+
+
   }

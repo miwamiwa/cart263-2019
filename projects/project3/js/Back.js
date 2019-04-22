@@ -4,13 +4,20 @@ This class handles displaying the back, updating its inclination, which will
 effect the position of the entire body in dude.displayDude().
 
 */
+
 class Back{
+
+
 
   constructor(){
 
     this.length = 50;
     this.leanForward = velocity*10;
   }
+
+
+
+
 
   // update()
   //
@@ -33,6 +40,10 @@ class Back{
   }
 
 
+
+
+
+
   // display()
   //
   // update fill and display back
@@ -47,4 +58,6 @@ class Back{
     box(10, this.length, 10);
     pop();
   }
+
+
 }
