@@ -33,8 +33,8 @@ class UI{
     this.timeIndicatorY = 0;
     this.beats = 16;
     this.timelineW = 520;
-    this.timelineX = -this.timelineW/2;
-    this.timelineY = window.innerHeight/2 - 130;
+    this.timelineX = -window.innerWidth/2+30;
+    this.timelineY = window.innerHeight/2 - 250;
     this.timelineH = 30;
     this.beatW = this.timelineW/this.beats;
 
@@ -46,7 +46,7 @@ class UI{
       z: 0,
       h: 70
     }
-    this.kb.x= -this.kb.w/2;
+    this.kb.x= 50;
     this.kb.y = window.innerHeight/2 - 230;
     this.noteWidth = this.kb.w /24;
 
@@ -95,17 +95,17 @@ class UI{
     let innerH = window.innerHeight;
     let padsX = innerW/7;
     let sliderX = innerW/12;
-    let padsY = 50;
+    let padsY = 500;
     let padsMargin = 30;
-    let padSize = innerH/7;
+    let padSize = innerH/12;
     let sliderW = innerW/48;
 
     for (let i=0;i<3; i++){  // create first column of xy pads
-      this.pads.push(new XYPad(padsX, padsY+i*(padsMargin+padSize), this.knobIndex, i, padSize ));
+      this.pads.push(new XYPad(30+this.pads.length*(padSize+20), padsY, this.knobIndex, i, padSize ));
       this.knobIndex++;
     }
     for (let i=0;i<3; i++){  // create second column of xy pads
-      this.pads.push(new XYPad(padsX+padSize+padsMargin, padsY+i*(padsMargin+padSize), this.knobIndex, i+3, padSize  ));
+      this.pads.push(new XYPad(30+this.pads.length*(padSize+20), padsY, this.knobIndex, i+3, padSize  ));
       this.knobIndex++;
     }
     for (let i=0;i<2; i++){  // create sliders on the left
@@ -121,12 +121,12 @@ class UI{
       this.knobIndex++;
     }
     for (let i=0;i<3; i++){ //create third column of xy pads
-      this.pads.push(new XYPad(innerW-padSize-padsX, padsY+i*(padsMargin+padSize), this.knobIndex, i+6, padSize ));
+      this.pads.push(new XYPad(30+100+this.pads.length*(padSize+20), padsY, this.knobIndex, i+6, padSize ));
       this.knobIndex++;
     }
     for (let i=0;i<3; i++){ // create fourth column of xy pads
-      let x = innerW-padSize-(padsX+padSize+padsMargin);
-      let y = padsY+i*(padsMargin+padSize);
+      let x = 30+100+this.pads.length*(padSize+20);
+      let y = padsY;
       this.pads.push(new XYPad(x, y, this.knobIndex, i+9, padSize  ));
       this.knobIndex++;
     }
@@ -273,6 +273,7 @@ class UI{
     rotateX(0.078*PI);
     this.displayKeyboard();
     this.updateTimeline();
+    translate(0,100,0)
     this.displayTimeline();
     pop();
   }

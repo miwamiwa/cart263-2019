@@ -12,9 +12,9 @@ class Head{
 
     this.headBob;
     // start webcam
-    this.capture = createCapture(VIDEO);
+  //  this.capture = createCapture(VIDEO);
     // hide source feed
-    this.capture.hide();
+  //  this.capture.hide();
     this.faceImage;
     this.camActive = true;
     this.size = 20;
@@ -48,6 +48,7 @@ class Head{
     fill(0, 105);
     stroke(235, 85);
     // if cam is available and webcam is active
+    /*
     if (this.capture.loadedmetadata && this.camActive) {
       // capture frame from webcam
       var c = this.capture.get(0, 0, 640, 480);
@@ -63,9 +64,9 @@ class Head{
         this.capture.stop();
       }
     }
-
+*/
     // if webcam is inactive, use saved image as texture
-    if(!this.camActive) texture(this.faceImage);
+
 
     // move to head position and apply head bob
     translate(dude.shoulderDistance/2, dude.back.length+20+this.headBob, 0);
@@ -73,6 +74,7 @@ class Head{
     rotateY(PI/2+this.headBob/32*PI);
     rotateX(PI);
     // display head
+    fill(50);
     sphere(this.size);
     pop();
   }

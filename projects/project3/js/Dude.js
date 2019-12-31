@@ -12,7 +12,7 @@ class Dude{
   constructor(){
 
     // dude position
-    this.offsetX=0;
+    this.offsetX=200;
     this.offsetY =-50;
     this.offsetZ =100;
     // hip motion
@@ -90,7 +90,7 @@ class Dude{
     this.displayGround();
 
     // scale the entire dude
-    scale(2);
+    scale(3);
 
     // calculate hip motion
     this.hipMove = sin( radians(frameCount*4))/20 * velocity;
@@ -147,10 +147,10 @@ class Dude{
     // assign fill
     fill(this.groundFill);
     // move to limb position and display
-    translate(-310,80, 99)
+    translate(-740,80, 99)
     noStroke();
-    rect(10, 20, 600, 200);
-    rect(0, 30, 620, 180);
+    rect(10, 20, 990, 200);
+    rect(0, 30, 1010, 180);
     pop();
   }
 

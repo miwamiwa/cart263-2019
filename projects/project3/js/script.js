@@ -48,14 +48,9 @@ function setup(){
   // position html
   positionText(width*0.01, height*0.95, "#title");
   // position camera
-  camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
+//  camera(0, -100, 400, 0, 0, 0, 0, 1, 0);
   // automatically take a picture after 10 seconds
-  setTimeout(function(){
-    if(!pictureTaken){
-      pictureTaken = true;
-      $("#instruct4").remove();
-    }
-  }, 10000);
+
 
   // ortho() removes all scaling due to perspective.
   // prior to finding this, i tried doing math to map mouse position to fit
@@ -95,8 +90,10 @@ function startSound(){
 
 function draw(){
 
+background(255);
   // display background color, cubes, and tinted layer
-  uiObject.displayBackground();
+//  uiObject.displayBackground();
+
   // display dude's limbs, head and back, and display ground
   dude.displayDude();
   // display timeline and keyboard
@@ -104,9 +101,13 @@ function draw(){
   // play sound
   if(soundStarted) musicObject.playMusic();
   // run fft analysis and display background ellipses
-  analyzeSound();
+//  analyzeSound();
+
+  //displaygraphs();
   // display sliders and pads
   uiObject.displayKnobs();
+
+
 }
 
 
